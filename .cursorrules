@@ -1,0 +1,46 @@
+# Partyhelp App - Cursor Rules
+
+## Project Overview
+Partyhelp Pay-Per-Lead system: Laravel 12 + Filament 5 backend for a venue-lead marketplace.
+WordPress/Elementor handles the public lead-generation form; Laravel handles everything else.
+
+## Architecture
+- **Admin panel:** Filament at `/admin` (light theme, desktop-primary)
+- **Venue portal:** Filament at `/venue` (light theme, mobile-responsive)
+- **Customer pages:** Blade + Livewire (dark theme, mobile-first)
+- **No React.** Use Filament, Livewire, and Alpine.js only.
+
+## Coding Standards
+- **Max 300 lines** per PHP file. Refactor proactively if approaching this limit.
+- **Max 500 lines** only where a single file is architecturally justified.
+- Blade files use `<x-layout>` component tags, NOT `@include` statements.
+- Follow Laravel conventions: PSR-12, type hints, return types.
+- All outbound email via **SendGrid API** (DO blocks SMTP ports).
+
+## File Structure
+- `app/Filament/Resources/` — Admin panel resources
+- `app/Filament/Venue/Resources/` — Venue portal resources
+- `app/Filament/Widgets/` — Admin dashboard widgets
+- `app/Filament/Venue/Widgets/` — Venue dashboard widgets
+- `app/Services/` — Business logic services
+- `app/Jobs/` — Queued jobs
+- `resources/views/components/layouts/` — Blade layout components
+- `resources/views/customer/` — Customer-facing dark theme pages
+- `config/partyhelp.php` — App configuration
+
+## Development Environment
+- All work happens on **Laravel Forge via Remote SSH** to Digital Ocean.
+- Never set up local Mac development unless explicitly instructed.
+- Commit to GitHub regularly after each meaningful change.
+
+## Key Documents
+- PRD: `/home/forge/partyhelp-repo/docs/PRD_Partyhelp_Pay_Per_Lead.md`
+- This file: `.cursorrules`
+
+## Testing
+- Build unit tests progressively as features are developed.
+- Run tests after major modifications.
+
+## Database
+- Using Laravel migrations with `ph_` conceptual prefix (actual tables without prefix per Laravel convention).
+- Will switch from SQLite to MySQL when Forge database is configured.
