@@ -6,6 +6,7 @@ use App\Models\DiscountSetting;
 use App\Models\PricingMatrix;
 use App\Models\SystemSetting;
 use App\Models\User;
+use App\Models\Venue;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +17,31 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Partyhelp Admin',
             'email' => 'admin@partyhelp.com.au',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('adminfestive'),
             'role' => 'admin',
+        ]);
+
+        // Test venue user
+        $venueUser = User::create([
+            'name' => 'Test Venue',
+            'email' => 'venue@partyhelp.com.au',
+            'password' => bcrypt('venuefestive'),
+            'role' => 'venue',
+        ]);
+
+        Venue::create([
+            'user_id' => $venueUser->id,
+            'business_name' => 'Test Venue Pty Ltd',
+            'contact_name' => 'Test Venue',
+            'contact_email' => 'venue@partyhelp.com.au',
+            'contact_phone' => '0400000000',
+            'address' => '123 Test St',
+            'suburb' => 'Melbourne',
+            'state' => 'VIC',
+            'postcode' => '3000',
+            'credit_balance' => 200,
+            'status' => 'active',
+            'approved_at' => now(),
         ]);
 
         $this->seedPricingMatrix();

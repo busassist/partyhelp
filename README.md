@@ -4,7 +4,7 @@ Partyhelp Pay-Per-Lead management app — Laravel 12 + Filament 5 backend for th
 
 ## Documentation
 
-- [PRD](/docs/PRD_Partyhelp_Pay_Per_Lead.md) — Product Requirements Document
+- [Partyhelp PRD](/docs/Partyhelp%20PRD.md) — Product Requirements Document
 
 ## Tech Stack
 
