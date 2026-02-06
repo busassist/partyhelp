@@ -17,6 +17,15 @@ WordPress/Elementor handles the public lead-generation form; Laravel handles eve
 - Follow Laravel conventions: PSR-12, type hints, return types.
 - All outbound email via **SendGrid API** (DO blocks SMTP ports).
 
+## Semantic Styling (PRD 3.1)
+Use **named semantic classes** for common elements so styling can be controlled from one place. Prefer semantic classes over inline utility-only styling.
+- **CTAs:** `.primary-cta-button` (add `.secondary-cta-button` etc. as needed)
+- **Logos:** `.brand-logo` (light backgrounds), `.brand-logo-inverse` (dark backgrounds)
+- **Cards:** `.content-card`, `.content-card-centered`, `.detail-card`, `.detail-card-highlight`, `.detail-card-panel`
+- **Typography:** `.page-title`, `.page-title-centered`, `.page-title-lg`, `.page-title-success`, `.page-title-error`, `.card-label`, `.card-value`, `.muted-text`, `.muted-text-sm`
+- **Nav:** `.nav-link-ghost`, `.nav-link-outline`
+- Define new semantic classes in `resources/css/app.css` @layer components when adding new common patterns.
+
 ## File Structure
 - `app/Filament/Resources/` — Admin panel resources
 - `app/Filament/Venue/Resources/` — Venue portal resources
@@ -34,7 +43,8 @@ WordPress/Elementor handles the public lead-generation form; Laravel handles eve
 - Commit to GitHub regularly after each meaningful change.
 
 ## Key Documents
-- PRD: `/home/forge/partyhelp-repo/docs/PRD_Partyhelp_Pay_Per_Lead.md`
+- PRD: `docs/Partyhelp PRD.md`
+- Seeding: `docs/SEEDING.md`
 - This file: `.cursorrules`
 
 ## Testing

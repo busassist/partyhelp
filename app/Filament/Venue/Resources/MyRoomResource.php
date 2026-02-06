@@ -6,6 +6,7 @@ use App\Filament\Venue\Resources\MyRoomResource\Pages;
 use App\Models\Room;
 use Filament\Forms;
 use Filament\Schemas\Schema;
+use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -79,9 +80,9 @@ class MyRoomResource extends Resource
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ]);
     }
 

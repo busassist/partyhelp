@@ -6,6 +6,7 @@ use App\Filament\Resources\PricingMatrixResource\Pages;
 use App\Models\PricingMatrix;
 use Filament\Forms;
 use Filament\Schemas\Schema;
+use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,7 +17,7 @@ class PricingMatrixResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
 
     protected static ?string $navigationLabel = 'Pricing Matrix';
 
@@ -24,7 +25,7 @@ class PricingMatrixResource extends Resource
     {
         return $schema->schema([
             Forms\Components\Select::make('occasion_type')
-                ->options(config('partyhelp.occasion_types'))
+                ->options(\App\Models\OccasionType::options())
                 ->required(),
             Forms\Components\TextInput::make('guest_min')
                 ->numeric()->required()->label('Guest count from'),
@@ -51,9 +52,9 @@ class PricingMatrixResource extends Resource
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->defaultSort('occasion_type');
     }
@@ -62,8 +63,7 @@ class PricingMatrixResource extends Resource
     {
         return [
             'index' => Pages\ListPricingMatrix::route('/'),
-            'create' => Pages\CreatePricingMatrix::route('/create'),
-            'edit' => Pages\EditPricingMatrix::route('/{record}/edit'),
+            'editOccasion' => Pages\EditOccasionMatrix::route('/edit/{occasionType}'),
         ];
     }
 }

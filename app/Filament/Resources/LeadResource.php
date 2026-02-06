@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\LeadResource\Pages;
 use App\Models\Lead;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -23,16 +25,16 @@ class LeadResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make('Customer Details')->schema([
+            Section::make('Customer Details')->schema([
                 Forms\Components\TextInput::make('first_name')->required(),
                 Forms\Components\TextInput::make('last_name')->required(),
                 Forms\Components\TextInput::make('email')->email()->required(),
                 Forms\Components\TextInput::make('phone')->required(),
             ])->columns(2),
 
-            Forms\Components\Section::make('Event Details')->schema([
+            Section::make('Event Details')->schema([
                 Forms\Components\Select::make('occasion_type')
-                    ->options(config('partyhelp.occasion_types'))
+                    ->options(\App\Models\OccasionType::options())
                     ->required(),
                 Forms\Components\TextInput::make('guest_count')
                     ->numeric()->minValue(10)->maxValue(500)->required(),
@@ -47,7 +49,7 @@ class LeadResource extends Resource
                     ->maxLength(500),
             ])->columns(2),
 
-            Forms\Components\Section::make('Lead Status')->schema([
+            Section::make('Lead Status')->schema([
                 Forms\Components\Select::make('status')
                     ->options([
                         'new' => 'New',
@@ -114,15 +116,15 @@ class LeadResource extends Resource
                         'cancelled' => 'Cancelled',
                     ]),
                 Tables\Filters\SelectFilter::make('occasion_type')
-                    ->options(config('partyhelp.occasion_types')),
+                    ->options(\App\Models\OccasionType::options()),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

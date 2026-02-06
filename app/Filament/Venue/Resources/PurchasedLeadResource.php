@@ -5,7 +5,9 @@ namespace App\Filament\Venue\Resources;
 use App\Filament\Venue\Resources\PurchasedLeadResource\Pages;
 use App\Models\LeadPurchase;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -31,7 +33,7 @@ class PurchasedLeadResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make('Customer Details')->schema([
+            Section::make('Customer Details')->schema([
                 Forms\Components\Placeholder::make('customer_name')
                     ->content(fn ($record) => $record->lead->full_name),
                 Forms\Components\Placeholder::make('customer_email')
@@ -40,7 +42,7 @@ class PurchasedLeadResource extends Resource
                     ->content(fn ($record) => $record->lead->phone),
             ])->columns(3),
 
-            Forms\Components\Section::make('Event Details')->schema([
+            Section::make('Event Details')->schema([
                 Forms\Components\Placeholder::make('occasion')
                     ->content(fn ($record) => $record->lead->occasion_type),
                 Forms\Components\Placeholder::make('guests')
@@ -51,7 +53,7 @@ class PurchasedLeadResource extends Resource
                     ->content(fn ($record) => $record->lead->suburb),
             ])->columns(4),
 
-            Forms\Components\Section::make('Follow Up')->schema([
+            Section::make('Follow Up')->schema([
                 Forms\Components\Select::make('lead_status')
                     ->options([
                         'pending' => 'Pending',
@@ -93,8 +95,8 @@ class PurchasedLeadResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Purchased')->dateTime()->sortable(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                Actions\EditAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
     }

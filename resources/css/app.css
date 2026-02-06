@@ -8,4 +8,82 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-ph-purple-400: #a78bfa;
+    --color-ph-purple-500: #8b5cf6;
+    --color-ph-purple-600: #7c3aed;
+    --color-ph-purple-700: #6d28d9;
+}
+
+/**
+ * Semantic component classes (PRD 3.1)
+ * Use these for common elements so styling can be controlled from one place.
+ * Prefer semantic classes over inline utility-only styling.
+ */
+@layer components {
+    /* CTAs */
+    .primary-cta-button {
+        @apply inline-flex items-center justify-center px-6 py-3 bg-ph-purple-600 hover:bg-ph-purple-700 text-white font-semibold rounded-lg transition-colors;
+    }
+
+    /* Brand logos */
+    .brand-logo {
+        @apply h-8 w-auto;
+    }
+    .brand-logo-inverse {
+        @apply h-8 w-auto;
+    }
+
+    /* Cards */
+    .content-card {
+        @apply bg-gray-800 rounded-lg p-8 shadow-lg;
+    }
+    .content-card-centered {
+        @apply bg-gray-800 rounded-lg p-8 shadow-lg text-center;
+    }
+    .detail-card {
+        @apply bg-gray-700 rounded p-4;
+    }
+    .detail-card-highlight {
+        @apply bg-gray-700 rounded-lg p-6 text-center;
+    }
+    .detail-card-panel {
+        @apply bg-gray-700 rounded-lg p-6;
+    }
+
+    /* Typography */
+    .page-title {
+        @apply text-2xl font-bold text-ph-purple-400 mb-6;
+    }
+    .page-title-centered {
+        @apply text-2xl font-bold text-ph-purple-400 mb-4;
+    }
+    .page-title-lg {
+        @apply text-3xl font-bold text-ph-purple-400 mb-2;
+    }
+    .page-title-success {
+        @apply text-2xl font-bold text-green-400 mb-4;
+    }
+    .page-title-error {
+        @apply text-2xl font-bold text-red-400 mb-4;
+    }
+    .card-label {
+        @apply text-gray-400 text-sm;
+    }
+    .card-value {
+        @apply font-semibold;
+    }
+    .muted-text {
+        @apply text-gray-400;
+    }
+    .muted-text-sm {
+        @apply text-gray-400 text-sm;
+    }
+
+    /* Nav links (welcome page) */
+    .nav-link-ghost {
+        @apply inline-block px-5 py-1.5 border border-transparent rounded-sm text-sm leading-normal transition-colors text-[#1b1b18] dark:text-[#EDEDEC] hover:border-[#19140035] dark:hover:border-[#3E3E3A];
+    }
+    .nav-link-outline {
+        @apply inline-block px-5 py-1.5 border rounded-sm text-sm leading-normal transition-colors border-[#19140035] dark:border-[#3E3E3A] text-[#1b1b18] dark:text-[#EDEDEC] hover:border-[#1915014a] dark:hover:border-[#62605b];
+    }
 }

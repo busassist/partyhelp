@@ -47,6 +47,12 @@ class DatabaseSeeder extends Seeder
         $this->seedPricingMatrix();
         $this->seedDiscountSettings();
         $this->seedSystemSettings();
+        $this->call(OccasionTypeSeeder::class);
+        $this->call(BudgetRangeSeeder::class);
+        $this->call(PostcodeSeeder::class);
+
+        $this->call(VenueSeeder::class);
+        $this->call(LeadSeeder::class);
     }
 
     private function seedPricingMatrix(): void

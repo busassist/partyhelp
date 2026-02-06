@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\VenueResource\Pages;
 use App\Models\Venue;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -23,7 +25,7 @@ class VenueResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make('Business Details')->schema([
+            Section::make('Business Details')->schema([
                 Forms\Components\TextInput::make('business_name')->required(),
                 Forms\Components\TextInput::make('abn')->label('ABN'),
                 Forms\Components\TextInput::make('contact_name')->required(),
@@ -32,7 +34,7 @@ class VenueResource extends Resource
                 Forms\Components\TextInput::make('website')->url(),
             ])->columns(2),
 
-            Forms\Components\Section::make('Location')->schema([
+            Section::make('Location')->schema([
                 Forms\Components\TextInput::make('address')->required(),
                 Forms\Components\TextInput::make('suburb')->required(),
                 Forms\Components\TextInput::make('state')->default('VIC'),
@@ -41,11 +43,11 @@ class VenueResource extends Resource
                     ->label('Adjacent suburbs'),
                 Forms\Components\Select::make('occasion_tags')
                     ->multiple()
-                    ->options(config('partyhelp.occasion_types'))
+                    ->options(\App\Models\OccasionType::options())
                     ->label('Occasion types served'),
             ])->columns(2),
 
-            Forms\Components\Section::make('Account')->schema([
+            Section::make('Account')->schema([
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending Approval',
@@ -97,9 +99,9 @@ class VenueResource extends Resource
                         'suspended' => 'Suspended',
                     ]),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('approve')
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\Action::make('approve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
@@ -108,7 +110,7 @@ class VenueResource extends Resource
                         'status' => 'active',
                         'approved_at' => now(),
                     ])),
-                Tables\Actions\Action::make('suspend')
+                Actions\Action::make('suspend')
                     ->icon('heroicon-o-no-symbol')
                     ->color('danger')
                     ->requiresConfirmation()

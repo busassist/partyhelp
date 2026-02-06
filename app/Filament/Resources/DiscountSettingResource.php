@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DiscountSettingResource\Pages;
 use App\Models\DiscountSetting;
 use Filament\Forms;
+use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -16,7 +17,7 @@ class DiscountSettingResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
 
     protected static ?string $navigationLabel = 'Discount Settings';
 
@@ -47,9 +48,9 @@ class DiscountSettingResource extends Resource
                     ->label('Resend')->boolean(),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->defaultSort('sort_order');
     }

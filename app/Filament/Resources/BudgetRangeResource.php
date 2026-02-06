@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BudgetRangeResource\Pages;
 use App\Models\BudgetRange;
 use Filament\Forms;
+use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -16,7 +17,7 @@ class BudgetRangeResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
 
     protected static ?string $navigationLabel = 'Budget Ranges';
 
@@ -46,9 +47,9 @@ class BudgetRangeResource extends Resource
                     ->money('AUD')->label('Max'),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->defaultSort('sort_order');
     }

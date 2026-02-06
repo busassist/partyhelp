@@ -6,6 +6,7 @@ use App\Filament\Venue\Resources\AvailableLeadResource\Pages;
 use App\Models\LeadMatch;
 use App\Services\LeadPurchaseService;
 use Filament\Notifications\Notification;
+use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -48,8 +49,8 @@ class AvailableLeadResource extends Resource
                     ->label('Match %')
                     ->formatStateUsing(fn ($state) => round($state) . '%'),
             ])
-            ->actions([
-                Tables\Actions\Action::make('purchase')
+            ->recordActions([
+                Actions\Action::make('purchase')
                     ->label('Purchase Lead')
                     ->icon('heroicon-o-shopping-cart')
                     ->color('success')

@@ -4,28 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Partyhelp' }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'ph-purple': {
-                            400: '#a78bfa', 500: '#8b5cf6',
-                            600: '#7c3aed', 700: '#6d28d9',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
     <header class="bg-gray-800 border-b border-gray-700">
         <div class="max-w-4xl mx-auto px-4 py-4">
-            <a href="https://partyhelp.com.au" class="text-2xl font-bold text-ph-purple-400">
-                Partyhelp
+            <a href="https://partyhelp.com.au" class="inline-block">
+                <img src="{{ asset('images/brand/ph-logo-white.png') }}" alt="Partyhelp" class="brand-logo-inverse">
             </a>
         </div>
     </header>

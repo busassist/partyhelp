@@ -10,6 +10,8 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -32,6 +34,16 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#7c3aed'),
             ])
             ->brandName('Partyhelp Admin')
+            ->favicon(asset('images/brand/ph-icon-dark.png'))
+            ->brandLogo(asset('images/brand/ph-logo-dark.png'))
+            ->darkModeBrandLogo(asset('images/brand/ph-logo-white.png'))
+            ->brandLogoHeight('55px')
+            ->renderHook(PanelsRenderHook::STYLES_AFTER, fn () => new HtmlString('<style>.fi-logo, .fi-logo img { height: 55px !important; object-fit: contain; }</style>'))
+            ->navigationGroups([
+                'Leads',
+                'Venues',
+                'Manage System Data',
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
