@@ -64,4 +64,14 @@ return [
     */
     'admin_email' => env('PARTYHELP_ADMIN_EMAIL', 'admin@partyhelp.com.au'),
     'admin_phone' => env('PARTYHELP_ADMIN_PHONE'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Media Upload Settings
+    |--------------------------------------------------------------------------
+    */
+    'media' => [
+        'max_width' => (int) env('MEDIA_MAX_WIDTH', 1920),
+        'output_format' => env('MEDIA_OUTPUT_FORMAT', 'webp'),
+    ],
 ];

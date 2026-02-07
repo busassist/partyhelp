@@ -16,10 +16,20 @@ class Room extends Model
         'description', 'features', 'images', 'sort_order', 'is_active',
     ];
 
+    /** Normalize features to valid keys when reading (supports legacy labels). */
+    protected function features(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn (?string $value) => Feature::normalizeToKeys(
+                json_decode($value ?? '[]', true) ?? []
+            ),
+            set: fn ($value) => json_encode($value ?? []),
+        );
+    }
+
     protected function casts(): array
     {
         return [
-            'features' => 'array',
             'images' => 'array',
             'hire_cost_min' => 'decimal:2',
             'hire_cost_max' => 'decimal:2',

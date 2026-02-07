@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FunctionPackController;
 use App\Http\Controllers\LeadPurchaseController;
+use App\Http\Controllers\MediaServeController;
 use App\Http\Controllers\VenueApprovalController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,3 +28,7 @@ Route::get('/venue-approval/{venue}/approve', [VenueApprovalController::class, '
 Route::get('/venue-approval/{venue}/reject', [VenueApprovalController::class, 'reject'])
     ->name('venue.reject')
     ->middleware('signed');
+
+Route::get('/media/{path}', [MediaServeController::class, 'show'])
+    ->where('path', '.*')
+    ->name('media.serve');

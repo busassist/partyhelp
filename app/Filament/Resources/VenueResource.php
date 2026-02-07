@@ -124,7 +124,9 @@ class VenueResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            \App\Filament\Resources\VenueResource\RelationManagers\RoomsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

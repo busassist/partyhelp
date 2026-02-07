@@ -3,8 +3,10 @@
 namespace App\Filament\Venue\Resources;
 
 use App\Filament\Venue\Resources\MyRoomResource\Pages;
+use App\Forms\Components\MediaLibraryPicker;
 use App\Models\Room;
 use Filament\Forms;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Actions;
 use Filament\Resources\Resource;
@@ -32,36 +34,32 @@ class MyRoomResource extends Resource
             Forms\Components\Select::make('style')
                 ->options(config('partyhelp.room_styles'))
                 ->required(),
-            Forms\Components\TextInput::make('min_capacity')
-                ->numeric()->required()->default(10),
-            Forms\Components\TextInput::make('max_capacity')
-                ->numeric()->required(),
-            Forms\Components\TextInput::make('seated_capacity')
-                ->numeric(),
-            Forms\Components\TextInput::make('hire_cost_min')
-                ->numeric()->prefix('$')->label('Min hire cost'),
-            Forms\Components\TextInput::make('hire_cost_max')
-                ->numeric()->prefix('$')->label('Max hire cost'),
+            Grid::make(3)->schema([
+                Forms\Components\TextInput::make('min_capacity')
+                    ->numeric()->required()->default(10),
+                Forms\Components\TextInput::make('max_capacity')
+                    ->numeric()->required(),
+                Forms\Components\TextInput::make('seated_capacity')
+                    ->numeric(),
+            ]),
+            Grid::make(2)->schema([
+                Forms\Components\TextInput::make('hire_cost_min')
+                    ->numeric()->prefix('$')->label('Min hire cost'),
+                Forms\Components\TextInput::make('hire_cost_max')
+                    ->numeric()->prefix('$')->label('Max hire cost'),
+            ]),
             Forms\Components\Textarea::make('description')
                 ->maxLength(1000)->columnSpanFull(),
             Forms\Components\CheckboxList::make('features')
-                ->options([
-                    'av_equipment' => 'AV Equipment',
-                    'dance_floor' => 'Dance Floor',
-                    'private_bar' => 'Private Bar',
-                    'outdoor_access' => 'Outdoor Access',
-                    'stage' => 'Stage',
-                    'projector' => 'Projector',
-                    'sound_system' => 'Sound System',
-                    'catering' => 'In-house Catering',
-                ])->columns(2),
-            Forms\Components\FileUpload::make('images')
-                ->multiple()
-                ->image()
+                ->options(\App\Models\Feature::options())
+                ->columns(2)
+                ->validationMessages(['in' => 'The selected features are invalid.']),
+            MediaLibraryPicker::make('images')
+                ->venueId(fn () => auth()->user()?->venue?->id)
+                ->isAdmin(false)
                 ->maxFiles(4)
-                ->maxSize(5120)
-                ->directory('rooms')
-                ->reorderable(),
+                ->autoSave(true)
+                ->inlineLabel(),
             Forms\Components\Toggle::make('is_active')->default(true),
         ]);
     }

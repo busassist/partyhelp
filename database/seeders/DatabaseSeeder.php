@@ -48,8 +48,10 @@ class DatabaseSeeder extends Seeder
         $this->seedDiscountSettings();
         $this->seedSystemSettings();
         $this->call(OccasionTypeSeeder::class);
+        $this->call(FeatureSeeder::class);
         $this->call(BudgetRangeSeeder::class);
         $this->call(PostcodeSeeder::class);
+        $this->call(RoomSeeder::class);
 
         $this->call(VenueSeeder::class);
         $this->call(LeadSeeder::class);

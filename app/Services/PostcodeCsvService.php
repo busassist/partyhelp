@@ -14,9 +14,9 @@ class PostcodeCsvService
     {
         $postcodes = Postcode::orderBy('suburb')->get();
         $path = 'temp/postcode-export/postcodes-' . now()->format('Y-m-d-His') . '.csv';
-        $fullPath = Storage::disk(config('filesystems.default'))->path($path);
+        $fullPath = Storage::disk('local')->path($path);
 
-        Storage::disk(config('filesystems.default'))->makeDirectory(dirname($path));
+        Storage::disk('local')->makeDirectory(dirname($path));
 
         $handle = fopen($fullPath, 'w');
         fputcsv($handle, self::CSV_HEADERS);

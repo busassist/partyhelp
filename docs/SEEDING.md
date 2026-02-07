@@ -28,7 +28,7 @@ bash /home/forge/get.partyhelp.com.au/scripts/seed-data.sh
 
 **What it seeds:**
 - Admin user: `admin@partyhelp.com.au` / `adminfestive`
-- Test venue: `venue@partyhelp.com.au` / `venuefestive`
+- Test venue: `venue@partyhelp.com.au` / `venuefestive` with 4 sample rooms (Main Function Room, The Loft, Courtyard, Boardroom)
 - Occasion types (from config)
 - Budget ranges ($1,500–$3,000 through $25,000+)
 - Postcodes (Melbourne suburbs)
@@ -76,8 +76,10 @@ php artisan migrate:fresh --seed
 
 # Run specific seeder
 php artisan db:seed --class=OccasionTypeSeeder
+php artisan db:seed --class=FeatureSeeder
 php artisan db:seed --class=BudgetRangeSeeder
 php artisan db:seed --class=PostcodeSeeder
+php artisan db:seed --class=RoomSeeder
 php artisan db:seed --class=VenueSeeder
 php artisan db:seed --class=LeadSeeder
 ```
@@ -86,10 +88,12 @@ php artisan db:seed --class=LeadSeeder
 
 | Seeder | Class | Purpose |
 |--------|-------|---------|
-| DatabaseSeeder | `DatabaseSeeder` | Core data (admin, test venue, pricing, config) + calls OccasionTypeSeeder, BudgetRangeSeeder, PostcodeSeeder, VenueSeeder, LeadSeeder |
+| DatabaseSeeder | `DatabaseSeeder` | Core data (admin, test venue, pricing, config) + calls OccasionTypeSeeder, BudgetRangeSeeder, PostcodeSeeder, RoomSeeder, VenueSeeder, LeadSeeder |
 | OccasionTypeSeeder | `OccasionTypeSeeder` | Occasion types from config (21st Birthday, Wedding Reception, etc.) |
+| FeatureSeeder | `FeatureSeeder` | Room features (AV Equipment, Dance Floor, etc.) |
 | BudgetRangeSeeder | `BudgetRangeSeeder` | Budget ranges ($1,500–$3,000 through $25,000+) |
 | PostcodeSeeder | `PostcodeSeeder` | Postcodes (suburb, postcode, state) for Melbourne |
+| RoomSeeder | `RoomSeeder` | 4 sample rooms for venue@partyhelp.com.au (Main Function Room, The Loft, Courtyard, Boardroom). Skips if venue already has rooms. |
 | VenueSeeder | `VenueSeeder` | 50 venues with rooms |
 | LeadSeeder | `LeadSeeder` | 80 leads with matches and purchases |
 

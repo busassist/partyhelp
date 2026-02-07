@@ -35,6 +35,7 @@ class ListPostcodes extends ListRecords
                         ->label('CSV file')
                         ->acceptedFileTypes(['text/csv', 'application/csv', 'text/plain'])
                         ->required()
+                        ->disk('local')
                         ->directory('temp/postcode-import')
                         ->maxSize(2048),
                 ])
@@ -53,11 +54,11 @@ class ListPostcodes extends ListRecords
                         return;
                     }
 
-                    $fullPath = Storage::disk(config('filesystems.default'))->path($path);
+                    $fullPath = Storage::disk('local')->path($path);
                     $service = app(PostcodeCsvService::class);
                     $result = $service->replaceFromCsv($fullPath);
 
-                    $disk = Storage::disk(config('filesystems.default'));
+                    $disk = Storage::disk('local');
                     if ($disk->exists($path)) {
                         $disk->delete($path);
                     }

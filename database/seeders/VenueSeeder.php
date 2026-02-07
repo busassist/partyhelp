@@ -164,7 +164,10 @@ class VenueSeeder extends Seeder
 
     private function roomFeatures(): array
     {
-        $all = ['AV system', 'Dance floor', 'Private bar', 'Outdoor access', 'Stage', 'Projector', 'PA system'];
-        return fake()->randomElements($all, rand(2, 5));
+        $keys = array_keys(\App\Models\Feature::options());
+
+        return empty($keys)
+            ? []
+            : fake()->randomElements($keys, min(rand(2, 5), count($keys)));
     }
 }
