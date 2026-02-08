@@ -76,7 +76,9 @@ class RoomsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn ($record) => \App\Filament\Resources\RoomResource::getUrl('edit', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

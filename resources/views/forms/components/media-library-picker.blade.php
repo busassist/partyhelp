@@ -121,9 +121,13 @@
     .media-modal-scroll::-webkit-scrollbar { width: 6px; }
     .media-modal-scroll::-webkit-scrollbar-track { background: transparent; }
     .media-modal-scroll::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
-    .media-modal-card:hover .card-hover-overlay { opacity: 1; }
-    .media-modal-card:hover .card-img { transform: scale(1.05); }
+    .media-modal-card-overlay { opacity: 0 !important; transition: opacity 0.2s !important; }
+    .media-modal-card-image-wrap:hover .media-modal-card-overlay { opacity: 1 !important; }
+    .media-modal-card-image-wrap:hover .card-img { transform: scale(1.05); }
+    .media-modal-card-btn-select:hover { opacity: 0.95; }
+    .media-modal-card-btn-delete:hover { opacity: 0.95; }
     .media-modal-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem; }
+    @keyframes media-upload-spin { to { transform: rotate(360deg); } }
     </style>
     @endpush
     @push('scripts')

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Media;
 use App\Services\MediaUploadService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -21,6 +22,8 @@ class MediaLibraryModal extends Component
     public string $searchQuery = '';
 
     public $uploadedFile = null;
+
+    public int $uploadIteration = 0;
 
     protected $listeners = ['openModal' => 'resetState'];
 
@@ -49,6 +52,30 @@ class MediaLibraryModal extends Component
         $this->dispatchMediaSelected($path);
     }
 
+    public function deleteImage(int $mediaId): void
+    {
+        $media = Media::findOrFail($mediaId);
+
+        if (! $this->canDelete($media)) {
+            return;
+        }
+
+        $disk = config('filesystems.media_disk', 'spaces');
+        if (Storage::disk($disk)->exists($media->file_path)) {
+            Storage::disk($disk)->delete($media->file_path);
+        }
+        $media->delete();
+    }
+
+    private function canDelete(Media $media): bool
+    {
+        if ($this->isAdmin) {
+            return true;
+        }
+
+        return $media->venue_id !== null && $media->venue_id === $this->venueId;
+    }
+
     public function updatedUploadedFile(): void
     {
         if ($this->uploadedFile) {
@@ -72,14 +99,15 @@ class MediaLibraryModal extends Component
                 'uploadedFile' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:10240',
             ]);
 
-            $media = app(MediaUploadService::class)->upload(
+            app(MediaUploadService::class)->upload(
                 $this->uploadedFile,
                 $this->isAdmin ? null : $this->venueId
             );
 
             $this->uploadedFile = null;
+            $this->uploadIteration++;
             $this->resetValidation();
-            $this->dispatchMediaSelected($media->file_path);
+            $this->js("window.dispatchEvent(new CustomEvent('media-upload-complete'))");
         } catch (\Throwable $e) {
             Log::error('[MediaLibraryModal] Upload failed', [
                 'message' => $e->getMessage(),

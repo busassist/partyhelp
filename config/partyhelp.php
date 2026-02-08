@@ -72,6 +72,6 @@ return [
     */
     'media' => [
         'max_width' => (int) env('MEDIA_MAX_WIDTH', 1920),
-        'output_format' => env('MEDIA_OUTPUT_FORMAT', 'webp'),
+        'output_format' => env('MEDIA_OUTPUT_FORMAT', 'jpeg'),
     ],
 ];

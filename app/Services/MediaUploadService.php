@@ -14,21 +14,22 @@ class MediaUploadService
     {
         $diskName = config('filesystems.media_disk', 'spaces');
         $maxWidth = config('partyhelp.media.max_width', 1920);
-        $format = config('partyhelp.media.output_format', 'webp');
+        $format = config('partyhelp.media.output_format', 'jpeg');
 
         $image = Image::read($file->getRealPath());
 
         // Only reduce width if larger than max – scaleDown never upscales
         $image->scaleDown(width: $maxWidth);
 
-        $encoded = match (strtolower($format)) {
+        $encoded = match (strtolower((string) $format)) {
             'webp' => $image->toWebp(),
             'jpg', 'jpeg' => $image->toJpeg(),
             'png' => $image->toPng(),
-            default => $image->toWebp(),
+            default => $image->toJpeg(),
         };
 
-        $ext = strtolower($format) === 'jpeg' ? 'jpg' : strtolower($format);
+        $formatLower = strtolower((string) $format) ?: 'jpeg';
+        $ext = in_array($formatLower, ['jpg', 'jpeg']) ? 'jpg' : $formatLower;
         $filename = Str::uuid() . '.' . $ext;
         $directory = 'media/' . ($venueId ? "venues/{$venueId}" : 'shared');
         $path = $directory . '/' . $filename;
@@ -48,7 +49,7 @@ class MediaUploadService
             'venue_id' => $venueId,
             'file_path' => $path,
             'file_name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $ext,
-            'mime_type' => $mimeTypes[$ext] ?? 'image/webp',
+            'mime_type' => $mimeTypes[$ext] ?? 'image/jpeg',
             'size' => strlen((string) $encoded),
         ]);
     }

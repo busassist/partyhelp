@@ -39,4 +39,17 @@ return [
         ],
     ],
 
+    'stripe' => (function () {
+        $mode = env('STRIPE_MODE', 'sandbox');
+        $isLive = $mode === 'live';
+
+        return [
+            'mode' => $mode,
+            'key' => $isLive ? env('STRIPE_KEY_LIVE') : env('STRIPE_KEY_SANDBOX'),
+            'secret' => $isLive ? env('STRIPE_SECRET_LIVE') : env('STRIPE_SECRET_SANDBOX'),
+            'webhook_secret' => $isLive ? env('STRIPE_WEBHOOK_SECRET_LIVE') : env('STRIPE_WEBHOOK_SECRET_SANDBOX'),
+            'currency' => env('STRIPE_CURRENCY', 'aud'),
+        ];
+    })(),
+
 ];

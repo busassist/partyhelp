@@ -1,7 +1,7 @@
 # Product Requirements Document
 ## Partyhelp Venues Pay-Per-Lead System
 
-**Version:** 2.1  
+**Version:** 2.3  
 **Date:** February 2026  
 **Prepared for:** Partyhelp  
 **Prepared by:** Business Assist  
@@ -260,6 +260,74 @@ The Elementor WordPress form submits to the Laravel app via **webhook**:
 - **Transactional/dynamic emails:** Built in Laravel, sent via SendGrid templating
 - **General nurturing/EDM:** Keep in ActiveCampaign or Mailchimp; avoid complex dynamic data integration where possible
 
+### 6.4 Transactional Email Register
+
+Complete list of transactional emails (14 total). Each is either point-in-time (triggered by an event) or scheduled (time-based).
+
+**Customer (Party Planner) Emails**
+
+| # | Email | Recipient | Trigger | Timing |
+|---|-------|-----------|---------|--------|
+| 1 | Form confirmation | Customer | Form submitted | Immediate |
+| 2 | Venue introduction | Customer | Each venue purchase | Per purchase (up to 3–5 per lead) |
+| 3 | No/few responses prompt | Customer | Few/no venue purchases | +8 hours after submission |
+| 4 | Shortlist check | Customer | Mid-journey | +36 hours after submission |
+| 5 | Additional services / lead expiry | Customer | End of lead window | +72 hours after submission |
+
+**Venue Emails**
+
+| # | Email | Recipient | Trigger | Timing |
+|---|-------|-----------|---------|--------|
+| 6 | Lead opportunity | Venue | Lead distributed | Immediate |
+| 7 | Lead opportunity (10% discount) | Venue | Discount escalation | +24 hours |
+| 8 | Lead opportunity (20% discount) | Venue | Discount escalation | +48 hours |
+| 9 | Lead no longer available | Venue | Lead fulfilled or expired | When threshold reached or 72h |
+| 10 | Function pack | Venue | Venue purchases lead | Immediate (link to download) |
+| 11 | Failed top-up notification | Venue | Auto top-up fails | Immediate |
+| 12 | Invoice / receipt | Venue | Payment or top-up | After successful payment |
+
+**Admin Emails**
+
+| # | Email | Recipient | Trigger | Timing |
+|---|-------|-----------|---------|--------|
+| 13 | New venue for approval | Admin | Venue registers | Immediate (Review / Approve / Reject) |
+| 14 | Low-match alert | Admin | Fewer than 10 venues match a lead | Immediate (also SMS) |
+
+### 6.5 Transactional Email Template Approach
+
+**Principle:** Admin users can control wording of key content within templates, without requiring an HTML authoring tool. We do not build a full end-user HTML template editor.
+
+**Master template ownership (codebase):**
+- HTML structure, layout, and styling are authored in our codebase (e.g. Blade partials or raw HTML files).
+- Templates are uploaded to SendGrid via API when structure/design changes.
+- Version control and deployment manage the master template.
+
+**Admin-editable content (Laravel / database):**
+- Each email type has a defined set of **content slots** (e.g. greeting, intro text, CTA button text, footer disclaimer).
+- These slots use Handlebars placeholders in the template (e.g. `{{adminGreeting}}`, `{{adminIntroText}}`).
+- Admin users edit the *values* for these slots in Filament (simple text fields), stored in an `email_copy` (or similar) table.
+- At send time: we merge admin-edited values + transactional data into `dynamic_template_data` and pass to SendGrid.
+
+**Transactional data (system-provided at send time):**
+- First name, occasion type, suburb, guest count, venue details, etc. – all sourced from leads, venues, and system state.
+- Passed as part of `dynamic_template_data`; never admin-edited.
+
+**Separation of concerns:**
+- **We control:** HTML structure, layout, styling, which Handlebars variables exist and where they go.
+- **Admin controls:** The values for a subset of variables – greeting text, CTA button text, footer disclaimer, intro paragraph.
+- **System provides:** Transactional data at send time.
+
+**Admin UX (per email type):**
+- One screen per email type in admin (e.g. "Form Confirmation", "Venue Introduction").
+- Fields for each admin-editable slot (plain text or minimal rich text).
+- Optional: "Insert merge field" dropdown (e.g. `{{firstName}}`) so admins can add personalisation placeholders in their text.
+- Preview / test send to a test address using sample data.
+
+**Benefits:**
+- Simple: no WYSIWYG, no HTML knowledge required.
+- Single source of truth: master template in our codebase.
+- Admin gets meaningful control over messaging without complexity.
+
 ---
 
 ## 7. Customer Engagement Sequences
@@ -379,11 +447,16 @@ Per room: Name, style, min/max capacity, seated capacity, **room hire cost / bud
 
 ### 9.6 Email Template Management
 
-- WYSIWYG editor
-- Merge fields
-- Preview and test send
-- Version history
+Per Section 6.5 (Transactional Email Template Approach):
+
+- Per-email-type screens for editing admin-editable content slots (greeting, intro, CTA text, footer, etc.)
+- Plain-text or minimal rich-text fields for each slot
+- Merge-field picker (e.g. `{{firstName}}`) for personalisation in admin-edited text
+- Preview and test send to test address
+- Version history for admin-edited copy (optional; master template versioned in codebase)
 - A/B testing for subject lines (where supported by SendGrid)
+
+Note: Master HTML template structure is controlled in codebase and uploaded to SendGrid via API; no end-user HTML authoring tool.
 
 ### 9.7 Reporting
 
@@ -476,6 +549,7 @@ Per room: Name, style, min/max capacity, seated capacity, **room hire cost / bud
 - `ph_lead_purchases` – Purchase records
 - `ph_credits` – Credit ledger
 - `ph_email_log` – Email tracking
+- `ph_email_copy` – Admin-editable content slots per email type (greeting, intro, CTA, footer, etc.)
 - `ph_sms_log` – SMS tracking
 - `ph_pricing_matrix` – Pricing config
 - `ph_budget_ranges` – Configurable budget range options for form
@@ -583,6 +657,7 @@ Per room: Name, style, min/max capacity, seated capacity, **room hire cost / bud
 | 2.0 | Feb 2026 | Business Assist | UX, venue portal, admin, credits, automation |
 | 2.1 | Feb 2026 | Business Assist | Webhook integration, venue approval email, budget ranges, function packs, colour schemes, responsive design |
 | 2.2 | Feb 2026 | Business Assist | Filament architecture decision, `<x-layout>` convention, no React |
+| 2.3 | Feb 2026 | Business Assist | Transactional email register (14 emails), template approach (content slots, admin-editable copy in Laravel) |
 
 ---
 
@@ -603,3 +678,4 @@ Per room: Name, style, min/max capacity, seated capacity, **room hire cost / bud
 | Colour schemes | Admin + Venue: light. End-customer (party planner) UI: dark (match partyhelp.com.au) |
 | UI framework | Filament for admin + venue portals. No React. Blade + Livewire for customer pages |
 | Blade convention | Use `<x-layout>` component tags, NOT `@include` statements |
+| Transactional email templates | Master HTML in codebase, uploaded to SendGrid via API; admin edits content slots (greeting, intro, CTA, footer) in Laravel; no HTML authoring tool |
