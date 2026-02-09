@@ -62,6 +62,11 @@ class Partyhelp_Form_Sync
         update_option(self::OPTION_KEY, $config);
         update_option(self::OPTION_LAST_SYNC, current_time('mysql'));
 
+        Partyhelp_Form_Debug::log('sync_completed', [
+            'venue_styles_count' => count($config['venue_styles']),
+            'areas_count' => count($config['areas']),
+        ]);
+
         return $config;
     }
 

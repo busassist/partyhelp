@@ -32,6 +32,13 @@ class Partyhelp_Form_Renderer
 
         $custom_css = partyhelp_form()->settings->get_custom_form_css();
 
+        Partyhelp_Form_Debug::log('form_rendered', [
+            'venue_styles_count' => count($venue_styles),
+            'custom_css_length' => strlen($custom_css),
+            'field_border_radius_px' => partyhelp_form()->settings->get_style_option('field_border_radius_px'),
+            'form_bg_color' => partyhelp_form()->settings->get_style_option('form_bg_color'),
+        ]);
+
         ob_start();
         echo $link_tag;
         if ($custom_css !== '') {
@@ -142,9 +149,9 @@ class Partyhelp_Form_Renderer
                     <span class="partyhelp-field-error" data-field="location"></span>
                 </div>
 
-                <?php if (! empty($venue_styles)): ?>
                 <div class="partyhelp-venue-styles-group">
                     <label class="partyhelp-venue-styles-label">Your preferred style of venue for your party: (choose as many as you like)</label>
+                    <?php if (! empty($venue_styles)): ?>
                     <div class="partyhelp-venue-styles-grid">
                         <?php foreach ($venue_styles as $vs): ?>
                         <div class="partyhelp-venue-style-item">
@@ -158,9 +165,11 @@ class Partyhelp_Form_Renderer
                         </div>
                         <?php endforeach; ?>
                     </div>
+                    <?php else: ?>
+                    <p class="partyhelp-venue-styles-empty">Venue style options (with thumbnails) will appear here after you sync the form config. Go to <a href="<?php echo esc_url(admin_url('options-general.php?page=partyhelp-form')); ?>">Settings → Partyhelp Form</a> and click <strong>Sync Now</strong>. Ensure get.partyhelp.com.au has venue styles (and images) configured in Admin.</p>
+                    <?php endif; ?>
                     <span class="partyhelp-field-error" data-field="room_styles"></span>
                 </div>
-                <?php endif; ?>
 
                 <div class="partyhelp-other-details-group">
                     <label for="ph-other-details">Other details about the party:</label>

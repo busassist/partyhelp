@@ -53,6 +53,20 @@ class Partyhelp_Form_Settings
             },
         ]);
 
+        register_setting('partyhelp_form', 'partyhelp_form_debug_enabled', [
+            'type' => 'boolean',
+            'default' => false,
+            'sanitize_callback' => function ($value) {
+                return (bool) $value;
+            },
+        ]);
+
+        register_setting('partyhelp_form', 'partyhelp_form_debug_api_url', [
+            'type' => 'string',
+            'default' => 'https://get.partyhelp.com.au/api/partyhelp-form/debug-log',
+            'sanitize_callback' => 'esc_url_raw',
+        ]);
+
         foreach (array_keys(self::STYLE_DEFAULTS) as $key) {
             $option_name = 'partyhelp_form_style_' . $key;
             $default = self::STYLE_DEFAULTS[$key];
@@ -62,7 +76,7 @@ class Partyhelp_Form_Settings
                     'default' => $default,
                     'sanitize_callback' => function ($value) use ($default) {
                         $v = absint($value);
-                        return $v >= 0 && $v <= 50 ? $v : $default;
+                        return $v >= 0 && $v <= 999 ? $v : $default;
                     },
                 ]);
             } else {
@@ -94,6 +108,9 @@ class Partyhelp_Form_Settings
         ?>
         <div class="wrap">
             <h1>Partyhelp Form Settings</h1>
+            <?php if (defined('PARTYHELP_FORM_VERSION')): ?>
+            <p class="description">Plugin version: <strong><?php echo esc_html(PARTYHELP_FORM_VERSION); ?></strong>. If you don’t see the <strong>Debug</strong> section below, update to the latest plugin from the repo.</p>
+            <?php endif; ?>
 
             <?php if (isset($_GET['synced'])): ?>
                 <div class="notice notice-success"><p>Form config synced successfully.</p></div>
@@ -127,6 +144,32 @@ class Partyhelp_Form_Settings
                                 value="<?php echo esc_attr(get_option('partyhelp_form_sync_frequency_minutes', 60)); ?>"
                                 min="1" max="1440" step="1" class="small-text" />
                             <p class="description">How often to sync form config (areas, occasion types, venue styles, etc.) from the API. Default: 60 (hourly). Save to apply.</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <h3 style="margin-top:1.5em;">Debug</h3>
+                <p class="description" style="margin-bottom:0.5em;">Send plugin debug messages to get.partyhelp.com.au to troubleshoot issues remotely.</p>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">Enable debug mode</th>
+                        <td>
+                            <input type="hidden" name="partyhelp_form_debug_enabled" value="0" />
+                            <label for="partyhelp_form_debug_enabled">
+                                <input type="checkbox" id="partyhelp_form_debug_enabled" name="partyhelp_form_debug_enabled" value="1"
+                                    <?php checked(get_option('partyhelp_form_debug_enabled', false)); ?> />
+                                Enable debug mode
+                            </label>
+                            <p class="description">When enabled, the plugin sends debug messages (e.g. form render, style options, sync results) to the Debug API URL below.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="partyhelp_form_debug_api_url">Debug API URL</label></th>
+                        <td>
+                            <input type="url" id="partyhelp_form_debug_api_url" name="partyhelp_form_debug_api_url"
+                                value="<?php echo esc_attr(get_option('partyhelp_form_debug_api_url', 'https://get.partyhelp.com.au/api/partyhelp-form/debug-log')); ?>"
+                                class="large-text" />
+                            <p class="description">Endpoint that receives debug payloads (default: get.partyhelp.com.au). View logs in Laravel <code>storage/logs/laravel.log</code>.</p>
                         </td>
                     </tr>
                 </table>
@@ -187,8 +230,8 @@ class Partyhelp_Form_Settings
                         <td>
                             <input type="number" id="partyhelp_form_style_field_border_radius_px" name="partyhelp_form_style_field_border_radius_px"
                                 value="<?php echo esc_attr($this->get_style_option('field_border_radius_px')); ?>"
-                                min="0" max="50" step="1" class="small-text" />
-                            <p class="description">Default: 8</p>
+                                min="0" step="1" class="small-text" />
+                            <p class="description">Default: 8. No maximum.</p>
                         </td>
                     </tr>
                     <tr>
@@ -229,6 +272,9 @@ class Partyhelp_Form_Settings
                 <li>Budget ranges: <?php echo count($config['budget_ranges'] ?? []); ?></li>
                 <li>Venue styles: <?php echo count($config['venue_styles'] ?? []); ?></li>
             </ul>
+            <?php if (empty($config['venue_styles'])): ?>
+            <p class="description">If venue styles is 0, the form will show a message instead of style options. Click <strong>Sync Now</strong> after ensuring get.partyhelp.com.au has the venue_styles table migrated and seeded, and venue styles (with images) set in Admin → Venue Styles.</p>
+            <?php endif; ?>
         </div>
         <?php
     }
@@ -261,7 +307,7 @@ class Partyhelp_Form_Settings
         $text_color = $this->sanitize_hex_or_empty($this->get_style_option('text_color'));
         $border_color = $this->sanitize_hex_or_empty($this->get_style_option('field_border_color'));
         $radius = (int) $this->get_style_option('field_border_radius_px');
-        $radius = $radius >= 0 && $radius <= 50 ? $radius : 8;
+        $radius = $radius >= 0 && $radius <= 999 ? $radius : 8;
         $text_font = $this->get_style_option('text_font_family');
         $heading_font = $this->get_style_option('heading_font_family');
 
@@ -302,7 +348,7 @@ class Partyhelp_Form_Settings
     {
         if (is_int($default)) {
             $v = absint($value);
-            return $v >= 0 && $v <= 50 ? $v : $default;
+            return $v >= 0 && $v <= 999 ? $v : $default;
         }
         if (in_array($key, ['form_bg_color', 'label_color', 'text_color', 'field_border_color'], true)) {
             $hex = $this->sanitize_hex_or_empty($value);

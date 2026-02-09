@@ -74,6 +74,23 @@
   color: var(--ph-text);
 }
 
+.partyhelp-venue-styles-empty {
+  font-size: 0.9375rem;
+  color: var(--ph-text-muted);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0.75rem 0;
+}
+
+.partyhelp-venue-styles-empty a {
+  color: var(--ph-primary);
+  text-decoration: underline;
+}
+
+.partyhelp-venue-styles-empty a:hover {
+  color: var(--ph-primary-hover);
+}
+
 .partyhelp-venue-styles-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

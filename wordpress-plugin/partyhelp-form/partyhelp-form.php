@@ -3,7 +3,7 @@
  * Plugin Name: Partyhelp Form
  * Plugin URI: https://partyhelp.com.au
  * Description: Party details form for venue recommendations, synced with get.partyhelp.com.au
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Partyhelp
  * Text Domain: partyhelp-form
  * Requires at least: 5.8
@@ -14,10 +14,11 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('PARTYHELP_FORM_VERSION', '1.1.1');
+define('PARTYHELP_FORM_VERSION', '1.1.2');
 define('PARTYHELP_FORM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('PARTYHELP_FORM_PLUGIN_URL', plugin_dir_url(__FILE__));
 
+require_once PARTYHELP_FORM_PLUGIN_DIR . 'includes/class-partyhelp-form-debug.php';
 require_once PARTYHELP_FORM_PLUGIN_DIR . 'includes/class-partyhelp-form.php';
 require_once PARTYHELP_FORM_PLUGIN_DIR . 'includes/class-partyhelp-form-sync.php';
 require_once PARTYHELP_FORM_PLUGIN_DIR . 'includes/class-partyhelp-form-settings.php';

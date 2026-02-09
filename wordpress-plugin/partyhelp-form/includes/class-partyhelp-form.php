@@ -43,6 +43,7 @@ class Partyhelp_Form
         add_action('partyhelp_form_cron_sync', [$this->sync, 'sync_from_api']);
         add_filter('cron_schedules', [$this, 'add_cron_schedule']);
         add_action('update_option_partyhelp_form_sync_frequency_minutes', [$this, 'reschedule_sync_cron'], 10, 3);
+        add_action('shutdown', [Partyhelp_Form_Debug::class, 'flush']);
     }
 
     /** Add custom interval for config sync (frequency in minutes). */

@@ -28,4 +28,6 @@ Route::prefix('partyhelp-form')->group(function () {
     Route::get('/occasion-types', [PartyhelpFormConfigController::class, 'occasionTypes'])->name('partyhelp-form.occasion-types');
     Route::get('/guest-brackets', [PartyhelpFormConfigController::class, 'guestBrackets'])->name('partyhelp-form.guest-brackets');
     Route::get('/budget-ranges', [PartyhelpFormConfigController::class, 'budgetRanges'])->name('partyhelp-form.budget-ranges');
+    Route::get('/venue-styles', [PartyhelpFormConfigController::class, 'venueStyles'])->name('partyhelp-form.venue-styles');
+    Route::post('/debug-log', [PartyhelpFormConfigController::class, 'debugLog'])->name('partyhelp-form.debug-log');
 });
