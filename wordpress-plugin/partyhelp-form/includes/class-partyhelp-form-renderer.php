@@ -24,13 +24,19 @@ class Partyhelp_Form_Renderer
         $link_tag = '<link rel="stylesheet" href="' . esc_url($css_url) . '" id="partyhelp-form-css" />';
 
         $config = $this->sync->get_config();
-        $areas = $config['areas'] ?? [];
+        $areas = $this->normalize_areas_for_display($config['areas'] ?? []);
         $occasion_types = $config['occasion_types'] ?? [];
         $guest_brackets = $config['guest_brackets'] ?? [];
         $budget_ranges = $config['budget_ranges'] ?? [];
+        $venue_styles = $config['venue_styles'] ?? [];
+
+        $custom_css = partyhelp_form()->settings->get_custom_form_css();
 
         ob_start();
         echo $link_tag;
+        if ($custom_css !== '') {
+            echo "\n<style id=\"partyhelp-form-custom\">\n" . $custom_css . "\n</style>";
+        }
         ?>
         <div class="partyhelp-form-wrapper">
             <form id="partyhelp-form" class="partyhelp-form" method="post" novalidate>
@@ -108,17 +114,53 @@ class Partyhelp_Form_Renderer
                 </div>
 
                 <div class="partyhelp-location-group">
-                    <label class="partyhelp-preferred-location-field-group-label">Select preferred location</label>
-                    <div class="partyhelp-location-checkboxes">
+                    <label class="partyhelp-preferred-location-field-group-label">Preferred Locations:</label>
+                    <div class="partyhelp-location-grid">
                         <?php foreach ($areas as $area): ?>
-                            <label class="partyhelp-location-option">
-                                <input type="checkbox" name="location[]" value="<?php echo esc_attr($area['label']); ?>" class="partyhelp-location-checkbox partyhelp-location-<?php echo esc_attr(sanitize_title($area['name'])); ?>" />
-                                <span><?php echo esc_html($area['label']); ?></span>
-                            </label>
+                            <div class="partyhelp-location-area-block partyhelp-location-area-<?php echo esc_attr(sanitize_title($area['name'])); ?>">
+                                <label class="partyhelp-location-option partyhelp-location-area-option">
+                                    <input type="checkbox" name="location[]" value="<?php echo esc_attr(! empty($area['suburbs']) ? $area['suburbs'][0] : $area['name']); ?>" class="partyhelp-location-checkbox partyhelp-location-area-checkbox" data-area="<?php echo esc_attr($area['name']); ?>" />
+                                    <span class="partyhelp-location-area-name"><?php echo esc_html($area['name']); ?></span>
+                                </label>
+                                <?php if (! empty($area['suburbs'])): ?>
+                                    <div class="partyhelp-location-suburbs">
+                                        <?php foreach ($area['suburbs'] as $suburb): ?>
+                                            <label class="partyhelp-location-option partyhelp-location-suburb-option">
+                                                <input type="checkbox" name="location[]" value="<?php echo esc_attr($suburb); ?>" class="partyhelp-location-checkbox partyhelp-location-suburb-checkbox" />
+                                                <span><?php echo esc_html($suburb); ?></span>
+                                            </label>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         <?php endforeach; ?>
+                        <div class="partyhelp-location-area-block partyhelp-location-other-block">
+                            <label for="ph-other-location" class="partyhelp-other-location-label">Other location</label>
+                            <input type="text" id="ph-other-location" name="other_location" class="partyhelp-input partyhelp-other-location-input" placeholder="Other location" />
+                        </div>
                     </div>
                     <span class="partyhelp-field-error" data-field="location"></span>
                 </div>
+
+                <?php if (! empty($venue_styles)): ?>
+                <div class="partyhelp-venue-styles-group">
+                    <label class="partyhelp-venue-styles-label">Your preferred style of venue for your party: (choose as many as you like)</label>
+                    <div class="partyhelp-venue-styles-grid">
+                        <?php foreach ($venue_styles as $vs): ?>
+                        <div class="partyhelp-venue-style-item">
+                            <label class="partyhelp-venue-style-option">
+                                <input type="checkbox" name="room_styles[]" value="<?php echo esc_attr($vs['key']); ?>" class="partyhelp-venue-style-checkbox" />
+                                <?php if (! empty($vs['image_url'])): ?>
+                                <span class="partyhelp-venue-style-image-wrap"><img src="<?php echo esc_url($vs['image_url']); ?>" alt="" class="partyhelp-venue-style-image" loading="lazy" /></span>
+                                <?php endif; ?>
+                                <span class="partyhelp-venue-style-name"><?php echo esc_html($vs['name']); ?></span>
+                            </label>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <span class="partyhelp-field-error" data-field="room_styles"></span>
+                </div>
+                <?php endif; ?>
 
                 <div class="partyhelp-other-details-group">
                     <label for="ph-other-details">Other details about the party:</label>
@@ -144,6 +186,37 @@ class Partyhelp_Form_Renderer
         }
 
         return false;
+    }
+
+    /**
+     * Ensure each area has a suburbs array for suburb checkboxes.
+     * If API returns label like "Area Name - Suburb1, Suburb2" but suburbs empty, parse from label.
+     */
+    private function normalize_areas_for_display(array $areas): array
+    {
+        $out = [];
+        foreach ($areas as $area) {
+            $suburbs = $area['suburbs'] ?? [];
+            $label = $area['label'] ?? '';
+            $name = $area['name'] ?? '';
+
+            if (empty($suburbs) && $label !== '' && strpos($label, ' - ') !== false) {
+                $parts = explode(' - ', $label, 2);
+                $name = trim($parts[0]);
+                $suburb_list = trim($parts[1] ?? '');
+                if ($suburb_list !== '') {
+                    $suburbs = array_map('trim', explode(',', $suburb_list));
+                    $suburbs = array_values(array_filter($suburbs));
+                }
+            }
+
+            $out[] = array_merge($area, [
+                'name' => $name,
+                'suburbs' => $suburbs,
+            ]);
+        }
+
+        return $out;
     }
 
     private function maybe_enqueue_assets(): void

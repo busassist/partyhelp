@@ -51,7 +51,13 @@ class Partyhelp_Form_Sync
             'occasion_types' => $data['occasion_types'] ?? [],
             'guest_brackets' => $data['guest_brackets'] ?? [],
             'budget_ranges' => $data['budget_ranges'] ?? [],
+            'venue_styles' => $data['venue_styles'] ?? [],
         ];
+
+        // If main config did not include venue styles (e.g. older API), fetch from dedicated endpoint
+        if (empty($config['venue_styles'])) {
+            $config['venue_styles'] = $this->fetch_venue_styles();
+        }
 
         update_option(self::OPTION_KEY, $config);
         update_option(self::OPTION_LAST_SYNC, current_time('mysql'));
@@ -100,6 +106,32 @@ class Partyhelp_Form_Sync
                 ['value' => '100+', 'label' => '100+', 'guest_min' => 101, 'guest_max' => 500],
             ],
             'budget_ranges' => [],
+            'venue_styles' => [],
         ];
+    }
+
+    /**
+     * Fetch venue styles from the dedicated API endpoint.
+     * Used when the main /config response does not include venue_styles.
+     */
+    private function fetch_venue_styles(): array
+    {
+        $response = wp_remote_get($this->get_api_base_url() . '/venue-styles', [
+            'timeout' => 10,
+            'headers' => ['Accept' => 'application/json'],
+        ]);
+
+        if (is_wp_error($response)) {
+            return [];
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (! is_array($data) || empty($data['venue_styles'])) {
+            return [];
+        }
+
+        return $data['venue_styles'];
     }
 }

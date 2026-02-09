@@ -41,11 +41,52 @@ class Partyhelp_Form
         add_action('wp_ajax_partyhelp_form_submit', [$this, 'handle_form_submit']);
         add_action('wp_ajax_nopriv_partyhelp_form_submit', [$this, 'handle_form_submit']);
         add_action('partyhelp_form_cron_sync', [$this->sync, 'sync_from_api']);
+        add_filter('cron_schedules', [$this, 'add_cron_schedule']);
+        add_action('update_option_partyhelp_form_sync_frequency_minutes', [$this, 'reschedule_sync_cron'], 10, 3);
+    }
+
+    /** Add custom interval for config sync (frequency in minutes). */
+    public function add_cron_schedule(array $schedules): array
+    {
+        $minutes = (int) get_option('partyhelp_form_sync_frequency_minutes', 60);
+        $minutes = max(1, min(1440, $minutes));
+        $schedules['partyhelp_form_sync'] = [
+            'interval' => $minutes * 60,
+            'display'  => sprintf(/* translators: %d = minutes */ __('Every %d minutes', 'partyhelp-form'), $minutes),
+        ];
+
+        return $schedules;
+    }
+
+    /** Reschedule sync cron when frequency option changes. */
+    public function reschedule_sync_cron($old_value, $value, $option): void
+    {
+        wp_clear_scheduled_hook('partyhelp_form_cron_sync');
+        if (! wp_next_scheduled('partyhelp_form_cron_sync')) {
+            wp_schedule_event(time(), 'partyhelp_form_sync', 'partyhelp_form_cron_sync');
+        }
     }
 
     public function handle_form_submit(): void
     {
         check_ajax_referer('partyhelp_form_submit', 'nonce');
+
+        $locations = isset($_POST['location']) && is_array($_POST['location'])
+            ? array_map('sanitize_text_field', array_filter($_POST['location']))
+            : [];
+        $other_location = sanitize_text_field($_POST['other_location'] ?? '');
+
+        if (! empty($other_location)) {
+            $suburb_value = $other_location;
+        } elseif (! empty($locations)) {
+            $suburb_value = $locations[0];
+        } else {
+            $suburb_value = '';
+        }
+
+        $room_styles = isset($_POST['room_styles']) && is_array($_POST['room_styles'])
+            ? array_map('sanitize_text_field', array_filter($_POST['room_styles']))
+            : [];
 
         $raw = [
             'First_Name' => sanitize_text_field($_POST['first_name'] ?? ''),
@@ -55,17 +96,11 @@ class Partyhelp_Form
             'Select_the_type_of_occasion' => sanitize_text_field($_POST['occasion_type'] ?? ''),
             'Preferred_Date' => sanitize_text_field($_POST['preferred_date'] ?? ''),
             'Number_of_Guests' => sanitize_text_field($_POST['guest_count'] ?? ''),
-            'Select_preferred_location' => isset($_POST['location']) && is_array($_POST['location'])
-                ? array_map('sanitize_text_field', $_POST['location'])
-                : sanitize_text_field($_POST['location'] ?? ''),
+            'Select_preferred_location' => $suburb_value,
             'Estimated_Budget' => sanitize_text_field($_POST['budget_range'] ?? ''),
             'Other_details_about_the_party:' => sanitize_textarea_field($_POST['special_requirements'] ?? ''),
+            'room_styles' => $room_styles,
         ];
-
-        $location = $raw['Select_preferred_location'];
-        if (is_array($location) && ! empty($location)) {
-            $raw['Select_preferred_location'] = $location[0];
-        }
 
         $response = wp_remote_post($this->settings->get_webhook_url(), [
             'timeout' => 15,

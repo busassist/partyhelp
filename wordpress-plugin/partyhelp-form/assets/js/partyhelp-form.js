@@ -12,7 +12,7 @@
     occasion_type: { required: true },
     preferred_date: { required: true, futureDate: true },
     guest_count: { required: true },
-    location: { required: true, minChecked: 1 },
+    location: { required: true, minCheckedOrOther: 'other_location' },
     special_requirements: { maxLength: 500 },
   };
 
@@ -23,6 +23,7 @@
     email: 'Please enter a valid email address.',
     futureDate: 'Please select a future date.',
     minChecked: 'Please select at least one location.',
+    minCheckedOrOther: 'Please select at least one location or enter an other location.',
   };
 
   function validateEmail(email) {
@@ -62,6 +63,15 @@
     if (c.minChecked && Array.isArray(value) && value.length < c.minChecked) {
       return messages.minChecked;
     }
+    if (c.minCheckedOrOther) {
+      const otherField = c.minCheckedOrOther;
+      const otherVal = values[otherField];
+      const hasLocation = Array.isArray(value) && value.length > 0;
+      const hasOther = otherVal && String(otherVal).trim().length > 0;
+      if (!hasLocation && !hasOther) {
+        return messages.minCheckedOrOther;
+      }
+    }
 
     return null;
   }
@@ -71,7 +81,8 @@
     $form.find('[name]').each(function () {
       const $el = $(this);
       const name = $el.attr('name');
-      if (!name || name === 'location[]') return;
+      if (!name) return;
+      if (name === 'location[]') return;
       const baseName = name.replace('[]', '');
       if (name.endsWith('[]')) {
         values[baseName] = $form.find(`[name="${name}"]:checked`).map(function () {
@@ -84,6 +95,7 @@
     values.location = $form.find('[name="location[]"]:checked').map(function () {
       return $(this).val();
     }).get();
+    values.other_location = $form.find('[name="other_location"]').val()?.trim() || '';
     return values;
   }
 
