@@ -19,7 +19,7 @@ class WebhookController extends Controller
         'occasion_type' => ['Select_the_type_of_occasion', 'occasion', 'Occasion_Type'],
         'guest_count' => ['Number_of_Guests', 'guest_count', 'guests'],
         'preferred_date' => ['Preferred_Date', 'preferred_date', 'date'],
-        'suburb' => ['Select_preferred_location', 'suburb', 'Suburb', 'location'],
+        'suburb' => ['Select_preferred_location', 'suburb', 'Suburb', 'location', 'locations'],
         'room_styles' => ['room_styles', 'Room_Styles', 'room_styles_preference'],
         'budget_range' => ['Estimated_Budget', 'budget_range', 'Budget_Range', 'budget'],
         'special_requirements' => ['Other_details_about_the_party:', 'Other_details_about_the_party', 'special_requirements', 'Special_Requirements', 'notes', 'message'],
@@ -190,13 +190,21 @@ class WebhookController extends Controller
             $data['occasion_type'] = $this->mapOccasionType($data['occasion_type']);
         }
 
-        if (isset($data['suburb']) && str_contains((string) $data['suburb'], ' - ')) {
-            $parts = explode(' - ', (string) $data['suburb'], 2);
-            $data['suburb'] = trim($parts[1] ?? $parts[0]);
-            $comma = strpos($data['suburb'], ',');
-            if ($comma !== false) {
-                $data['suburb'] = trim(substr($data['suburb'], 0, $comma));
+        if (isset($data['suburb'])) {
+            $suburb = $data['suburb'];
+            if (is_array($suburb)) {
+                $suburb = $suburb[0] ?? '';
             }
+            $suburb = (string) $suburb;
+            if (str_contains($suburb, ' - ')) {
+                $parts = explode(' - ', $suburb, 2);
+                $suburb = trim($parts[1] ?? $parts[0]);
+                $comma = strpos($suburb, ',');
+                if ($comma !== false) {
+                    $suburb = trim(substr($suburb, 0, $comma));
+                }
+            }
+            $data['suburb'] = $suburb;
         }
 
         return $data;

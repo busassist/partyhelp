@@ -39,6 +39,11 @@ class VenueResource extends Resource
                 Forms\Components\TextInput::make('suburb')->required(),
                 Forms\Components\TextInput::make('state')->default('VIC'),
                 Forms\Components\TextInput::make('postcode')->required(),
+                Forms\Components\Select::make('area_id')
+                    ->relationship('area', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Location (Area)'),
                 Forms\Components\TagsInput::make('suburb_tags')
                     ->label('Adjacent suburbs'),
                 Forms\Components\Select::make('occasion_tags')
@@ -72,6 +77,9 @@ class VenueResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('business_name')
                     ->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('area.name')
+                    ->label('Location')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('contact_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('suburb')

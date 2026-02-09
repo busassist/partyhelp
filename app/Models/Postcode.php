@@ -10,11 +10,16 @@ class Postcode extends Model
         'suburb', 'postcode', 'state', 'sort_order',
     ];
 
-    public static function options(): array
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class, 'area_postcode');
+    }
+
+    public static function optionsForSelect(): array
     {
         return static::orderBy('suburb')
             ->get()
-            ->mapWithKeys(fn (self $p) => [$p->suburb => "{$p->suburb} ({$p->postcode})"])
+            ->mapWithKeys(fn (self $p) => [$p->id => "{$p->suburb} ({$p->postcode})"])
             ->toArray();
     }
 }

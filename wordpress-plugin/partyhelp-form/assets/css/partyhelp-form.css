@@ -1,0 +1,257 @@
+/**
+ * Partyhelp Form - Dark theme styles
+ * Matches partyhelp.com.au visual style
+ */
+
+/* Variables */
+.partyhelp-form-wrapper {
+  --ph-bg-dark: #1a0f2e;
+  --ph-bg-form: #2c0f4a;
+  --ph-bg-input: #1e1035;
+  --ph-border: #4a3a6a;
+  --ph-text: #ffffff;
+  --ph-text-muted: #cbd5e1;
+  --ph-primary: #8b5cf6;
+  --ph-primary-hover: #7c3aed;
+  --ph-error: #f87171;
+  --ph-radius: 12px;
+  --ph-radius-sm: 8px;
+}
+
+/* Wrapper */
+.partyhelp-form-wrapper {
+  font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--ph-bg-form);
+  border-radius: var(--ph-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Typography */
+.partyhelp-form-heading {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--ph-text);
+  line-height: 1.4;
+  margin: 0 0 1rem;
+}
+
+.partyhelp-form-instruction,
+.partyhelp-form-note,
+.partyhelp-form-help {
+  font-size: 0.9375rem;
+  color: var(--ph-text-muted);
+  line-height: 1.5;
+  margin: 0 0 0.5rem;
+}
+
+.partyhelp-form-help a {
+  color: var(--ph-primary);
+  text-decoration: underline;
+}
+
+.partyhelp-form-help a:hover {
+  color: var(--ph-primary-hover);
+}
+
+/* Field groups */
+.partyhelp-personal-info-group,
+.partyhelp-party-details-group,
+.partyhelp-location-group,
+.partyhelp-other-details-group {
+  margin-top: 1.75rem;
+}
+
+.partyhelp-form-row {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.partyhelp-form-row-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 600px) {
+  .partyhelp-form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Labels */
+.partyhelp-form-wrapper label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ph-text);
+  margin-bottom: 0.375rem;
+}
+
+.partyhelp-form-wrapper .required {
+  color: var(--ph-error);
+}
+
+/* Inputs */
+.partyhelp-input,
+.partyhelp-select,
+.partyhelp-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--ph-text);
+  background: var(--ph-bg-input);
+  border: 1px solid var(--ph-border);
+  border-radius: var(--ph-radius-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.partyhelp-input::placeholder,
+.partyhelp-textarea::placeholder {
+  color: var(--ph-text-muted);
+  opacity: 0.8;
+}
+
+.partyhelp-input:focus,
+.partyhelp-select:focus,
+.partyhelp-textarea:focus {
+  outline: none;
+  border-color: var(--ph-primary);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+}
+
+.partyhelp-input.partyhelp-input-error,
+.partyhelp-select.partyhelp-input-error,
+.partyhelp-textarea.partyhelp-input-error {
+  border-color: var(--ph-error);
+}
+
+.partyhelp-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23cbd5e1' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.partyhelp-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Individual field wrappers */
+.partyhelp-first-name-field,
+.partyhelp-last-name-field,
+.partyhelp-email-field,
+.partyhelp-phone-field,
+.partyhelp-occasion-type-field-group,
+.partyhelp-preferred-date-field,
+.partyhelp-num-guests-field-group,
+.partyhelp-estimated-budget-field {
+  margin-bottom: 0;
+}
+
+.partyhelp-party-details-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .partyhelp-party-details-group {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Location checkboxes */
+.partyhelp-preferred-location-field-group-label {
+  margin-bottom: 0.75rem;
+}
+
+.partyhelp-location-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.partyhelp-location-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.partyhelp-location-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.125rem;
+  accent-color: var(--ph-primary);
+  cursor: pointer;
+}
+
+.partyhelp-location-option span {
+  color: var(--ph-text-muted);
+  font-size: 0.9375rem;
+}
+
+/* Error messages */
+.partyhelp-field-error {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--ph-error);
+  margin-top: 0.25rem;
+  min-height: 1.25rem;
+}
+
+/* Submit */
+.partyhelp-form-submit-wrap {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ph-border);
+}
+
+.partyhelp-submit-button {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: white;
+  background: var(--ph-primary);
+  border: none;
+  border-radius: var(--ph-radius-sm);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.05s;
+}
+
+.partyhelp-submit-button:hover {
+  background: var(--ph-primary-hover);
+}
+
+.partyhelp-submit-button:active {
+  transform: scale(0.99);
+}
+
+.partyhelp-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.partyhelp-form-message {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  text-align: center;
+  min-height: 1.5rem;
+}
+
+.partyhelp-form-message.partyhelp-form-message-success {
+  color: #86efac;
+}
+
+.partyhelp-form-message.partyhelp-form-message-error {
+  color: var(--ph-error);
+}

@@ -15,7 +15,7 @@ class Venue extends Model
     protected $fillable = [
         'user_id', 'business_name', 'abn', 'contact_name',
         'contact_email', 'contact_phone', 'website', 'address',
-        'suburb', 'state', 'postcode', 'suburb_tags', 'occasion_tags',
+        'suburb', 'state', 'postcode', 'area_id', 'suburb_tags', 'occasion_tags',
         'credit_balance', 'auto_topup_threshold', 'auto_topup_amount',
         'auto_topup_enabled', 'stripe_customer_id',
         'stripe_payment_method_id', 'status', 'approved_at',
@@ -39,6 +39,11 @@ class Venue extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class);
     }
 
     public function rooms(): HasMany

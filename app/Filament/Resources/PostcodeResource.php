@@ -23,6 +23,8 @@ class PostcodeResource extends Resource
 
     protected static ?string $navigationLabel = 'Postcodes';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $modelLabel = 'Postcode';
 
     public static function form(Schema $schema): Schema
