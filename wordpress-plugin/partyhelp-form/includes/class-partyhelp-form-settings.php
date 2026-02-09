@@ -238,8 +238,11 @@ class Partyhelp_Form_Settings
         return get_option('partyhelp_form_webhook_url', 'https://get.partyhelp.com.au/api/webhook/elementor-lead');
     }
 
-    /** Get a style option value with default. */
-    public function get_style_option(string $key): string|int
+    /**
+     * Get a style option value with default.
+     * @return string|int
+     */
+    public function get_style_option(string $key)
     {
         $default = self::STYLE_DEFAULTS[$key] ?? '';
         $value = get_option('partyhelp_form_style_' . $key, $default);
@@ -289,7 +292,13 @@ class Partyhelp_Form_Settings
         return implode("\n", $lines);
     }
 
-    private function sanitize_style_value(string $key, $value, $default): string|int
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @param string|int $default
+     * @return string|int
+     */
+    private function sanitize_style_value(string $key, $value, $default)
     {
         if (is_int($default)) {
             $v = absint($value);
