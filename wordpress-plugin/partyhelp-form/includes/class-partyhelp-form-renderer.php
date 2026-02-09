@@ -20,6 +20,9 @@ class Partyhelp_Form_Renderer
     {
         $this->maybe_enqueue_assets();
 
+        $css_url = PARTYHELP_FORM_PLUGIN_URL . 'assets/css/partyhelp-form.css?ver=' . PARTYHELP_FORM_VERSION;
+        $link_tag = '<link rel="stylesheet" href="' . esc_url($css_url) . '" id="partyhelp-form-css" />';
+
         $config = $this->sync->get_config();
         $areas = $config['areas'] ?? [];
         $occasion_types = $config['occasion_types'] ?? [];
@@ -27,6 +30,7 @@ class Partyhelp_Form_Renderer
         $budget_ranges = $config['budget_ranges'] ?? [];
 
         ob_start();
+        echo $link_tag;
         ?>
         <div class="partyhelp-form-wrapper">
             <form id="partyhelp-form" class="partyhelp-form" method="post" novalidate>
