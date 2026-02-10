@@ -32,7 +32,8 @@ bash /home/forge/get.partyhelp.com.au/scripts/seed-data.sh
 - Occasion types (from config)
 - Budget ranges ($1,500–$3,000 through $25,000+)
 - Postcodes (Melbourne suburbs)
-- 50 Melbourne-style venues (e.g. The Fox & Hound, Town Hall Richmond)
+- Areas (CBD, INNER SOUTH, INNER SOUTH EAST, INNER EAST, INNER NORTH, INNER WEST) with postcodes linked
+- 50 Melbourne-style venues (e.g. The Fox & Hound, Town Hall Richmond), each mapped to at least one area
 - 2–4 rooms per venue (Mezzanine Bar, Corporate Lounge, etc.)
 - 80 leads with varied statuses (new, distributed, fulfilled, expired, etc.)
 - Lead matches and purchases (with credit transactions)
@@ -79,6 +80,7 @@ php artisan db:seed --class=OccasionTypeSeeder
 php artisan db:seed --class=FeatureSeeder
 php artisan db:seed --class=BudgetRangeSeeder
 php artisan db:seed --class=PostcodeSeeder
+php artisan db:seed --class=AreaSeeder
 php artisan db:seed --class=RoomSeeder
 php artisan db:seed --class=VenueSeeder
 php artisan db:seed --class=LeadSeeder
@@ -94,8 +96,9 @@ php artisan db:seed --class=LeadSeeder
 | VenueStyleSeeder | `VenueStyleSeeder` | Venue styles (Bar, Function Room, Night Club, etc.) + attaches 2–3 styles to existing venues |
 | BudgetRangeSeeder | `BudgetRangeSeeder` | Budget ranges ($1,500–$3,000 through $25,000+) |
 | PostcodeSeeder | `PostcodeSeeder` | Postcodes (suburb, postcode, state) for Melbourne |
+| AreaSeeder | `AreaSeeder` | Areas (CBD, INNER SOUTH, etc.) and area–postcode links for /admin/locations |
 | RoomSeeder | `RoomSeeder` | 4 sample rooms for venue@partyhelp.com.au (Main Function Room, The Loft, Courtyard, Boardroom). Skips if venue already has rooms. |
-| VenueSeeder | `VenueSeeder` | 50 venues with rooms |
+| VenueSeeder | `VenueSeeder` | 50 venues with rooms; each venue has area_id set; venues without area are assigned one |
 | LeadSeeder | `LeadSeeder` | 80 leads with matches and purchases |
 
 ## Making Scripts Executable

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
+use App\Models\Postcode;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Venue;
@@ -70,6 +72,8 @@ class VenueSeeder extends Seeder
                 'role' => 'venue',
             ]);
 
+            $areaId = $this->areaIdForSuburb($suburbName);
+
             $venue = Venue::create([
                 'user_id' => $user->id,
                 'business_name' => $venueName,
@@ -82,6 +86,7 @@ class VenueSeeder extends Seeder
                 'suburb' => $suburbName,
                 'state' => 'VIC',
                 'postcode' => $postcode,
+                'area_id' => $areaId,
                 'suburb_tags' => $this->adjacentSuburbs($suburbName),
                 'occasion_tags' => fake()->randomElements($occasionKeys, rand(4, 8)),
                 'credit_balance' => fake()->randomFloat(2, 150, 500),
@@ -122,6 +127,34 @@ class VenueSeeder extends Seeder
             }
 
             $venue->venueStyles()->sync($this->venueStylesForVenue($venue));
+        }
+
+        $this->assignAreasToVenuesWithoutArea();
+    }
+
+    private function areaIdForSuburb(string $suburbName): ?int
+    {
+        $postcode = Postcode::where('suburb', $suburbName)->first();
+        if (! $postcode) {
+            return Area::orderBy('sort_order')->value('id');
+        }
+
+        $area = $postcode->areas()->first();
+
+        return $area?->id ?? Area::orderBy('sort_order')->value('id');
+    }
+
+    /** Ensure every venue has at least one area (for existing DB or test venue). */
+    private function assignAreasToVenuesWithoutArea(): void
+    {
+        $venuesWithoutArea = Venue::whereNull('area_id')->get();
+        $defaultAreaId = Area::orderBy('sort_order')->value('id');
+
+        foreach ($venuesWithoutArea as $venue) {
+            $areaId = $this->areaIdForSuburb($venue->suburb) ?? $defaultAreaId;
+            if ($areaId) {
+                $venue->update(['area_id' => $areaId]);
+            }
         }
     }
 

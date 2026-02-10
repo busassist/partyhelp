@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
         $this->call(EmailTemplateSeeder::class);
         $this->call(BudgetRangeSeeder::class);
         $this->call(PostcodeSeeder::class);
+        $this->call(AreaSeeder::class);
         $this->call(RoomSeeder::class);
 
         $this->call(VenueSeeder::class);
