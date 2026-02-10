@@ -1,13 +1,13 @@
 <div class="space-y-6">
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/50">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
+        <div class="flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/50">
             <h3 class="text-base font-semibold text-gray-900 dark:text-white">Card on file</h3>
             @if($hasCard)
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">A payment method is saved. You can add a new card to replace it.</p>
             @else
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">No card on file. Add a card to enable one-off purchases and auto top-up.</p>
             @endif
-            <form action="{{ route('venue.billing.create-setup-session') }}" method="GET" class="mt-4 inline-block">
+            <form action="{{ route('venue.billing.create-setup-session') }}" method="GET" class="mt-auto pt-4">
                 <button
                     type="submit"
                     class="inline-flex rounded-lg bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:ring-offset-2 dark:focus:ring-offset-gray-900"
@@ -17,7 +17,7 @@
             </form>
         </div>
 
-        <form wire:submit="updateAutoTopup" class="space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/50">
+<form wire:submit="updateAutoTopup" class="flex flex-col space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/50">
             <h3 class="text-base font-semibold text-gray-900 dark:text-white">Auto top-up</h3>
             <label class="flex cursor-pointer items-center gap-3">
                 <input
@@ -41,11 +41,11 @@
         </div>
         <button
             type="submit"
-            class="rounded-lg bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            class="mt-auto rounded-lg bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:ring-offset-2 dark:focus:ring-offset-gray-900"
         >
             Save auto top-up settings
-            </button>
-        </form>
+        </button>
+    </form>
     </div>
 
     @if($venue && $venue->auto_topup_enabled)
