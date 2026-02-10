@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EmailTemplateResource\Pages;
 
 use App\Filament\Resources\EmailTemplateResource;
 use App\Services\SendGridTemplateSyncService;
+use App\Services\SendGridTestEmailService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Http\Client\RequestException;
@@ -26,6 +27,22 @@ class EditEmailTemplate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            \Filament\Actions\Action::make('send_test_email')
+                ->label('Send test email')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('primary')
+                ->form([
+                    \Filament\Forms\Components\TextInput::make('email')
+                        ->label('Send test to')
+                        ->email()
+                        ->required()
+                        ->placeholder('admin@example.com'),
+                ])
+                ->modalHeading('Send test email')
+                ->modalDescription('A test email will be sent to the address below using this template with sample data.')
+                ->action(function (array $data): void {
+                    $this->runSendTest($data['email']);
+                }),
             \Filament\Actions\Action::make('sync_to_sendgrid')
                 ->label('Sync to SendGrid')
                 ->icon('heroicon-o-cloud-arrow-up')
@@ -47,6 +64,41 @@ class EditEmailTemplate extends EditRecord
                     $this->runSync(force: true);
                 }),
         ];
+    }
+
+    private function runSendTest(string $toEmail): void
+    {
+        try {
+            $service = app(SendGridTestEmailService::class);
+            $service->sendTest($this->record, $toEmail);
+
+            Notification::make()
+                ->title('Test email sent')
+                ->body("Sent to {$toEmail} with sample data.")
+                ->success()
+                ->send();
+        } catch (\RuntimeException $e) {
+            Notification::make()
+                ->title('Cannot send test')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+        } catch (RequestException $e) {
+            $body = $e->response?->json();
+            $message = $body['errors'][0]['message'] ?? $e->getMessage();
+
+            Notification::make()
+                ->title('SendGrid error')
+                ->body($message)
+                ->danger()
+                ->send();
+        } catch (\Throwable $e) {
+            Notification::make()
+                ->title('Test send failed')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 
     private function runSync(bool $force): void
