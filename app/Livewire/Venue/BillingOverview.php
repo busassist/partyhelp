@@ -26,29 +26,16 @@ class BillingOverview extends Component
                 ->send();
             return;
         }
-        if (request()->query('success')) {
-            if (request()->query('setup')) {
-                \Filament\Notifications\Notification::make()
-                    ->title('Card added')
-                    ->body('Your payment method has been saved.')
-                    ->success()
-                    ->send();
-            } else {
-                $venue = $this->getVenue();
-                $sessionId = request()->query('session_id');
-                if ($venue && $sessionId) {
-                    try {
-                        app(\App\Services\StripeCheckoutService::class)
-                            ->processCheckoutSessionFromSuccessPage($sessionId, $venue);
-                    } catch (\Throwable) {
-                        // Already logged or not our session; still show success
-                    }
+        if (request()->query('success') && ! request()->query('setup')) {
+            $venue = $this->getVenue();
+            $sessionId = request()->query('session_id');
+            if ($venue && $sessionId) {
+                try {
+                    app(\App\Services\StripeCheckoutService::class)
+                        ->processCheckoutSessionFromSuccessPage($sessionId, $venue);
+                } catch (\Throwable) {
+                    // Already logged or not our session
                 }
-                \Filament\Notifications\Notification::make()
-                    ->title('Payment successful')
-                    ->body('Your credits have been added.')
-                    ->success()
-                    ->send();
             }
         }
     }

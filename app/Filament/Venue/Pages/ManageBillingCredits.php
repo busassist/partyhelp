@@ -5,6 +5,7 @@ namespace App\Filament\Venue\Pages;
 use App\Livewire\Venue\BillingOverview;
 use App\Livewire\Venue\BillingBuyCredits;
 use App\Livewire\Venue\BillingPaymentMethods;
+use App\Livewire\Venue\BillingSuccessBanner;
 use App\Livewire\Venue\BillingTransactions;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Livewire;
@@ -31,6 +32,7 @@ class ManageBillingCredits extends Page
     {
         return $schema
             ->components([
+                Livewire::make(BillingSuccessBanner::class),
                 Tabs::make('Billing')
                     ->contained()
                     ->tabs([
