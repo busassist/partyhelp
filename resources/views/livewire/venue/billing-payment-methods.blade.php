@@ -6,12 +6,14 @@
         @else
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">No card on file. Add a card to enable one-off purchases and auto top-up.</p>
         @endif
-        <a
-            href="{{ route('venue.billing.create-setup-session') }}"
-            class="mt-4 inline-flex rounded-lg bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-        >
-            {{ $hasCard ? 'Add another card' : 'Add credit card' }}
-        </a>
+        <form action="{{ route('venue.billing.create-setup-session') }}" method="GET" class="mt-4 inline-block">
+            <button
+                type="submit"
+                class="inline-flex rounded-lg bg-[#7c3aed] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            >
+                {{ $hasCard ? 'Add another card' : 'Add credit card' }}
+            </button>
+        </form>
     </div>
 
     <form wire:submit="updateAutoTopup" class="space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/50">

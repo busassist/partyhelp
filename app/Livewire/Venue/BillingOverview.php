@@ -9,6 +9,15 @@ class BillingOverview extends Component
 {
     public function mount(): void
     {
+        if (session('error')) {
+            \Filament\Notifications\Notification::make()
+                ->title('Error')
+                ->body(session('error'))
+                ->danger()
+                ->send();
+            session()->forget('error');
+            return;
+        }
         if (request()->query('cancel')) {
             \Filament\Notifications\Notification::make()
                 ->title('Checkout cancelled')
