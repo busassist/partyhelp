@@ -1,32 +1,32 @@
 <div class="space-y-4">
     @if($venue)
-        <p class="fi-section-header-description">Current balance: <strong class="fi-section-header-heading">${{ number_format($venue->credit_balance, 2) }}</strong></p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Current balance: <strong class="text-gray-900 dark:text-white">${{ number_format($venue->credit_balance, 2) }}</strong></p>
     @endif
-    <div class="overflow-x-auto">
-        <table class="fi-ta-table">
-            <thead>
-                <tr class="fi-ta-row">
-                    <th class="fi-ta-header-cell">Date</th>
-                    <th class="fi-ta-header-cell">Type</th>
-                    <th class="fi-ta-header-cell">Description</th>
-                    <th class="fi-ta-header-cell fi-align-end">Amount</th>
-                    <th class="fi-ta-header-cell fi-align-end">Balance after</th>
+    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-800/50">
+                <tr>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Date</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Type</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Description</th>
+                    <th scope="col" class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Amount</th>
+                    <th scope="col" class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Balance after</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800/50">
                 @forelse($transactions as $tx)
-                    <tr class="fi-ta-row">
-                        <td class="fi-ta-cell whitespace-nowrap">{{ $tx->created_at->format('d M Y H:i') }}</td>
-                        <td class="fi-ta-cell whitespace-nowrap">{{ $this->typeLabel($tx->type) }}</td>
-                        <td class="fi-ta-cell">{{ $tx->description ?? '—' }}</td>
-                        <td class="fi-ta-cell fi-align-end whitespace-nowrap {{ $tx->amount >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }}">
+                    <tr>
+                        <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $tx->created_at->format('d M Y H:i') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $this->typeLabel($tx->type) }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ $tx->description ?? '—' }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-right text-sm {{ $tx->amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
                             {{ $tx->amount >= 0 ? '+' : '' }}${{ number_format($tx->amount, 2) }}
                         </td>
-                        <td class="fi-ta-cell fi-align-end whitespace-nowrap">${{ number_format($tx->balance_after, 2) }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-900 dark:text-white">${{ number_format($tx->balance_after, 2) }}</td>
                     </tr>
                 @empty
-                    <tr class="fi-ta-row">
-                        <td colspan="5" class="fi-ta-cell py-8 text-center">No transactions yet.</td>
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No transactions yet.</td>
                     </tr>
                 @endforelse
             </tbody>
