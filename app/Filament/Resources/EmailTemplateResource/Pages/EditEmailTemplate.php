@@ -6,6 +6,7 @@ use App\Filament\Resources\EmailTemplateResource;
 use App\Services\SendGridTemplateSyncService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Http\Client\RequestException;
 
 class EditEmailTemplate extends EditRecord
 {
@@ -33,23 +34,7 @@ class EditEmailTemplate extends EditRecord
                 ->modalHeading('Sync template to SendGrid?')
                 ->modalDescription('This will create or update the SendGrid dynamic template. Only changed templates are uploaded (hash-based detection).')
                 ->action(function () {
-                    $service = app(SendGridTemplateSyncService::class);
-                    $result = $service->sync($this->record, force: false);
-
-                    if ($result['synced']) {
-                        Notification::make()
-                            ->title('Template synced to SendGrid')
-                            ->body("Template ID: {$result['template_id']}")
-                            ->success()
-                            ->send();
-                        $this->record->refresh();
-                    } else {
-                        Notification::make()
-                            ->title('No changes to sync')
-                            ->body($result['reason'] ?? 'Template is up to date.')
-                            ->info()
-                            ->send();
-                    }
+                    $this->runSync(force: false);
                 }),
             \Filament\Actions\Action::make('sync_force')
                 ->label('Force sync')
@@ -59,16 +44,49 @@ class EditEmailTemplate extends EditRecord
                 ->modalHeading('Force sync to SendGrid?')
                 ->modalDescription('Upload the template even if no changes were detected.')
                 ->action(function () {
-                    $service = app(SendGridTemplateSyncService::class);
-                    $result = $service->sync($this->record, force: true);
-
-                    Notification::make()
-                        ->title('Template force-synced to SendGrid')
-                        ->body("Template ID: {$result['template_id']}")
-                        ->success()
-                        ->send();
-                    $this->record->refresh();
+                    $this->runSync(force: true);
                 }),
         ];
+    }
+
+    private function runSync(bool $force): void
+    {
+        try {
+            $service = app(SendGridTemplateSyncService::class);
+            $result = $service->sync($this->record, force: $force);
+
+            if ($result['synced']) {
+                Notification::make()
+                    ->title('Template synced to SendGrid')
+                    ->body("Template ID: {$result['template_id']}")
+                    ->success()
+                    ->send();
+                $this->record->refresh();
+            } else {
+                Notification::make()
+                    ->title('No changes to sync')
+                    ->body($result['reason'] ?? 'Template is up to date.')
+                    ->info()
+                    ->send();
+            }
+        } catch (RequestException $e) {
+            $body = $e->response?->json();
+            $message = $body['errors'][0]['message'] ?? $e->getMessage();
+            $status = $e->response?->status();
+
+            Notification::make()
+                ->title('SendGrid sync failed')
+                ->body($status === 403
+                    ? 'Access forbidden. Ensure your SendGrid API key has permission to manage Dynamic Templates (Template Engine).'
+                    : "SendGrid returned error: {$message}")
+                ->danger()
+                ->send();
+        } catch (\Throwable $e) {
+            Notification::make()
+                ->title('Sync failed')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 }

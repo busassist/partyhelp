@@ -12,13 +12,18 @@ class EmailLogResource extends Resource
 {
     protected static ?string $model = EmailLog::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-envelope-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
 
     protected static ?string $navigationLabel = 'Emails';
 
     protected static ?string $modelLabel = 'Email log';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function table(Table $table): Table
     {

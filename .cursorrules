@@ -42,6 +42,12 @@ Use **named semantic classes** for common elements so styling can be controlled 
 - Never set up local Mac development unless explicitly instructed.
 - Commit to GitHub regularly after each meaningful change.
 
+## Email & SendGrid – Commit Safeguard (MANDATORY)
+**Email-related work must never be lost.** After any change to any of the following, **commit and push to the remote** before ending the session or moving on to unrelated work:
+- **Paths:** `app/Mail/`, `app/Services/*SendGrid*`, `app/Services/*Mail*`, `resources/views/emails/`, `app/Models/EmailTemplate.php`, `app/Filament/Resources/EmailTemplate*`, `app/Filament/Resources/EmailLog*`, `config/partyhelp.php` (email_template_slots, *_email config), `config/services.php` (sendgrid), `database/seeders/EmailTemplateSeeder.php`, `docs/*EMAIL*`, `docs/*SENDGRID*`
+- **Rule:** If you touch any of the above, treat "commit + push" as part of the task. Do not leave email/SendGrid changes only in the working tree.
+- **Reminder:** A previous incident required recovering email work from a backup; this rule exists so that never happens again.
+
 ## Key Documents
 - PRD: `docs/Partyhelp PRD.md`
 - Seeding: `docs/SEEDING.md`
