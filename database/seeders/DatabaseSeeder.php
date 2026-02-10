@@ -6,6 +6,7 @@ use App\Models\DiscountSetting;
 use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\Venue;
+use Database\Seeders\EmailTemplateSeeder;
 use Database\Seeders\PricingMatrixSeeder;
 use Illuminate\Database\Seeder;
 
@@ -50,6 +51,7 @@ class DatabaseSeeder extends Seeder
         $this->call(OccasionTypeSeeder::class);
         $this->call(FeatureSeeder::class);
         $this->call(VenueStyleSeeder::class);
+        $this->call(EmailTemplateSeeder::class);
         $this->call(BudgetRangeSeeder::class);
         $this->call(PostcodeSeeder::class);
         $this->call(RoomSeeder::class);

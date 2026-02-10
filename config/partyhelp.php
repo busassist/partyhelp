@@ -74,4 +74,55 @@ return [
         'max_width' => (int) env('MEDIA_MAX_WIDTH', 1920),
         'output_format' => env('MEDIA_OUTPUT_FORMAT', 'jpeg'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Venue Introduction Email
+    |--------------------------------------------------------------------------
+    */
+    'venue_intro_email' => [
+        'footer_tagline' => env('VENUE_INTRO_FOOTER_TAGLINE', "We've helped over 50,000 people find their perfect venue. Let us help you make your next event unforgettable."),
+        'support_email' => env('VENUE_INTRO_SUPPORT_EMAIL', 'venues@partyhelp.com.au'),
+        'sign_off_name' => env('VENUE_INTRO_SIGN_OFF_NAME', 'Johnny'),
+        'sign_off_title' => env('VENUE_INTRO_SIGN_OFF_TITLE', 'Manager, Party Venues'),
+        'business_address' => env('VENUE_INTRO_BUSINESS_ADDRESS', 'Business Assist, 195 Little Collins Street, Melbourne VIC 3000, Australia'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Form Confirmation Email
+    |--------------------------------------------------------------------------
+    */
+    'form_confirmation_email' => [
+        'support_email' => env('FORM_CONFIRMATION_SUPPORT_EMAIL', 'venues@partyhelp.com.au'),
+        'sign_off_name' => env('FORM_CONFIRMATION_SIGN_OFF_NAME', 'Johnny'),
+        'sign_off_title' => env('FORM_CONFIRMATION_SIGN_OFF_TITLE', 'Manager, Party Venues'),
+        'business_address' => env('FORM_CONFIRMATION_BUSINESS_ADDRESS', 'Party Help, 195 Little Collins Street, Melbourne Victoria 3000, Australia'),
+        'ps_message' => env('FORM_CONFIRMATION_PS_MESSAGE', "Don't forget to let us know which venue you have booked so we can put you in the draw to win a \$159 Gold Class experience. And if you book a Partyhelp venue, you will also receive a \$50 drink card!"),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Email Template Editable Slots
+    |--------------------------------------------------------------------------
+    | Maps template key => [slot_key => human_label]. Used for WYSIWYG editing.
+    */
+    'email_template_slots' => [
+        'venue_introduction' => [
+            'header_text' => 'Header text',
+            'thank_you_text' => 'Thank you message',
+            'location_intro' => 'Location intro',
+            'recommendations_intro' => 'Recommendations intro',
+            'closing_text' => 'Closing message',
+            'matching_rooms_label' => 'Matching rooms label',
+        ],
+        'form_confirmation' => [
+            'header_text' => 'Header text',
+            'thank_you_intro' => 'Thank you intro',
+            'what_happens_now_text' => 'What happens now',
+            'what_to_do_text' => 'What do I need to do',
+            'contact_intro' => 'Contact intro',
+            'ps_message' => 'PS message',
+        ],
+    ],
 ];
