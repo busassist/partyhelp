@@ -41,11 +41,21 @@ class VenueBillingController extends Controller
                 $successUrl,
                 $cancelUrl
             );
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('filament.venue.pages.billing')
+                ->with('error', $e->getMessage());
+        } catch (\RuntimeException $e) {
+            return redirect()->route('filament.venue.pages.billing')
+                ->with('error', $e->getMessage());
         } catch (\Throwable $e) {
             report($e);
+            $message = 'Could not start checkout. Please try again.';
+            if (config('app.debug')) {
+                $message .= ' ' . $e->getMessage();
+            }
 
             return redirect()->route('filament.venue.pages.billing')
-                ->with('error', 'Could not start checkout. Please try again.');
+                ->with('error', $message);
         }
 
         return redirect()->away($url);
@@ -73,9 +83,13 @@ class VenueBillingController extends Controller
                 ->with('error', $e->getMessage());
         } catch (\Throwable $e) {
             report($e);
+            $message = 'Could not start add card. Please try again.';
+            if (config('app.debug')) {
+                $message .= ' ' . $e->getMessage();
+            }
 
             return redirect()->route('filament.venue.pages.billing')
-                ->with('error', 'Could not start add card. Please try again.');
+                ->with('error', $message);
         }
 
         return redirect()->away($url);

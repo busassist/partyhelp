@@ -181,8 +181,16 @@ class StripeCheckoutService
     private function stripeClient(): StripeClient
     {
         $secret = config('services.stripe.secret');
-        if (! $secret) {
-            throw new \RuntimeException('Stripe secret is not configured.');
+        if (! $secret || ! is_string($secret) || trim($secret) === '') {
+            throw new \RuntimeException(
+                'Stripe secret is not configured. Set STRIPE_SECRET_SANDBOX (or STRIPE_SECRET_LIVE when using live mode) in .env to your Stripe secret key.'
+            );
+        }
+        $secret = trim($secret);
+        if (str_starts_with($secret, 'sk_test_xxxx') || str_starts_with($secret, 'sk_live_xxxx')) {
+            throw new \RuntimeException(
+                'Stripe secret is still the placeholder. Replace STRIPE_SECRET_SANDBOX in .env with your real test secret key from the Stripe Dashboard (Developers → API keys).'
+            );
         }
 
         return new StripeClient($secret);
