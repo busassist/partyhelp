@@ -186,7 +186,7 @@ class Partyhelp_Form_Settings
                         <td>
                             <input type="text" id="partyhelp_form_style_form_bg_color" name="partyhelp_form_style_form_bg_color"
                                 value="<?php echo esc_attr($this->get_style_option('form_bg_color')); ?>"
-                                class="small-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['form_bg_color']); ?>" />
+                                class="regular-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['form_bg_color']); ?>" />
                             <p class="description">e.g. #2c0f4a. Default: <?php echo esc_html(self::STYLE_DEFAULTS['form_bg_color']); ?></p>
                         </td>
                     </tr>
@@ -195,7 +195,7 @@ class Partyhelp_Form_Settings
                         <td>
                             <input type="text" id="partyhelp_form_style_label_color" name="partyhelp_form_style_label_color"
                                 value="<?php echo esc_attr($this->get_style_option('label_color')); ?>"
-                                class="small-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['label_color']); ?>" />
+                                class="regular-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['label_color']); ?>" />
                             <p class="description">Default: white (#ffffff)</p>
                         </td>
                     </tr>
@@ -204,7 +204,7 @@ class Partyhelp_Form_Settings
                         <td>
                             <input type="text" id="partyhelp_form_style_text_color" name="partyhelp_form_style_text_color"
                                 value="<?php echo esc_attr($this->get_style_option('text_color')); ?>"
-                                class="small-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['text_color']); ?>" />
+                                class="regular-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['text_color']); ?>" />
                             <p class="description">Body text and checkbox option text. Default: #e1e1e1</p>
                         </td>
                     </tr>
@@ -239,7 +239,7 @@ class Partyhelp_Form_Settings
                         <td>
                             <input type="text" id="partyhelp_form_style_field_border_color" name="partyhelp_form_style_field_border_color"
                                 value="<?php echo esc_attr($this->get_style_option('field_border_color')); ?>"
-                                class="small-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['field_border_color']); ?>" />
+                                class="regular-text" placeholder="<?php echo esc_attr(self::STYLE_DEFAULTS['field_border_color']); ?>" />
                             <p class="description">Default: #4a3a6a</p>
                         </td>
                     </tr>
