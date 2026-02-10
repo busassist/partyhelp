@@ -27,6 +27,7 @@ return [
         'templates' => [
             'venue_introduction' => env('SENDGRID_TEMPLATE_VENUE_INTRODUCTION'),
             'form_confirmation' => env('SENDGRID_TEMPLATE_FORM_CONFIRMATION'),
+            'invoice_receipt' => env('SENDGRID_TEMPLATE_INVOICE_RECEIPT'),
         ],
     ],
 

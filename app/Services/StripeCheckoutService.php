@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Mail\VenueReceiptEmail;
 use App\Models\CreditTransaction;
 use App\Models\Venue;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\StripeClient;
 
@@ -150,13 +152,29 @@ class StripeCheckoutService
             }
         }
 
-        $this->creditService->credit(
+        $transaction = $this->creditService->credit(
             $venue,
             (float) $amountDollars,
             'topup',
             "Credit purchase \${$amountDollars}",
             $paymentIntentId
         );
+
+        $this->sendReceiptEmail($venue, $transaction);
+    }
+
+    private function sendReceiptEmail(Venue $venue, CreditTransaction $transaction): void
+    {
+        $to = $venue->contact_email ?? $venue->user?->email;
+        if (! is_string($to) || trim($to) === '') {
+            return;
+        }
+
+        try {
+            Mail::to(trim($to))->send(new VenueReceiptEmail($venue, $transaction));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     /**
