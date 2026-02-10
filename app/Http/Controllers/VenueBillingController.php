@@ -65,6 +65,12 @@ class VenueBillingController extends Controller
 
         try {
             $url = $this->checkoutService->createSetupSession($venue, $successUrl, $cancelUrl);
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('filament.venue.pages.billing')
+                ->with('error', $e->getMessage());
+        } catch (\RuntimeException $e) {
+            return redirect()->route('filament.venue.pages.billing')
+                ->with('error', $e->getMessage());
         } catch (\Throwable $e) {
             report($e);
 

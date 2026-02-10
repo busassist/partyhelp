@@ -62,7 +62,10 @@ class StripeCheckoutService
             if ($venue->stripe_customer_id) {
                 $params['customer'] = $venue->stripe_customer_id;
             } else {
-                $params['customer_email'] = $venue->contact_email;
+                $email = $this->venueEmailForStripe($venue);
+                if (! empty($email)) {
+                    $params['customer_email'] = $email;
+                }
             }
         }
 
@@ -86,12 +89,25 @@ class StripeCheckoutService
         if ($venue->stripe_customer_id) {
             $params['customer'] = $venue->stripe_customer_id;
         } else {
-            $params['customer_email'] = $venue->contact_email;
+            $email = $this->venueEmailForStripe($venue);
+            if (empty($email)) {
+                throw new \InvalidArgumentException(
+                    'No email available for Stripe. Set the venue contact email or ensure your user account has an email.'
+                );
+            }
+            $params['customer_email'] = $email;
         }
 
         $session = $stripe->checkout->sessions->create($params);
 
         return $session->url;
+    }
+
+    private function venueEmailForStripe(Venue $venue): ?string
+    {
+        $email = $venue->contact_email ?? $venue->user?->email;
+
+        return is_string($email) && trim($email) !== '' ? trim($email) : null;
     }
 
     public function handleCheckoutCompleted(StripeSession $session): void
