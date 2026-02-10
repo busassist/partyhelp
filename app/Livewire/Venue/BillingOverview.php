@@ -34,6 +34,16 @@ class BillingOverview extends Component
                     ->success()
                     ->send();
             } else {
+                $venue = $this->getVenue();
+                $sessionId = request()->query('session_id');
+                if ($venue && $sessionId) {
+                    try {
+                        app(\App\Services\StripeCheckoutService::class)
+                            ->processCheckoutSessionFromSuccessPage($sessionId, $venue);
+                    } catch (\Throwable) {
+                        // Already logged or not our session; still show success
+                    }
+                }
                 \Filament\Notifications\Notification::make()
                     ->title('Payment successful')
                     ->body('Your credits have been added.')

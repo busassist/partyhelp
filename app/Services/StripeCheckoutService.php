@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CreditTransaction;
 use App\Models\Venue;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\StripeClient;
@@ -123,11 +124,15 @@ class StripeCheckoutService
             return;
         }
 
+        $piId = $session->payment_intent ?? null;
+        $paymentIntentId = $piId ? (is_string($piId) ? $piId : $piId->id) : null;
+        if ($paymentIntentId && CreditTransaction::where('stripe_payment_intent_id', $paymentIntentId)->exists()) {
+            return;
+        }
+
         $amountCents = (int) $session->amount_total;
         $amountDollars = $amountCents / 100;
         $saveForAuto = ($session->metadata['save_for_auto_topup'] ?? '0') === '1';
-        $piId = $session->payment_intent ?? null;
-        $paymentIntentId = $piId ? (is_string($piId) ? $piId : $piId->id) : null;
 
         $customerId = $session->customer;
         if (is_object($customerId)) {
@@ -152,6 +157,33 @@ class StripeCheckoutService
             "Credit purchase \${$amountDollars}",
             $paymentIntentId
         );
+    }
+
+    /**
+     * Process a checkout session when user lands on success URL (fallback when webhook has not run).
+     * Verifies the session belongs to the given venue. Idempotent (handleCheckoutCompleted skips if already credited).
+     */
+    public function processCheckoutSessionFromSuccessPage(string $sessionId, Venue $venue): bool
+    {
+        $sessionId = trim($sessionId);
+        if ($sessionId === '') {
+            return false;
+        }
+        try {
+            $session = $this->stripeClient()->checkout->sessions->retrieve($sessionId);
+        } catch (\Throwable) {
+            return false;
+        }
+        if (! $session || $session->mode !== 'payment') {
+            return false;
+        }
+        $sessionVenueId = (int) ($session->metadata['venue_id'] ?? $session->client_reference_id ?? 0);
+        if ($sessionVenueId !== (int) $venue->id) {
+            return false;
+        }
+        $this->handleCheckoutCompleted($session);
+
+        return true;
     }
 
     private function attachPaymentMethodFromSetup(StripeSession $session, Venue $venue): void

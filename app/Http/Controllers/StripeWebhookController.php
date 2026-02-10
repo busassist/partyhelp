@@ -30,6 +30,10 @@ class StripeWebhookController extends Controller
 
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
+            if (! $session instanceof StripeSession && isset($session->id)) {
+                $stripe = new \Stripe\StripeClient(config('services.stripe.secret'));
+                $session = $stripe->checkout->sessions->retrieve($session->id);
+            }
             if ($session instanceof StripeSession) {
                 app(StripeCheckoutService::class)->handleCheckoutCompleted($session);
             }
