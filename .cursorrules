@@ -40,7 +40,7 @@ Use **named semantic classes** for common elements so styling can be controlled 
 ## Development Environment
 - All work happens on **Laravel Forge via Remote SSH** to Digital Ocean.
 - Never set up local Mac development unless explicitly instructed.
-- **Commit after every change:** Commit and push to the remote after each meaningful change (any file), not only at the end of a session. Do not leave work only in the working tree. A previous incident where email work was lost (recovered from backup) led to this rule; apply it to all changes so nothing is ever lost again.
+- **Commit when a task is complete:** When you have finished ALL changes arising from one user prompt, commit and push to the remote **before** returning the results or summary to the user. Do not leave completed work only in the working tree. One commit per completed task is fine; do not make many commits in the middle of a single task. If the user has to ask you to commit, the rule was not followed.
 
 ## Key Documents
 - PRD: `docs/Partyhelp PRD.md`
