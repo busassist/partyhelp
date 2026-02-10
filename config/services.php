@@ -24,6 +24,10 @@ return [
 
     'sendgrid' => [
         'api_key' => env('SENDGRID_API_KEY', env('MAIL_PASSWORD')),
+        'templates' => [
+            'venue_introduction' => env('SENDGRID_TEMPLATE_VENUE_INTRODUCTION'),
+            'form_confirmation' => env('SENDGRID_TEMPLATE_FORM_CONFIRMATION'),
+        ],
     ],
 
     'ses' => [
