@@ -250,6 +250,21 @@
   margin-bottom: 0;
 }
 
+/* Date field: click-anywhere opens picker; white calendar icon */
+.partyhelp-date-field-wrap {
+  cursor: pointer;
+}
+
+.partyhelp-form-wrapper .partyhelp-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.partyhelp-form-wrapper .partyhelp-date-input::-webkit-datetime-edit {
+  cursor: pointer;
+}
+
 .partyhelp-party-details-group {
   display: grid;
   grid-template-columns: 1fr 1fr;

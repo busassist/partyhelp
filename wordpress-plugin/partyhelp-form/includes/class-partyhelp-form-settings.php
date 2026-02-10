@@ -372,6 +372,20 @@ class Partyhelp_Form_Settings
         $lines[] = '.partyhelp-form-wrapper .partyhelp-venue-style-name {';
         $lines[] = '  font-family: ' . $heading_font . ';';
         $lines[] = '}';
+        $lines[] = '/* Explicit border-radius so plugin setting overrides theme */';
+        $lines[] = '.partyhelp-form-wrapper .partyhelp-input,';
+        $lines[] = '.partyhelp-form-wrapper .partyhelp-select,';
+        $lines[] = '.partyhelp-form-wrapper .partyhelp-textarea,';
+        $lines[] = '.partyhelp-form-wrapper input[type="date"],';
+        $lines[] = '.partyhelp-form-wrapper input[type="email"],';
+        $lines[] = '.partyhelp-form-wrapper input[type="number"],';
+        $lines[] = '.partyhelp-form-wrapper input[type="tel"],';
+        $lines[] = '.partyhelp-form-wrapper input[type="text"],';
+        $lines[] = '.partyhelp-form-wrapper input[type="url"],';
+        $lines[] = '.partyhelp-form-wrapper select.partyhelp-select,';
+        $lines[] = '.partyhelp-form-wrapper textarea.partyhelp-textarea {';
+        $lines[] = '  border-radius: ' . $radius . 'px;';
+        $lines[] = '}';
 
         return implode("\n", $lines);
     }

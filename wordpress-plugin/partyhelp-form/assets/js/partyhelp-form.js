@@ -129,6 +129,14 @@
     const $form = $('#partyhelp-form');
     if (!$form.length) return;
 
+    /* Click anywhere on date field wrapper opens the date picker */
+    $form.on('click', '.partyhelp-date-field-wrap', function () {
+      const input = document.getElementById('ph-preferred-date');
+      if (input && typeof input.showPicker === 'function') {
+        input.showPicker();
+      }
+    });
+
     $form.on('submit', function (e) {
       e.preventDefault();
 

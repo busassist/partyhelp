@@ -92,7 +92,9 @@ class Partyhelp_Form_Renderer
                     </div>
                     <div class="partyhelp-preferred-date-field">
                         <label for="ph-preferred-date">Preferred Date <span class="required">*</span></label>
-                        <input type="date" id="ph-preferred-date" name="preferred_date" class="partyhelp-input" required />
+                        <div class="partyhelp-date-field-wrap" id="ph-date-wrap">
+                            <input type="date" id="ph-preferred-date" name="preferred_date" class="partyhelp-input partyhelp-date-input" required />
+                        </div>
                         <span class="partyhelp-field-error" data-field="preferred_date"></span>
                     </div>
                     <div class="partyhelp-num-guests-field-group">
@@ -126,14 +128,14 @@ class Partyhelp_Form_Renderer
                         <?php foreach ($areas as $area): ?>
                             <div class="partyhelp-location-area-block partyhelp-location-area-<?php echo esc_attr(sanitize_title($area['name'])); ?>">
                                 <label class="partyhelp-location-option partyhelp-location-area-option">
-                                    <input type="checkbox" name="location[]" value="<?php echo esc_attr(! empty($area['suburbs']) ? $area['suburbs'][0] : $area['name']); ?>" class="partyhelp-location-checkbox partyhelp-location-area-checkbox" data-area="<?php echo esc_attr($area['name']); ?>" />
+                                    <input type="checkbox" name="location[]" value="<?php echo esc_attr('AREA:' . $area['name']); ?>" class="partyhelp-location-checkbox partyhelp-location-area-checkbox" data-area="<?php echo esc_attr($area['name']); ?>" />
                                     <span class="partyhelp-location-area-name"><?php echo esc_html($area['name']); ?></span>
                                 </label>
                                 <?php if (! empty($area['suburbs'])): ?>
                                     <div class="partyhelp-location-suburbs">
                                         <?php foreach ($area['suburbs'] as $suburb): ?>
                                             <label class="partyhelp-location-option partyhelp-location-suburb-option">
-                                                <input type="checkbox" name="location[]" value="<?php echo esc_attr($suburb); ?>" class="partyhelp-location-checkbox partyhelp-location-suburb-checkbox" />
+                                                <input type="checkbox" name="location[]" value="<?php echo esc_attr('SUBURB:' . $area['name'] . ':' . $suburb); ?>" class="partyhelp-location-checkbox partyhelp-location-suburb-checkbox" data-area="<?php echo esc_attr($area['name']); ?>" />
                                                 <span><?php echo esc_html($suburb); ?></span>
                                             </label>
                                         <?php endforeach; ?>

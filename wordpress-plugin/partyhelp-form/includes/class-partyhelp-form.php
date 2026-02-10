@@ -79,6 +79,7 @@ class Partyhelp_Form
 
         if (! empty($other_location)) {
             $suburb_value = $other_location;
+            $locations = array_merge($locations, [$other_location]);
         } elseif (! empty($locations)) {
             $suburb_value = $locations[0];
         } else {
@@ -98,6 +99,7 @@ class Partyhelp_Form
             'Preferred_Date' => sanitize_text_field($_POST['preferred_date'] ?? ''),
             'Number_of_Guests' => sanitize_text_field($_POST['guest_count'] ?? ''),
             'Select_preferred_location' => $suburb_value,
+            'location' => $locations,
             'Estimated_Budget' => sanitize_text_field($_POST['budget_range'] ?? ''),
             'Other_details_about_the_party:' => sanitize_textarea_field($_POST['special_requirements'] ?? ''),
             'room_styles' => $room_styles,
