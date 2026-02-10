@@ -39,7 +39,24 @@ class LeadResource extends Resource
                 Forms\Components\TextInput::make('guest_count')
                     ->numeric()->minValue(10)->maxValue(500)->required(),
                 Forms\Components\DatePicker::make('preferred_date')->required(),
-                Forms\Components\TextInput::make('suburb')->required(),
+                Forms\Components\Placeholder::make('location_hierarchy')
+                    ->label('Preferred locations (from form)')
+                    ->content(function (Lead $record) {
+                        $lines = $record->location_hierarchy_lines;
+                        if ($lines !== []) {
+                            return new \Illuminate\Support\HtmlString(
+                                '<ul class="list-disc list-inside space-y-1">' .
+                                implode('', array_map(fn (string $line) => '<li>' . e($line) . '</li>', $lines)) .
+                                '</ul>'
+                            );
+                        }
+
+                        return $record->suburb ? 'Location → ' . e($record->suburb) : '—';
+                    })
+                    ->visible(fn (Lead $record): bool => $record->location_hierarchy_lines !== [] || (string) $record->suburb !== ''),
+                Forms\Components\TextInput::make('suburb')
+                    ->label('Primary suburb (for matching)')
+                    ->required(),
                 Forms\Components\Select::make('room_styles')
                     ->multiple()
                     ->options(config('partyhelp.room_styles'))

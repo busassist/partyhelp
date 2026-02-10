@@ -7,9 +7,11 @@
     $autoSave = $getAutoSave();
     $modalId = 'media-library-modal-' . md5($id . $statePath);
     $mediaDisk = config('filesystems.media_disk', 'spaces');
-    $mediaBaseUrl = $mediaDisk === 'public'
-        ? rtrim(config('app.url'), '/') . '/storage'
-        : rtrim(config('app.url'), '/') . '/media';
+    $useTransparent = config('filesystems.media_use_transparent_urls', true);
+    $diskConfig = config("filesystems.disks.{$mediaDisk}", []);
+    $mediaBaseUrl = ($useTransparent || empty($diskConfig['url']))
+        ? rtrim(config('app.url'), '/') . ($mediaDisk === 'public' ? '/storage' : '/media')
+        : rtrim($diskConfig['url'], '/');
 @endphp
 
 <x-dynamic-component

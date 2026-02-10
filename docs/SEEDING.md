@@ -91,6 +91,7 @@ php artisan db:seed --class=LeadSeeder
 | DatabaseSeeder | `DatabaseSeeder` | Core data (admin, test venue, pricing, config) + calls OccasionTypeSeeder, BudgetRangeSeeder, PostcodeSeeder, RoomSeeder, VenueSeeder, LeadSeeder |
 | OccasionTypeSeeder | `OccasionTypeSeeder` | Occasion types from config (21st Birthday, Wedding Reception, etc.) |
 | FeatureSeeder | `FeatureSeeder` | Room features (AV Equipment, Dance Floor, etc.) |
+| VenueStyleSeeder | `VenueStyleSeeder` | Venue styles (Bar, Function Room, Night Club, etc.) + attaches 2–3 styles to existing venues |
 | BudgetRangeSeeder | `BudgetRangeSeeder` | Budget ranges ($1,500–$3,000 through $25,000+) |
 | PostcodeSeeder | `PostcodeSeeder` | Postcodes (suburb, postcode, state) for Melbourne |
 | RoomSeeder | `RoomSeeder` | 4 sample rooms for venue@partyhelp.com.au (Main Function Room, The Loft, Courtyard, Boardroom). Skips if venue already has rooms. |

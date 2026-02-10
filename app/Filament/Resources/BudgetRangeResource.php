@@ -17,7 +17,9 @@ class BudgetRangeResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Pricing';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Budget Ranges';
 

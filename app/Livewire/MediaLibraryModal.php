@@ -61,8 +61,15 @@ class MediaLibraryModal extends Component
         }
 
         $disk = config('filesystems.media_disk', 'spaces');
-        if (Storage::disk($disk)->exists($media->file_path)) {
-            Storage::disk($disk)->delete($media->file_path);
+        try {
+            if (Storage::disk($disk)->exists($media->file_path)) {
+                Storage::disk($disk)->delete($media->file_path);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('[MediaLibraryModal] Failed to delete file from storage', [
+                'path' => $media->file_path,
+                'error' => $e->getMessage(),
+            ]);
         }
         $media->delete();
     }

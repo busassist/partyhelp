@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Venue;
+use App\Models\VenueStyle;
 use Illuminate\Database\Seeder;
 
 class VenueSeeder extends Seeder
@@ -119,7 +120,44 @@ class VenueSeeder extends Seeder
                     'is_active' => true,
                 ]);
             }
+
+            $venue->venueStyles()->sync($this->venueStylesForVenue($venue));
         }
+    }
+
+    /** @return int[] */
+    private function venueStylesForVenue(Venue $venue): array
+    {
+        $roomToVenueStyle = [
+            'bar' => 'Bar',
+            'function_room' => 'Function Room',
+            'pub' => 'Pub',
+            'club' => 'Night Club',
+            'semi_outdoor' => 'Courtyard',
+        ];
+
+        $roomStyles = $venue->rooms->pluck('style')->unique()->filter()->values();
+        $styleNames = $roomStyles->map(fn (string $s) => $roomToVenueStyle[$s] ?? null)->filter()->unique()->values()->all();
+
+        $allStyles = VenueStyle::where('is_active', true)->pluck('id', 'name');
+        $ids = [];
+        foreach ($styleNames as $name) {
+            if (isset($allStyles[$name])) {
+                $ids[] = $allStyles[$name];
+            }
+        }
+
+        $need = rand(2, 3) - count($ids);
+        if ($need > 0) {
+            $remaining = $allStyles->filter(fn ($id) => ! in_array($id, $ids))->values();
+            $extraCount = min($need, $remaining->count());
+            if ($extraCount > 0) {
+                $extra = $remaining->random($extraCount);
+                $ids = array_merge($ids, $extra->all());
+            }
+        }
+
+        return array_slice(array_unique($ids), 0, 3);
     }
 
     private function uniqueName(array $pool, array &$used): string

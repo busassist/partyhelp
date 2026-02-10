@@ -50,6 +50,12 @@ class VenueResource extends Resource
                     ->multiple()
                     ->options(\App\Models\OccasionType::options())
                     ->label('Occasion types served'),
+                Forms\Components\Select::make('venueStyles')
+                    ->relationship('venueStyles', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->label('Venue styles'),
             ])->columns(2),
 
             Section::make('Account')->schema([
@@ -80,6 +86,10 @@ class VenueResource extends Resource
                 Tables\Columns\TextColumn::make('area.name')
                     ->label('Location')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('venueStyles.name')
+                    ->label('Styles')
+                    ->badge()
+                    ->separator(','),
                 Tables\Columns\TextColumn::make('contact_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('suburb')

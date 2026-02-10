@@ -64,6 +64,9 @@ class WebhookController extends Controller
                 'guest_count' => 'required|integer|min:10|max:500',
                 'preferred_date' => 'required|date|after:today',
                 'suburb' => 'required|string',
+                'suburb_preferences' => 'nullable|array',
+                'suburb_preferences.*' => 'string|max:100',
+                'location_selections' => 'nullable|array',
                 'room_styles' => 'nullable',
                 'budget_range' => 'nullable|string',
                 'special_requirements' => 'nullable|string|max:500',
@@ -106,6 +109,8 @@ class WebhookController extends Controller
                 'guest_count' => $data['guest_count'],
                 'preferred_date' => $data['preferred_date'],
                 'suburb' => $data['suburb'],
+                'suburb_preferences' => $data['suburb_preferences'] ?? null,
+                'location_selections' => $data['location_selections'] ?? null,
                 'room_styles' => $roomStyles,
                 'budget_range' => $data['budget_range'] ?? null,
                 'special_requirements' => $data['special_requirements'] ?? null,
@@ -159,10 +164,19 @@ class WebhookController extends Controller
         $data = [];
         foreach (self::FIELD_ALIASES as $canonical => $aliases) {
             $value = $raw[$canonical] ?? null;
-            foreach ($aliases as $alias) {
-                if ($value === null && isset($raw[$alias])) {
-                    $value = $raw[$alias];
-                    break;
+            if ($canonical === 'suburb') {
+                if (isset($raw['location']) && is_array($raw['location']) && count($raw['location']) > 0) {
+                    $value = $raw['location'];
+                } elseif (isset($raw['locations']) && is_array($raw['locations']) && count($raw['locations']) > 0) {
+                    $value = $raw['locations'];
+                }
+            }
+            if ($value === null) {
+                foreach ($aliases as $alias) {
+                    if (isset($raw[$alias])) {
+                        $value = $raw[$alias];
+                        break;
+                    }
                 }
             }
             if ($value !== null && $value !== '') {
@@ -192,22 +206,77 @@ class WebhookController extends Controller
 
         if (isset($data['suburb'])) {
             $suburb = $data['suburb'];
-            if (is_array($suburb)) {
-                $suburb = $suburb[0] ?? '';
+            $multiple = is_array($suburb);
+            if ($multiple) {
+                $data['location_selections'] = $this->parseLocationSelections($suburb);
+                $data['suburb_preferences'] = $this->locationSelectionsToSuburbList($data['location_selections']);
+                $firstSuburb = $data['suburb_preferences'][0] ?? $suburb[0] ?? '';
+                $data['suburb'] = is_string($firstSuburb) ? $firstSuburb : $this->normalizeSuburbString((string) ($suburb[0] ?? ''));
+            } else {
+                $data['suburb'] = $this->normalizeSuburbString((string) $suburb);
             }
-            $suburb = (string) $suburb;
-            if (str_contains($suburb, ' - ')) {
-                $parts = explode(' - ', $suburb, 2);
-                $suburb = trim($parts[1] ?? $parts[0]);
-                $comma = strpos($suburb, ',');
-                if ($comma !== false) {
-                    $suburb = trim(substr($suburb, 0, $comma));
-                }
-            }
-            $data['suburb'] = $suburb;
         }
 
         return $data;
+    }
+
+    /** Parse AREA:Name and SUBURB:AreaName:SuburbName into location_selections. */
+    private function parseLocationSelections(array $values): array
+    {
+        $out = [];
+        foreach ($values as $v) {
+            $s = trim((string) $v);
+            if (str_starts_with($s, 'AREA:')) {
+                $name = trim(substr($s, 5));
+                if ($name !== '') {
+                    $out[] = ['type' => 'area', 'area' => null, 'name' => $name];
+                }
+                continue;
+            }
+            if (str_starts_with($s, 'SUBURB:')) {
+                $rest = trim(substr($s, 7));
+                $parts = explode(':', $rest, 2);
+                $area = trim($parts[0] ?? '');
+                $suburbName = trim($parts[1] ?? '');
+                if ($suburbName !== '') {
+                    $out[] = ['type' => 'suburb', 'area' => $area ?: null, 'name' => $suburbName];
+                }
+                continue;
+            }
+            if ($s !== '') {
+                $out[] = ['type' => 'suburb', 'area' => null, 'name' => $this->normalizeSuburbString($s)];
+            }
+        }
+
+        return $out;
+    }
+
+    private function locationSelectionsToSuburbList(array $selections): array
+    {
+        $names = [];
+        foreach ($selections as $item) {
+            $name = $item['name'] ?? '';
+            if ($name !== '' && ! in_array($name, $names, true)) {
+                $names[] = $name;
+            }
+        }
+
+        return $names;
+    }
+
+    private function normalizeSuburbString(string $suburb): string
+    {
+        $suburb = trim($suburb);
+        if (str_contains($suburb, ' - ')) {
+            $parts = explode(' - ', $suburb, 2);
+            $suburb = trim($parts[1] ?? $parts[0]);
+            $comma = strpos($suburb, ',');
+            if ($comma !== false) {
+                $suburb = trim(substr($suburb, 0, $comma));
+            }
+        }
+
+        return $suburb;
     }
 
     private function parseGuestCount(mixed $input): int

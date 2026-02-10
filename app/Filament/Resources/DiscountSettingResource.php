@@ -17,7 +17,9 @@ class DiscountSettingResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-receipt-percent';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Pricing';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Discount Settings';
 

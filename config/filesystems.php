@@ -18,6 +18,13 @@ return [
     'media_disk' => env('MEDIA_DISK', 'spaces'),
 
     /*
+    | When true, media URLs use your app domain (e.g. get.partyhelp.com.au/media/...)
+    | via MediaServeController. The app proxies files from Spaces using credentials,
+    | so the bucket can stay private. Set to false to use direct DO_SPACES_URL.
+    */
+    'media_use_transparent_urls' => env('MEDIA_USE_TRANSPARENT_URLS', true),
+
+    /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
@@ -62,11 +69,15 @@ return [
             'report' => false,
         ],
 
+        /*
+        | DigitalOcean Spaces (S3-compatible) – for media storage only.
+        | Uses DO_SPACES_* env vars. Never falls back to AWS instance profile.
+        */
         'spaces' => [
             'driver' => 's3',
             'key' => env('DO_SPACES_KEY'),
             'secret' => env('DO_SPACES_SECRET'),
-            'region' => env('DO_SPACES_REGION', 'us-east-1'),
+            'region' => env('DO_SPACES_REGION', 'syd1'),
             'bucket' => env('DO_SPACES_BUCKET'),
             'url' => env('DO_SPACES_URL'),
             'endpoint' => env('DO_SPACES_ENDPOINT'),

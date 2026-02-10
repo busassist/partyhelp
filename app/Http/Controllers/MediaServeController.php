@@ -17,11 +17,16 @@ class MediaServeController extends Controller
             abort(404);
         }
 
-        $disk = Storage::disk(config('filesystems.media_disk', 'spaces'));
+        $diskName = config('filesystems.media_disk', 'spaces');
+        $disk = Storage::disk($diskName);
 
         try {
             $stream = $disk->readStream($path);
-        } catch (FilesystemException $e) {
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[MediaServe] Proxy failed, serving via app URL requires DO_SPACES_KEY/SECRET', [
+                'path' => $path,
+                'error' => $e->getMessage(),
+            ]);
             abort(404);
         }
 
@@ -37,8 +42,12 @@ class MediaServeController extends Controller
                 fclose($stream);
             },
             basename($path),
-            ['Content-Type' => $mimeType],
+            [
+                'Content-Type' => $mimeType,
+                'Cache-Control' => 'public, max-age=86400', // 24h cache when proxying
+            ],
             'inline'
         );
     }
+
 }

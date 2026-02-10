@@ -14,7 +14,7 @@ class Lead extends Model
     protected $fillable = [
         'first_name', 'last_name', 'email', 'phone',
         'occasion_type', 'guest_count', 'preferred_date',
-        'suburb', 'room_styles', 'budget_range',
+        'suburb', 'suburb_preferences', 'location_selections', 'room_styles', 'budget_range',
         'special_requirements', 'base_price', 'current_price',
         'discount_percent', 'status', 'purchase_target',
         'purchase_count', 'distributed_at', 'fulfilled_at',
@@ -25,6 +25,8 @@ class Lead extends Model
     {
         return [
             'room_styles' => 'array',
+            'suburb_preferences' => 'array',
+            'location_selections' => 'array',
             'preferred_date' => 'date',
             'base_price' => 'decimal:2',
             'current_price' => 'decimal:2',
@@ -48,6 +50,88 @@ class Lead extends Model
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    /** Preferred locations from form (multiple suburbs). Falls back to single suburb. */
+    public function getPreferredLocationsAttribute(): array
+    {
+        $prefs = $this->suburb_preferences;
+        if (is_array($prefs) && count($prefs) > 0) {
+            return array_values(array_filter($prefs));
+        }
+
+        return $this->suburb ? [$this->suburb] : [];
+    }
+
+    /**
+     * Location hierarchy for display: area-only and area→suburb.
+     * Each item: ['label' => 'Location → CBD' or 'Location → CBD → Southbank']
+     */
+    public function getLocationHierarchyLinesAttribute(): array
+    {
+        $selections = $this->location_selections;
+        if (is_array($selections) && count($selections) > 0) {
+            $lines = [];
+            foreach ($selections as $item) {
+                $type = $item['type'] ?? null;
+                $area = $item['area'] ?? null;
+                $name = $item['name'] ?? '';
+                if ($name === '') {
+                    continue;
+                }
+                if ($type === 'area') {
+                    $lines[] = 'Location → ' . $name;
+                } elseif ($type === 'suburb' && $area !== null && $area !== '') {
+                    $lines[] = 'Location → ' . $area . ' → ' . $name;
+                } else {
+                    $lines[] = 'Location → ' . $name;
+                }
+            }
+
+            return $lines;
+        }
+
+        $prefs = $this->suburb_preferences;
+        if (is_array($prefs) && count($prefs) > 0) {
+            return array_map(fn (string $s) => 'Location → ' . $s, $prefs);
+        }
+
+        $payload = $this->webhook_payload;
+        if (is_array($payload) && ! empty($payload['location']) && is_array($payload['location'])) {
+            return $this->linesFromRawLocationArray($payload['location']);
+        }
+
+        if ($this->suburb) {
+            return ['Location → ' . $this->suburb];
+        }
+
+        return [];
+    }
+
+    private function linesFromRawLocationArray(array $arr): array
+    {
+        $lines = [];
+        foreach ($arr as $v) {
+            $s = trim((string) $v);
+            if ($s === '') {
+                continue;
+            }
+            if (str_starts_with($s, 'AREA:')) {
+                $lines[] = 'Location → ' . trim(substr($s, 5));
+            } elseif (str_starts_with($s, 'SUBURB:')) {
+                $rest = trim(substr($s, 7));
+                $parts = explode(':', $rest, 2);
+                $area = trim($parts[0] ?? '');
+                $sub = trim($parts[1] ?? '');
+                if ($sub !== '') {
+                    $lines[] = $area !== '' ? 'Location → ' . $area . ' → ' . $sub : 'Location → ' . $sub;
+                }
+            } else {
+                $lines[] = 'Location → ' . $s;
+            }
+        }
+
+        return $lines;
     }
 
     public function isFulfilled(): bool

@@ -17,7 +17,9 @@ class PricingMatrixResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Data';
+    protected static string | \UnitEnum | null $navigationGroup = 'Manage System Pricing';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Pricing Matrix';
 

@@ -28,6 +28,10 @@ DO_SPACES_URL=https://partyhelp-bucket.syd1.digitaloceanspaces.com
 3. If you get "Access Denied" when loading images, ensure the Space is set to Public: DigitalOcean Dashboard → your Space → Settings → File Listing → Public.
 4. Create a **Spaces access key** (API → Spaces access keys). Use the Access Key ID and Secret shown when you create the key—not a DigitalOcean personal token. The key name/label is different from the actual Access Key ID.
 
+### DigitalOcean Only (No AWS Fallback)
+
+The app uses **DigitalOcean Spaces only** for media storage. It does not fall back to AWS S3 or EC2 instance profile. If `DO_SPACES_KEY` or `DO_SPACES_SECRET` are missing when `MEDIA_DISK=spaces`, the app will fail at boot with a clear error. Run `php artisan config:clear` after adding credentials.
+
 ### Troubleshooting InvalidAccessKeyId
 
 If you see `InvalidAccessKeyId`, ensure you're using a **Spaces access key** from API → Spaces access keys, not a personal access token. Generate a new key and copy both the Access Key ID and Secret immediately—they are shown only once.
@@ -55,6 +59,16 @@ Dry run (preview only):
 ```bash
 php artisan media:migrate-to-spaces --dry-run
 ```
+
+### Transparent URLs (Default)
+
+By default, media URLs use your app domain (e.g. `https://get.partyhelp.com.au/media/...`) instead of raw S3/Spaces URLs. This keeps the storage backend transparent to end users—files are still stored in Spaces, but requests are proxied through Laravel.
+
+- **Enabled by default:** `MEDIA_USE_TRANSPARENT_URLS=true` (or omit—true is default)
+- **How it works:** `MediaServeController` streams files from Spaces on each request. Responses include `Cache-Control: public, max-age=86400` so browsers cache for 24 hours.
+- **Trade-offs:** Proxying adds latency and consumes your server’s bandwidth. For high-traffic sites, consider:
+  - Setting `MEDIA_USE_TRANSPARENT_URLS=false` to use direct Spaces URLs (users see `*.digitaloceanspaces.com` URLs), or
+  - Using a custom domain on Spaces (e.g. `media.get.partyhelp.com.au` CNAME to the bucket) so URLs stay under your domain without proxying.
 
 ### Local Development
 

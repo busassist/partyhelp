@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -56,7 +57,8 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Leads',
                 'Venues',
-                'Manage System Data',
+                NavigationGroup::make('Manage System Data')->collapsed(true),
+                NavigationGroup::make('Manage System Pricing')->collapsed(true),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

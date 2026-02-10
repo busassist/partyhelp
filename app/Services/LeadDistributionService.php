@@ -19,12 +19,10 @@ class LeadDistributionService
         $price = PricingMatrix::getPrice(
             $lead->occasion_type,
             $lead->guest_count,
-        );
+        ) ?? 29.99;
 
-        if ($price) {
-            $lead->base_price = $price;
-            $lead->current_price = $price;
-        }
+        $lead->base_price = $price;
+        $lead->current_price = $price;
 
         $lead->purchase_target = (int) SystemSetting::get('lead_fulfilment_threshold', 3);
         $lead->expires_at = now()->addHours(
