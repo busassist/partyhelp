@@ -44,6 +44,21 @@ class Partyhelp_Form_Settings
             'sanitize_callback' => 'esc_url_raw',
         ]);
 
+        register_setting('partyhelp_form', 'partyhelp_form_redirect_url', [
+            'type' => 'string',
+            'default' => '',
+            'sanitize_callback' => function ($value) {
+                $value = is_string($value) ? trim($value) : '';
+                if ($value === '') {
+                    return '';
+                }
+                if (isset($value[0]) && $value[0] === '/') {
+                    return '/' . ltrim($value, '/');
+                }
+                return esc_url_raw($value);
+            },
+        ]);
+
         register_setting('partyhelp_form', 'partyhelp_form_sync_frequency_minutes', [
             'type' => 'integer',
             'default' => 60,
@@ -135,6 +150,15 @@ class Partyhelp_Form_Settings
                                 value="<?php echo esc_attr(get_option('partyhelp_form_webhook_url', 'https://get.partyhelp.com.au/api/webhook/elementor-lead')); ?>"
                                 class="regular-text" />
                             <p class="description">Form submissions are sent to this URL</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="partyhelp_form_redirect_url">Redirect URL (after success)</label></th>
+                        <td>
+                            <input type="text" id="partyhelp_form_redirect_url" name="partyhelp_form_redirect_url"
+                                value="<?php echo esc_attr(get_option('partyhelp_form_redirect_url', '')); ?>"
+                                class="regular-text" placeholder="/thank-you" />
+                            <p class="description">Optional. Redirect to this URL after a successful submission (e.g. <code>/thank-you</code> or full URL). Leave blank to show the success message on the same page.</p>
                         </td>
                     </tr>
                     <tr>
@@ -282,6 +306,20 @@ class Partyhelp_Form_Settings
     public function get_webhook_url(): string
     {
         return get_option('partyhelp_form_webhook_url', 'https://get.partyhelp.com.au/api/webhook/elementor-lead');
+    }
+
+    /** Full URL to redirect to after successful form submit, or empty string if not set. */
+    public function get_redirect_url(): string
+    {
+        $url = get_option('partyhelp_form_redirect_url', '');
+        $url = is_string($url) ? trim($url) : '';
+        if ($url === '') {
+            return '';
+        }
+        if (isset($url[0]) && $url[0] === '/') {
+            return home_url($url);
+        }
+        return $url;
     }
 
     /**

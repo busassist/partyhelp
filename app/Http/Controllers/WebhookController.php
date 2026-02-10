@@ -19,7 +19,7 @@ class WebhookController extends Controller
         'occasion_type' => ['Select_the_type_of_occasion', 'occasion', 'Occasion_Type'],
         'guest_count' => ['Number_of_Guests', 'guest_count', 'guests'],
         'preferred_date' => ['Preferred_Date', 'preferred_date', 'date'],
-        'suburb' => ['Select_preferred_location', 'suburb', 'Suburb', 'location', 'locations'],
+        'suburb' => ['Select_preferred_location', 'suburb', 'Suburb', 'location', 'locations', 'other_location'],
         'room_styles' => ['room_styles', 'Room_Styles', 'room_styles_preference'],
         'budget_range' => ['Estimated_Budget', 'budget_range', 'Budget_Range', 'budget'],
         'special_requirements' => ['Other_details_about_the_party:', 'Other_details_about_the_party', 'special_requirements', 'Special_Requirements', 'notes', 'message'],
@@ -126,7 +126,7 @@ class WebhookController extends Controller
             $response = response()->json([
                 'success' => true,
                 'status' => 'success',
-                'message' => 'Lead received and queued for processing',
+                'message' => "We've got your details and will send venue details asap",
                 'lead_id' => $lead->id,
             ], 200);
 

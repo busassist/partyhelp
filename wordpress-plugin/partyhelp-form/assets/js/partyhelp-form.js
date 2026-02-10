@@ -159,8 +159,12 @@
       })
         .done(function (res) {
           if (res.success) {
+            if (res.data?.redirect_url) {
+              window.location.href = res.data.redirect_url;
+              return;
+            }
             $form[0].reset();
-            $msg.addClass('partyhelp-form-message-success').text(res.data?.message || 'Thank you! We will email you venue recommendations soon.');
+            $msg.addClass('partyhelp-form-message-success').text(res.data?.message || "We've got your details and will send venue details asap.");
           } else {
             const errs = res.data?.errors || {};
             const errMessages = [];

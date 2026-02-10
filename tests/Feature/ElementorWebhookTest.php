@@ -36,7 +36,7 @@ class ElementorWebhookTest extends TestCase
             ->assertJson([
                 'success' => true,
                 'status' => 'success',
-                'message' => 'Lead received and queued for processing',
+                'message' => "We've got your details and will send venue details asap",
             ])
             ->assertJsonStructure(['lead_id']);
 

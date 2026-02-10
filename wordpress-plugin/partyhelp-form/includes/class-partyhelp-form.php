@@ -118,7 +118,12 @@ class Partyhelp_Form
         }
 
         if ($code >= 200 && $code < 300 && ! empty($data['success'])) {
-            wp_send_json_success(['message' => $data['message'] ?? 'Thank you! We will email you venue recommendations soon.']);
+            $payload = ['message' => $data['message'] ?? "We've got your details and will send venue details asap."];
+            $redirect = $this->settings->get_redirect_url();
+            if ($redirect !== '') {
+                $payload['redirect_url'] = $redirect;
+            }
+            wp_send_json_success($payload);
         }
 
         $errors = $data['errors'] ?? [];
