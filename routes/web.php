@@ -3,7 +3,10 @@
 use App\Http\Controllers\FunctionPackController;
 use App\Http\Controllers\LeadPurchaseController;
 use App\Http\Controllers\MediaServeController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\VenueApprovalController;
+use App\Http\Controllers\VenueBillingController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,3 +35,20 @@ Route::get('/venue-approval/{venue}/reject', [VenueApprovalController::class, 'r
 Route::get('/media/{path}', [MediaServeController::class, 'show'])
     ->where('path', '.*')
     ->name('media.serve');
+
+// Stripe webhook (no CSRF)
+Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
+    ->name('stripe.webhook')
+    ->withoutMiddleware([VerifyCsrfToken::class]);
+
+// Venue billing (auth required)
+Route::middleware(['auth'])->prefix('venue')->name('venue.')->group(function () {
+    Route::post('billing/create-checkout-session', [VenueBillingController::class, 'createCheckoutSession'])
+        ->name('billing.create-checkout-session');
+    Route::get('billing/create-setup-session', [VenueBillingController::class, 'createSetupSession'])
+        ->name('billing.create-setup-session');
+    Route::post('billing/update-auto-topup', [VenueBillingController::class, 'updateAutoTopup'])
+        ->name('billing.update-auto-topup');
+    Route::post('billing/disable-auto-topup', [VenueBillingController::class, 'disableAutoTopup'])
+        ->name('billing.disable-auto-topup');
+});

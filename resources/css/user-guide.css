@@ -1,0 +1,185 @@
+/* User Guide page – typography and layout (no Tailwind typography plugin) */
+.fi-user-guide {
+    max-width: 56rem;
+    margin: 0 auto;
+    color: var(--fi-body-text-color, #374151);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+}
+
+/* Table of contents – 2-column panel with icons */
+.fi-user-guide-toc {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--fi-border-color, #e5e7eb);
+    background: var(--fi-body-card-bg, #f9fafb);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.dark .fi-user-guide-toc {
+    background: var(--fi-body-card-bg, rgba(255, 255, 255, 0.03));
+    border-color: var(--fi-border-color);
+}
+
+.fi-user-guide-toc__title {
+    margin: 0 0 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--fi-body-heading-color, #111827);
+}
+
+.fi-user-guide-toc__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+    .fi-user-guide-toc__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fi-user-guide-toc__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    color: var(--fi-primary-600, #6d28d9);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: background 0.15s ease, color 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.fi-user-guide-toc__item:hover {
+    background: var(--fi-primary-50, #f5f3ff);
+    color: var(--fi-primary-700, #5b21b6);
+}
+
+.dark .fi-user-guide-toc__item:hover {
+    background: rgba(124, 58, 237, 0.15);
+}
+
+.fi-user-guide-toc__icon {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--fi-primary-500, #7c3aed);
+}
+
+.fi-user-guide-toc__icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.fi-user-guide-toc__label {
+    line-height: 1.3;
+}
+
+.fi-user-guide .lead {
+    font-size: 1rem;
+    color: var(--fi-body-text-muted-color, #6b7280);
+    margin-bottom: 1.25rem;
+}
+
+.fi-user-guide section {
+    margin-bottom: 2rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0.5rem;
+    background: var(--fi-body-card-bg, #ffffff);
+    border: 1px solid var(--fi-border-color, #e5e7eb);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+}
+
+.dark .fi-user-guide section {
+    background: var(--fi-body-card-bg, rgba(255, 255, 255, 0.03));
+    border-color: var(--fi-border-color);
+}
+
+.fi-user-guide h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--fi-border-color, #e5e7eb);
+    color: var(--fi-body-heading-color, #111827);
+}
+
+.fi-user-guide h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.5rem;
+    color: var(--fi-body-heading-color, #111827);
+}
+
+.fi-user-guide p {
+    margin: 0 0 0.75rem;
+}
+
+.fi-user-guide ul {
+    margin: 0 0 0.75rem;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+}
+
+.fi-user-guide li {
+    margin-bottom: 0.35rem;
+}
+
+.fi-user-guide code {
+    font-size: 0.875em;
+    padding: 0.15em 0.4em;
+    border-radius: 0.25rem;
+    background: var(--fi-body-code-bg, #f3f4f6);
+    color: var(--fi-body-code-color, #1f2937);
+    font-family: ui-monospace, monospace;
+}
+
+.fi-user-guide a {
+    color: var(--fi-primary-500, #7c3aed);
+    text-decoration: none;
+}
+
+.fi-user-guide a:hover {
+    text-decoration: underline;
+}
+
+/* Dark mode */
+.dark .fi-user-guide {
+    color: var(--fi-body-text-color);
+}
+
+.dark .fi-user-guide .lead {
+    color: var(--fi-body-text-muted-color);
+}
+
+.dark .fi-user-guide h2,
+.dark .fi-user-guide h3 {
+    color: var(--fi-body-heading-color);
+}
+
+.dark .fi-user-guide code {
+    background: var(--fi-body-code-bg, rgba(255, 255, 255, 0.08));
+    color: var(--fi-body-code-color);
+}
+
+.dark .fi-user-guide a {
+    color: var(--fi-primary-400);
+}
+
+.dark .fi-user-guide-toc__item {
+    color: var(--fi-primary-400);
+}
+
+.dark .fi-user-guide-toc__item:hover {
+    color: var(--fi-primary-300);
+}
+
+.dark .fi-user-guide-toc__title {
+    color: var(--fi-body-heading-color);
+}
