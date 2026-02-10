@@ -31,4 +31,15 @@
             </span>
         </label>
     </div>
+
+    @if(config('services.stripe.mode') !== 'live')
+        <div class="rounded-xl border-2 border-amber-400 bg-amber-50 p-5 dark:border-amber-500 dark:bg-amber-950/30">
+            <p class="font-semibold text-amber-800 dark:text-amber-200">Warning: STRIPE Test Mode is enabled</p>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Use these details for test transactions:</p>
+            <ul class="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <li><strong class="text-gray-700 dark:text-gray-300">VISA</strong> — Card: 4242 4242 4242 4242 · Expiry: any future date · CVC: any number</li>
+                <li><strong class="text-gray-700 dark:text-gray-300">MASTERCARD</strong> — Card: 5555 5555 5555 4444 · Expiry: any future date · CVC: any number</li>
+            </ul>
+        </div>
+    @endif
 </div>
