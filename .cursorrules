@@ -40,13 +40,7 @@ Use **named semantic classes** for common elements so styling can be controlled 
 ## Development Environment
 - All work happens on **Laravel Forge via Remote SSH** to Digital Ocean.
 - Never set up local Mac development unless explicitly instructed.
-- Commit to GitHub regularly after each meaningful change.
-
-## Email & SendGrid – Commit Safeguard (MANDATORY)
-**Email-related work must never be lost.** After any change to any of the following, **commit and push to the remote** before ending the session or moving on to unrelated work:
-- **Paths:** `app/Mail/`, `app/Services/*SendGrid*`, `app/Services/*Mail*`, `resources/views/emails/`, `app/Models/EmailTemplate.php`, `app/Filament/Resources/EmailTemplate*`, `app/Filament/Resources/EmailLog*`, `config/partyhelp.php` (email_template_slots, *_email config), `config/services.php` (sendgrid), `database/seeders/EmailTemplateSeeder.php`, `docs/*EMAIL*`, `docs/*SENDGRID*`
-- **Rule:** If you touch any of the above, treat "commit + push" as part of the task. Do not leave email/SendGrid changes only in the working tree.
-- **Reminder:** A previous incident required recovering email work from a backup; this rule exists so that never happens again.
+- **Commit after every change:** Commit and push to the remote after each meaningful change (any file), not only at the end of a session. Do not leave work only in the working tree. A previous incident where email work was lost (recovered from backup) led to this rule; apply it to all changes so nothing is ever lost again.
 
 ## Key Documents
 - PRD: `docs/Partyhelp PRD.md`
