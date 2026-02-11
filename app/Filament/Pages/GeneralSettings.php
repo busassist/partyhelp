@@ -2,11 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Console\Commands\ProcessQueueCommand;
 use App\Filament\Livewire\DebugLogViewer;
 use App\Models\SystemSetting;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Artisan;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -85,6 +87,13 @@ class GeneralSettings extends Page
                                             ->helperText('Turn on to record lead received, venues matched and emails sent. Stays on until you turn it off.'),
                                     ]),
                                 Section::make('Debug log')
+                                    ->headerActions([
+                                        Action::make('runQueueNow')
+                                            ->label('Run queue now')
+                                            ->icon('heroicon-o-play')
+                                            ->action(fn () => $this->runQueueNow())
+                                            ->requiresConfirmation(false),
+                                    ])
                                     ->schema([
                                         Livewire::make(DebugLogViewer::class),
                                     ]),
@@ -120,6 +129,27 @@ class GeneralSettings extends Page
             ->components([
                 $this->getFormContentComponent(),
             ]);
+    }
+
+    public function runQueueNow(): void
+    {
+        $exitCode = Artisan::call('queue:process', ['--max-time' => 60]);
+
+        if ($exitCode === ProcessQueueCommand::EXIT_ALREADY_RUNNING) {
+            Notification::make()
+                ->warning()
+                ->title('Queue already running')
+                ->body('A queue processor is already running. Wait for it to finish or try again shortly.')
+                ->send();
+
+            return;
+        }
+
+        Notification::make()
+            ->success()
+            ->title('Queue processed')
+            ->body('Pending jobs have been processed (or none were queued).')
+            ->send();
     }
 
     public function save(): void
