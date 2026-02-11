@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Livewire\DebugLogViewer;
 use App\Models\SystemSetting;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -10,7 +11,10 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -42,6 +46,7 @@ class GeneralSettings extends Page
                 'lead_max_matches',
                 config('partyhelp.lead.max_matches', 30)
             ),
+            'debug_logging_enabled' => SystemSetting::get('debug_logging_enabled', false),
         ];
         $this->form->fill($this->data);
     }
@@ -51,16 +56,39 @@ class GeneralSettings extends Page
         return $schema
             ->statePath('data')
             ->components([
-                Section::make('Lead matching')
-                    ->description('Control how many venues receive each lead opportunity.')
-                    ->schema([
-                        \Filament\Forms\Components\TextInput::make('lead_max_matches')
-                            ->label('Max venues matched per lead')
-                            ->helperText('Top N venues by match score receive the lead opportunity (default 30).')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(100)
-                            ->required(),
+                Tabs::make('Settings')
+                    ->persistTabInQueryString('tab')
+                    ->tabs([
+                        Tab::make('Settings')
+                            ->id('settings')
+                            ->schema([
+                                Section::make('Lead matching')
+                                    ->description('Control how many venues receive each lead opportunity.')
+                                    ->schema([
+                                        \Filament\Forms\Components\TextInput::make('lead_max_matches')
+                                            ->label('Max venues matched per lead')
+                                            ->helperText('Top N venues by match score receive the lead opportunity (default 30).')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(100)
+                                            ->required(),
+                                    ]),
+                            ]),
+                        Tab::make('Debug')
+                            ->id('debug')
+                            ->schema([
+                                Section::make('Debug logging')
+                                    ->description('When enabled, lead received, venue matches and emails sent are logged below.')
+                                    ->schema([
+                                        \Filament\Forms\Components\Toggle::make('debug_logging_enabled')
+                                            ->label('Enable debug logging')
+                                            ->helperText('Turn on to record lead received, venues matched and emails sent. Stays on until you turn it off.'),
+                                    ]),
+                                Section::make('Debug log')
+                                    ->schema([
+                                        Livewire::make(DebugLogViewer::class),
+                                    ]),
+                            ]),
                     ]),
             ]);
     }
@@ -103,6 +131,13 @@ class GeneralSettings extends Page
             (int) ($data['lead_max_matches'] ?? 30),
             'leads',
             'integer'
+        );
+
+        SystemSetting::set(
+            'debug_logging_enabled',
+            ! empty($data['debug_logging_enabled']),
+            'general',
+            'boolean'
         );
 
         Notification::make()

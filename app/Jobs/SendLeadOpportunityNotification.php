@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Lead;
 use App\Models\Venue;
+use App\Services\DebugLogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,6 +32,11 @@ class SendLeadOpportunityNotification implements ShouldQueue
             'occasion' => $this->lead->occasion_type,
             'suburb' => $this->lead->suburb,
             'price' => $this->lead->current_price,
+        ]);
+
+        DebugLogService::logEmailSent('lead_opportunity', [
+            'lead_id' => $this->lead->id,
+            'venue' => $this->venue->business_name,
         ]);
     }
 }

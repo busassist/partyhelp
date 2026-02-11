@@ -7,6 +7,7 @@ use App\Models\Lead;
 use App\Models\LeadMatch;
 use App\Models\PricingMatrix;
 use App\Models\SystemSetting;
+use App\Services\DebugLogService;
 
 class LeadDistributionService
 {
@@ -35,6 +36,7 @@ class LeadDistributionService
             $lead->status = 'new';
             $lead->save();
             $this->notifyAdminLowMatches($lead, 0);
+            DebugLogService::logVenuesMatched($lead, 0, []);
 
             return;
         }
@@ -42,6 +44,9 @@ class LeadDistributionService
         if ($matches->count() < 10) {
             $this->notifyAdminLowMatches($lead, $matches->count());
         }
+
+        $venueNames = $matches->pluck('venue.business_name')->filter();
+        DebugLogService::logVenuesMatched($lead, $matches->count(), $venueNames);
 
         foreach ($matches as $matchData) {
             LeadMatch::create([

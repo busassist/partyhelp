@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessNewLead;
 use App\Models\Lead;
+use App\Services\DebugLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -117,6 +118,8 @@ class WebhookController extends Controller
                 'status' => 'new',
                 'webhook_payload' => $raw,
             ]);
+
+            DebugLogService::logLeadReceived($lead);
 
             ProcessNewLead::dispatch($lead);
 
