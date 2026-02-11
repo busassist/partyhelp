@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
@@ -57,6 +58,26 @@ class FormConfirmationEmail extends Mailable
             return new Content(view: 'emails.sendgrid-dynamic-placeholder');
         }
 
-        return new Content(view: 'emails.form-confirmation');
+        return new Content(view: 'emails.form-confirmation', with: $this->bladeViewData());
+    }
+
+    /** @return array<string, mixed> */
+    private function bladeViewData(): array
+    {
+        $template = EmailTemplate::where('key', 'form_confirmation')->first();
+        $slots = $template?->content_slots ?? [];
+        $data = [
+            'customerName' => $this->customerName,
+            'websiteUrl' => $this->websiteUrl,
+            'viewInBrowserUrl' => $this->viewInBrowserUrl,
+            'unsubscribeUrl' => $this->unsubscribeUrl,
+        ];
+        foreach ($slots as $key => $value) {
+            if (is_string($value)) {
+                $data[$key] = str_replace('{{websiteUrl}}', $this->websiteUrl, $value);
+            }
+        }
+
+        return $data;
     }
 }

@@ -20,6 +20,7 @@ class SendLeadOpportunityNotification implements ShouldQueue
     public function __construct(
         public Lead $lead,
         public Venue $venue,
+        public int $discountPercent = 0,
     ) {}
 
     public function handle(): void
@@ -40,7 +41,7 @@ class SendLeadOpportunityNotification implements ShouldQueue
 
         Mail::mailer('sendgrid')
             ->to($to)
-            ->send(new LeadOpportunityEmail($this->lead, $this->venue));
+            ->send(new LeadOpportunityEmail($this->lead, $this->venue, $this->discountPercent));
 
         Log::info('Lead opportunity notification sent via SendGrid', [
             'lead_id' => $this->lead->id,

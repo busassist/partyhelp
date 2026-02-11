@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\SendLeadOpportunityNotification;
+use App\Jobs\SendLowMatchAlertEmail;
 use App\Models\Lead;
 use App\Models\LeadMatch;
 use App\Models\PricingMatrix;
@@ -77,8 +78,9 @@ class LeadDistributionService
 
     private function notifyAdminLowMatches(Lead $lead, int $matchCount): void
     {
-        // TODO: Send email + SMS alert to admin
-        // For now, log it
         logger()->warning("Low venue matches for lead #{$lead->id}: {$matchCount} matches found");
+        if (config('partyhelp.admin_email')) {
+            SendLowMatchAlertEmail::dispatch($lead, $matchCount);
+        }
     }
 }

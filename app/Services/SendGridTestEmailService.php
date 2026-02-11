@@ -103,7 +103,7 @@ class SendGridTestEmailService
                 'occasion' => '21st Birthday',
                 'guestCount' => '60',
             ],
-            'lead_opportunity', 'lead_opportunity_10pct', 'lead_opportunity_20pct' => [
+            'lead_opportunity' => [
                 'occasion' => '21st Birthday',
                 'suburb' => 'Richmond',
                 'guestCount' => '60',
@@ -114,6 +114,19 @@ class SendGridTestEmailService
                 'creditBalance' => '150.00',
                 'topUpUrl' => $appUrl . '/venue/billing?tab=buy-credits',
                 'viewInBrowserUrl' => $appUrl . '/emails/view/test',
+            ],
+            'lead_opportunity_discount' => [
+                'occasion' => '21st Birthday',
+                'suburb' => 'Richmond',
+                'guestCount' => '60',
+                'preferredDate' => '2026-03-15',
+                'roomStyles' => 'Function Room, Bar',
+                'price' => '10.80',
+                'purchaseUrl' => $this->sampleLeadPurchaseUrl($appUrl),
+                'creditBalance' => '150.00',
+                'topUpUrl' => $appUrl . '/venue/billing?tab=buy-credits',
+                'viewInBrowserUrl' => $appUrl . '/emails/view/test',
+                'discountPercent' => '10',
             ],
             'lead_no_longer_available' => [
                 'suburb' => 'Richmond',

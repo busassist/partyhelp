@@ -30,21 +30,29 @@ class PricingMatrixSeeder extends Seeder
         'other' => [6, 10, 15, 20],
     ];
 
+    /**
+     * Seeds a price row for every occasion type × guest bracket.
+     * Run after GuestBracketSeeder. To refresh: php artisan db:seed --class=PricingMatrixSeeder
+     */
     public function run(): void
     {
         $brackets = GuestBracket::where('is_active', true)->orderBy('sort_order')->get();
         if ($brackets->isEmpty()) {
+            $this->command?->warn('PricingMatrixSeeder: No guest brackets found. Run GuestBracketSeeder first.');
+
             return;
         }
 
         $occasionTypes = array_keys(config('partyhelp.occasion_types', []));
+        $defaultPrices = self::PRICES_BY_OCCASION['default'];
 
         foreach ($occasionTypes as $occasionType) {
             $prices = self::PRICES_BY_OCCASION[$occasionType]
-                ?? self::PRICES_BY_OCCASION['default'];
+                ?? $defaultPrices;
+            $prices = array_values($prices);
 
             foreach ($brackets as $index => $bracket) {
-                $price = $prices[$index] ?? $prices[0];
+                $price = $prices[$index] ?? $prices[0] ?? $defaultPrices[0];
 
                 PricingMatrix::updateOrCreate(
                     [

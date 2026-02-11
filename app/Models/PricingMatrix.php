@@ -30,7 +30,9 @@ class PricingMatrix extends Model
     {
         $bracket = GuestBracket::where('is_active', true)
             ->where('guest_min', '<=', $guestCount)
-            ->where('guest_max', '>=', $guestCount)
+            ->where(function ($q) use ($guestCount) {
+                $q->whereNull('guest_max')->orWhere('guest_max', '>=', $guestCount);
+            })
             ->orderBy('sort_order')
             ->first();
 

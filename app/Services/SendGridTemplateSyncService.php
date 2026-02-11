@@ -69,8 +69,7 @@ class SendGridTemplateSyncService
             'shortlist_check' => 'emails.shortlist-check',
             'additional_services_lead_expiry' => 'emails.additional-services-lead-expiry',
             'lead_opportunity' => 'emails.lead-opportunity',
-            'lead_opportunity_10pct' => 'emails.lead-opportunity-discount',
-            'lead_opportunity_20pct' => 'emails.lead-opportunity-discount',
+            'lead_opportunity_discount' => 'emails.lead-opportunity-discount',
             'lead_no_longer_available' => 'emails.lead-no-longer-available',
             'function_pack' => 'emails.function-pack',
             'failed_topup_notification' => 'emails.failed-topup-notification',
@@ -107,7 +106,7 @@ class SendGridTemplateSyncService
         return match ($key) {
             'form_confirmation', 'venue_introduction' => $base,
             'no_few_responses_prompt', 'shortlist_check', 'additional_services_lead_expiry' => $common + ['occasion' => '{{occasion}}', 'guestCount' => '{{guestCount}}'],
-            'lead_opportunity', 'lead_opportunity_10pct', 'lead_opportunity_20pct' => [
+            'lead_opportunity' => [
                 'occasion' => '{{occasion}}',
                 'suburb' => '{{suburb}}',
                 'guestCount' => '{{guestCount}}',
@@ -118,6 +117,19 @@ class SendGridTemplateSyncService
                 'creditBalance' => '{{creditBalance}}',
                 'topUpUrl' => '{{topUpUrl}}',
                 'viewInBrowserUrl' => '{{viewInBrowserUrl}}',
+            ],
+            'lead_opportunity_discount' => [
+                'occasion' => '{{occasion}}',
+                'suburb' => '{{suburb}}',
+                'guestCount' => '{{guestCount}}',
+                'preferredDate' => '{{preferredDate}}',
+                'roomStyles' => '{{roomStyles}}',
+                'price' => '{{price}}',
+                'purchaseUrl' => '{{purchaseUrl}}',
+                'creditBalance' => '{{creditBalance}}',
+                'topUpUrl' => '{{topUpUrl}}',
+                'viewInBrowserUrl' => '{{viewInBrowserUrl}}',
+                'discountPercent' => '{{discountPercent}}',
             ],
             'lead_no_longer_available' => [
                 'suburb' => '{{suburb}}',

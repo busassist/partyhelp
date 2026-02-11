@@ -1,11 +1,11 @@
-# Email Templates Spec (14 templates)
+# Email Templates Spec (13 templates)
 
 PRD Section 6.4. Templates 1–2 are built; 3–14 are scaffolded here with structure, subject, slots, and dynamic data.
 
 **Conventions:** Admin-editable text is stored in `content_slots` per template. System data is passed at send time as `dynamic_template_data`. Subject lines may include Handlebars e.g. `{{occasion}}`, `{{suburb}}`, `{{price}}`.
 
 **Venue link URLs (when sending, not test data):**
-- **purchaseUrl** (lead_opportunity, lead_opportunity_10pct, lead_opportunity_20pct): Use signed route so the CTA works. In code: `$lead->signedPurchaseUrlFor($venue)` (resolves to `/lead/{id}/purchase/{venueId}` with signature).
+- **purchaseUrl** (lead_opportunity, lead_opportunity_discount): Use signed route so the CTA works. In code: `$lead->signedPurchaseUrlFor($venue)` (resolves to `/lead/{id}/purchase/{venueId}` with signature).
 - **dashboardUrl** (lead_no_longer_available): Venue “Available Leads” list is at `{app.url}/venue/available-leads` (Filament resource index).
 - **topUpUrl** (lead opportunity templates): “Buy Credits” tab on billing – use `{app.url}/venue/billing?tab=buy-credits`. (Billing page persists tab in query string; no `/venue/billing/top-up` route.)
 - **updatePaymentUrl** (failed_topup_notification): “Payment Methods” tab – use `{app.url}/venue/billing?tab=payment-methods`.
@@ -48,12 +48,11 @@ PRD Section 6.4. Templates 1–2 are built; 3–14 are scaffolded here with stru
 | # | Key | Trigger | Timing |
 |---|-----|---------|--------|
 | 6 | lead_opportunity | Lead distributed | Immediate |
-| 7 | lead_opportunity_10pct | Discount escalation | +24 hours |
-| 8 | lead_opportunity_20pct | Discount escalation | +48 hours |
-| 9 | lead_no_longer_available | Fulfilled or expired | When threshold/72h |
-| 10 | function_pack | Venue purchases lead | Immediate |
-| 11 | failed_topup_notification | Auto top-up fails | Immediate |
-| 12 | invoice_receipt | Payment or top-up | After successful payment |
+| 7 | lead_opportunity_discount | Discount escalation | Per admin-defined tier (hours/mins after distribution) |
+| 8 | lead_no_longer_available | Fulfilled or expired | When threshold/72h |
+| 9 | function_pack | Venue purchases lead | Immediate |
+| 10 | failed_topup_notification | Auto top-up fails | Immediate |
+| 11 | invoice_receipt | Payment or top-up | After successful payment |
 
 ### 6. lead_opportunity (PRD 6.1)
 - **Subject:** `New {{occasion}} Lead - {{suburb}} - {{guestCount}} guests - ${{price}}`
@@ -61,37 +60,31 @@ PRD Section 6.4. Templates 1–2 are built; 3–14 are scaffolded here with stru
 - **Dynamic:** occasion, suburb, guestCount, preferredDate, roomStyles, price, purchaseUrl, creditBalance, topUpUrl, viewInBrowserUrl
 - **Structure:** Logo, lead summary (occasion, guests, date, suburb, room style, price), CTA "Purchase This Lead - ${{price}}", footer credit balance + top-up link.
 
-### 7. lead_opportunity_10pct
-- **Subject:** Same as 6 with discount note, e.g. `New {{occasion}} Lead - {{suburb}} - 10% off - ${{price}}`
-- **Slots:** Same as 6 + discount_intro_text (e.g. "This lead is now 10% off for the next 24 hours.")
-- **Dynamic:** As 6 + discountPercent (10), newPrice
-- **Structure:** As 6 with discount banner/intro.
+### 7. lead_opportunity_discount (any discount tier)
+- **Subject:** Same as 6 with discount note, e.g. `New {{occasion}} Lead - {{suburb}} - {{discountPercent}}% off - ${{price}}`
+- **Slots:** intro_text, discount_intro_text, cta_button_label, footer_balance_text, topup_link_text. Use `{{discountPercent}}` in copy for the tier (e.g. "This lead is now {{discountPercent}}% off.")
+- **Dynamic:** As 6 + discountPercent (number, e.g. 10, 15, 20 – from admin Discount Settings).
+- **Structure:** As 6 with discount banner/intro. One template serves all admin-configured discount tiers.
 
-### 8. lead_opportunity_20pct
-- **Subject:** Same pattern, 20% off.
-- **Slots:** Same as 7, discount_intro_text for 20%.
-- **Dynamic:** As 7, discountPercent (20).
-- **Structure:** As 7.
-
-### 9. lead_no_longer_available
+### 8. lead_no_longer_available
 - **Subject:** `Lead no longer available - {{suburb}}`
 - **Slots:** header_text, body_text, cta_text
 - **Dynamic:** suburb, occasion, reason (fulfilled|expired), dashboardUrl, viewInBrowserUrl
 - **Structure:** Short message: lead fulfilled or expired, CTA to view other leads.
 
-### 10. function_pack
+### 9. function_pack
 - **Subject:** Admin-editable (e.g. "Your function pack is ready to download")
 - **Slots:** header_text, intro_text, download_button_label, closing_text
 - **Dynamic:** venueName, customerName (or lead ref), downloadUrl, expiryNote, viewInBrowserUrl
 - **Structure:** Logo, header, intro, prominent download link/button, closing.
 
-### 11. failed_topup_notification
+### 10. failed_topup_notification
 - **Subject:** Admin-editable (e.g. "Your Partyhelp credit top-up could not be processed")
 - **Slots:** header_text, intro_text, cta_button_label, closing_text
 - **Dynamic:** venueName, attemptedAmount, failureReason, updatePaymentUrl, viewInBrowserUrl
 - **Structure:** Logo, header, intro, reason, CTA to update payment method.
 
-### 12. invoice_receipt
+### 11. invoice_receipt
 - **Subject:** `Your Partyhelp {{documentType}} #{{invoiceNumber}}`
 - **Slots:** header_text, intro_text, view_statement_label, closing_text
 - **Dynamic:** venueName, documentType (Invoice|Receipt), invoiceNumber, amount, description, viewUrl, viewInBrowserUrl
@@ -103,16 +96,16 @@ PRD Section 6.4. Templates 1–2 are built; 3–14 are scaffolded here with stru
 
 | # | Key | Trigger | Timing |
 |---|-----|---------|--------|
-| 13 | new_venue_for_approval | Venue registers | Immediate |
-| 14 | low_match_alert | <10 venues match | Immediate |
+| 12 | new_venue_for_approval | Venue registers | Immediate |
+| 13 | low_match_alert | <10 venues match | Immediate |
 
-### 13. new_venue_for_approval (PRD 8.1)
+### 12. new_venue_for_approval (PRD 8.1)
 - **Subject:** `New venue pending approval: {{venueName}}`
 - **Slots:** header_text, intro_text, review_button_label, approve_button_label, reject_button_label
 - **Dynamic:** venueName, businessName, contactName, email, phone, reviewUrl, approveUrl, rejectUrl, viewInBrowserUrl
 - **Structure:** Logo, header, venue summary, three CTAs: Review vendor, Approve, Reject.
 
-### 14. low_match_alert (PRD 9.1)
+### 13. low_match_alert (PRD 9.1)
 - **Subject:** `Low-match alert: {{matchCount}} venues for lead in {{suburb}}`
 - **Slots:** header_text, intro_text, view_lead_label
 - **Dynamic:** suburb, occasion, guestCount, matchCount, leadId, dashboardLeadUrl, viewInBrowserUrl

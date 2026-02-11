@@ -159,16 +159,9 @@ return [
             'footer_balance_text' => 'Footer balance text',
             'topup_link_text' => 'Top-up link text',
         ],
-        'lead_opportunity_10pct' => [
-            'intro_text' => 'Intro text',
-            'discount_intro_text' => 'Discount intro (10%)',
-            'cta_button_label' => 'CTA button label',
-            'footer_balance_text' => 'Footer balance text',
-            'topup_link_text' => 'Top-up link text',
-        ],
-        'lead_opportunity_20pct' => [
-            'intro_text' => 'Intro text',
-            'discount_intro_text' => 'Discount intro (20%)',
+        'lead_opportunity_discount' => [
+            'intro_text' => 'Intro text (use {{discountPercent}} for the tier %)',
+            'discount_intro_text' => 'Discount intro (use {{discountPercent}})',
             'cta_button_label' => 'CTA button label',
             'footer_balance_text' => 'Footer balance text',
             'topup_link_text' => 'Top-up link text',

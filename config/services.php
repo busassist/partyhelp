@@ -29,6 +29,7 @@ return [
             'form_confirmation' => env('SENDGRID_TEMPLATE_FORM_CONFIRMATION'),
             'invoice_receipt' => env('SENDGRID_TEMPLATE_INVOICE_RECEIPT'),
             'lead_opportunity' => env('SENDGRID_TEMPLATE_LEAD_OPPORTUNITY'),
+            'lead_opportunity_discount' => env('SENDGRID_TEMPLATE_LEAD_OPPORTUNITY_DISCOUNT'),
         ],
     ],
 

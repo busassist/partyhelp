@@ -3,8 +3,8 @@
     $logoUrl = asset('images/brand/ph-logo-white.png');
     $introText = $intro_text ?? 'This lead is still available – now at a discount.';
     $discountIntroText = $discount_intro_text ?? 'Purchase to receive full customer details.';
-    $ctaButtonLabel = $cta_button_label ?? 'Purchase This Lead - ${{price}}';
-    $footerBalanceText = $footer_balance_text ?? 'Your credit balance: ${{creditBalance}}';
+    $ctaButtonLabel = $cta_button_label ?? ('Purchase This Lead - $' . ($price ?? '—'));
+    $footerBalanceText = $footer_balance_text ?? ('Your credit balance: $' . ($creditBalance ?? '0.00'));
     $topupLinkText = $topup_link_text ?? 'Top up credits';
 @endphp
 <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#0a031a;font-family:Inter,Arial,sans-serif;color:#f1f5f9;">

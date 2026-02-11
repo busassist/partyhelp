@@ -53,6 +53,28 @@ class Lead extends Model
         return "{$this->first_name} {$this->last_name}";
     }
 
+    /**
+     * Guest count for display (e.g. in emails). Uses raw webhook value when it
+     * was a range (e.g. "46-60"); otherwise the stored numeric guest_count.
+     */
+    public function getGuestCountDisplayAttribute(): string
+    {
+        $raw = $this->webhook_payload;
+        if (is_array($raw)) {
+            $keys = ['Number_of_Guests', 'guest_count', 'guests'];
+            foreach ($keys as $key) {
+                if (isset($raw[$key]) && is_string($raw[$key]) && trim($raw[$key]) !== '') {
+                    $val = trim($raw[$key]);
+                    if (preg_match('/^\d+\s*-\s*\d+$/', $val)) {
+                        return $val;
+                    }
+                }
+            }
+        }
+
+        return (string) (int) $this->guest_count;
+    }
+
     /** Signed URL for a venue to view/purchase this lead (used in lead opportunity emails). */
     public function signedPurchaseUrlFor(Venue $venue): string
     {

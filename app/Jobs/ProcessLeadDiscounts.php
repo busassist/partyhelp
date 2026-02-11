@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\SendLeadOpportunityNotification;
 use App\Models\DiscountSetting;
 use App\Models\Lead;
 use Illuminate\Bus\Queueable;
@@ -41,10 +42,25 @@ class ProcessLeadDiscounts implements ShouldQueue
                 $lead->save();
 
                 if ($setting->resend_notification) {
-                    // TODO: Re-send opportunity to matched venues
+                    $this->resendToMatchedVenues($lead, (int) $setting->discount_percent);
                     Log::info("Discount applied to lead #{$lead->id}: {$setting->discount_percent}%");
                 }
             }
         }
+    }
+
+    /** Send discount opportunity email to matched venues that have not purchased this lead. */
+    private function resendToMatchedVenues(Lead $lead, int $discountPercent): void
+    {
+        $purchasedVenueIds = $lead->purchases()->pluck('venue_id')->all();
+        $lead->matches()
+            ->with('venue')
+            ->whereNotIn('venue_id', $purchasedVenueIds)
+            ->get()
+            ->each(function ($match) use ($lead, $discountPercent) {
+                if ($match->venue && $match->venue->contact_email) {
+                    SendLeadOpportunityNotification::dispatch($lead, $match->venue, $discountPercent);
+                }
+            });
     }
 }
