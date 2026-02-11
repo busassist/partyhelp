@@ -21,7 +21,7 @@
                                 @break
                             @case('email_sent')
                                 <span class="text-gray-700 dark:text-gray-300">
-                                    Email sent: {{ $entry->payload['email'] ?? '—' }}{!! isset($entry->payload['venue']) ? ' (venue: ' . e($entry->payload['venue']) . ')' : '' !!}
+                                    Email sent: {{ $entry->payload['email'] ?? '—' }}{!! isset($entry->payload['venues']) ? ' (venues: ' . e($entry->payload['venues']) . ')' : (isset($entry->payload['venue']) ? ' (venue: ' . e($entry->payload['venue']) . ')' : '') !!}
                                 </span>
                                 @break
                             @default

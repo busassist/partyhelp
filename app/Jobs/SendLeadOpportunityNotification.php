@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\Lead;
 use App\Models\Venue;
-use App\Services\DebugLogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,7 +22,12 @@ class SendLeadOpportunityNotification implements ShouldQueue
 
     public function handle(): void
     {
-        // TODO: Implement SendGrid email. When sending, pass: purchaseUrl = $this->lead->signedPurchaseUrlFor($this->venue);
+        if ($this->venue->isSeedEmail()) {
+            return;
+        }
+
+        // TODO: Implement SendGrid email (not implemented yet — no API calls are made; SendGrid activity will appear once this is done).
+        // When sending, pass: purchaseUrl = $this->lead->signedPurchaseUrlFor($this->venue);
         // topUpUrl = config('app.url') . '/venue/billing?tab=buy-credits' (Buy Credits tab). Same for lead_opportunity_10pct / lead_opportunity_20pct.
         // TODO: Implement SMS via Twilio/MessageMedia
         Log::info("Lead opportunity notification", [
@@ -32,11 +36,6 @@ class SendLeadOpportunityNotification implements ShouldQueue
             'occasion' => $this->lead->occasion_type,
             'suburb' => $this->lead->suburb,
             'price' => $this->lead->current_price,
-        ]);
-
-        DebugLogService::logEmailSent('lead_opportunity', [
-            'lead_id' => $this->lead->id,
-            'venue' => $this->venue->business_name,
         ]);
     }
 }

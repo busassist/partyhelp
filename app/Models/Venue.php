@@ -77,6 +77,13 @@ class Venue extends Model
         return $this->hasMany(CreditTransaction::class);
     }
 
+    public function isSeedEmail(): bool
+    {
+        $email = $this->contact_email ?? '';
+
+        return str_contains(strtolower($email), '@seed.partyhelp.com.au');
+    }
+
     public function venueStyles(): BelongsToMany
     {
         return $this->belongsToMany(VenueStyle::class, 'venue_venue_style');

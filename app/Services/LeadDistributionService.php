@@ -63,6 +63,11 @@ class LeadDistributionService
             );
         }
 
+        DebugLogService::logEmailSent('lead_opportunity', [
+            'lead_id' => $lead->id,
+            'venues' => $venueNames->implode(', '),
+        ]);
+
         $lead->status = 'distributed';
         $lead->distributed_at = now();
         $lead->save();
