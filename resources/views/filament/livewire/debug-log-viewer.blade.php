@@ -1,16 +1,5 @@
 <div class="space-y-2">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Recent debug log (last 50)</h4>
-        <button
-            type="button"
-            wire:click="runQueueNow"
-            wire:loading.attr="disabled"
-            class="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-70 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-500 dark:focus:ring-offset-2 dark:bg-gray-700 dark:hover:bg-gray-600"
-        >
-            <span wire:loading.remove wire:target="runQueueNow">Run queue now</span>
-            <span wire:loading wire:target="runQueueNow">Running…</span>
-        </button>
-    </div>
+    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Recent debug log (last 50)</h4>
     @if ($entries->isEmpty())
         <p class="text-sm text-gray-500 dark:text-gray-400">No log entries yet. Enable debug logging and process leads to see activity.</p>
     @else

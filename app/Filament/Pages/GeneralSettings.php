@@ -91,6 +91,7 @@ class GeneralSettings extends Page
                                         Action::make('runQueueNow')
                                             ->label('Run queue now')
                                             ->icon('heroicon-o-play')
+                                            ->color('primary')
                                             ->action(fn () => $this->runQueueNow())
                                             ->requiresConfirmation(false),
                                     ])
