@@ -63,9 +63,11 @@ class LeadDistributionService
             );
         }
 
+        $venuesList = $venueNames->map(fn (string $name) => "venue: {$name}")->implode(', ');
         DebugLogService::logEmailSent('lead_opportunity', [
             'lead_id' => $lead->id,
-            'venues' => $venueNames->implode(', '),
+            'lead_email' => $lead->email,
+            'venues' => $venuesList,
         ]);
 
         $lead->status = 'distributed';

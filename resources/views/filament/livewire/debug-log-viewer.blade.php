@@ -20,8 +20,19 @@
                                 </span>
                                 @break
                             @case('email_sent')
+                                @php
+                                    $emailType = $entry->payload['email'] ?? '—';
+                                    $leadEmail = $entry->payload['lead_email'] ?? null;
+                                    $venues = $entry->payload['venues'] ?? null;
+                                    $venue = $entry->payload['venue'] ?? null;
+                                    $emailSentSuffix = $leadEmail !== null && $venues !== null
+                                        ? ' for ' . e($leadEmail) . ' to (' . e($venues) . ')'
+                                        : ($leadEmail !== null && $venue !== null
+                                            ? ' for ' . e($leadEmail) . ' to (venue: ' . e($venue) . ')'
+                                            : ($venues !== null ? ' (' . e($venues) . ')' : ($venue !== null ? ' (venue: ' . e($venue) . ')' : '')));
+                                @endphp
                                 <span class="text-gray-700 dark:text-gray-300">
-                                    Email sent: {{ $entry->payload['email'] ?? '—' }}{!! isset($entry->payload['venues']) ? ' (venues: ' . e($entry->payload['venues']) . ')' : (isset($entry->payload['venue']) ? ' (venue: ' . e($entry->payload['venue']) . ')' : '') !!}
+                                    Email sent: {{ $emailType }}{!! $emailSentSuffix !!}
                                 </span>
                                 @break
                             @default
