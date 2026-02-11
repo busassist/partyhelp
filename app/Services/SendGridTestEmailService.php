@@ -157,6 +157,15 @@ class SendGridTestEmailService
                 'viewUrl' => $appUrl . '/venue/billing',
                 'viewInBrowserUrl' => $appUrl . '/emails/view/test',
             ],
+            'venue_set_password' => [
+                'venueName' => 'Sample Venue',
+                'setPasswordUrl' => $appUrl . '/venue/set-password?token=sample&email=venue@example.com',
+                'appUrl' => $appUrl,
+            ],
+            'venue_registration_approved' => [
+                'venueName' => 'Sample Venue',
+                'loginUrl' => $appUrl . '/venue/login',
+            ],
             'new_venue_for_approval' => [
                 'venueName' => 'New Sample Venue',
                 'businessName' => 'New Sample Venue Pty Ltd',

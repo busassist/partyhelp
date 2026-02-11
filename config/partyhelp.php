@@ -189,6 +189,16 @@ return [
             'view_statement_label' => 'View statement label',
             'closing_text' => 'Closing message',
         ],
+        'venue_set_password' => [
+            'intro_text' => 'Intro text (use {{venueName}})',
+            'cta_button_label' => 'CTA button label',
+            'expiry_note' => 'Expiry note',
+        ],
+        'venue_registration_approved' => [
+            'header_text' => 'Header text',
+            'intro_text' => 'Intro text',
+            'cta_button_label' => 'CTA button label',
+        ],
         'new_venue_for_approval' => [
             'header_text' => 'Header text',
             'intro_text' => 'Intro text',

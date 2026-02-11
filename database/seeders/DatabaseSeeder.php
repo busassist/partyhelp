@@ -75,6 +75,7 @@ class DatabaseSeeder extends Seeder
             ['lead_expiry_hours', '72', 'leads', 'integer'],
             ['lead_max_matches', '30', 'leads', 'integer'],
             ['debug_logging_enabled', '0', 'general', 'boolean'],
+            ['new_venues_email_password', '0', 'general', 'boolean'],
             ['admin_email', 'admin@partyhelp.com.au', 'general', 'string'],
             ['min_credit_balance', '100', 'credits', 'float'],
         ];

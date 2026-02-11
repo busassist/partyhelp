@@ -30,6 +30,7 @@ return [
             'invoice_receipt' => env('SENDGRID_TEMPLATE_INVOICE_RECEIPT'),
             'lead_opportunity' => env('SENDGRID_TEMPLATE_LEAD_OPPORTUNITY'),
             'lead_opportunity_discount' => env('SENDGRID_TEMPLATE_LEAD_OPPORTUNITY_DISCOUNT'),
+            'venue_set_password' => env('SENDGRID_TEMPLATE_VENUE_SET_PASSWORD'),
         ],
     ],
 

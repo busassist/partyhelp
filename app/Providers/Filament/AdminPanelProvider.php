@@ -41,10 +41,10 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#7c3aed'),
             ])
             ->brandName('Partyhelp Admin')
-            ->favicon(asset('images/brand/ph-icon-dark.png'))
-            ->brandLogo(asset('images/brand/ph-logo-dark.png'))
-            ->darkModeBrandLogo(asset('images/brand/ph-logo-white.png'))
-            ->brandLogoHeight('55px')
+            ->favicon($this->brandAsset('ph-icon-dark.png'))
+            ->brandLogo($this->brandAsset('ph-logo-dark.png'))
+            ->darkModeBrandLogo($this->brandAsset('ph-logo-white.png'))
+            ->brandLogoHeight('75px')
             ->renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER, fn () => new HtmlString(
                 view('admin.user-guide-link')->render() . "\n" . view('admin.settings-link')->render()
             ))
@@ -57,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
 
                 return new HtmlString(
                     '<style>' .
-                    '.fi-logo, .fi-logo img { height: 55px !important; object-fit: contain; }' .
+                    '.fi-logo, .fi-logo img { height: 75px !important; object-fit: contain; }' .
                     '.fi-sidebar-group-label { color: #7c3aed !important; }' .
                     '.dark .fi-sidebar-group-label { color: white !important; }' .
                     '.fi-sidebar-nav { border-right: 1px solid #eee; }' .
@@ -94,5 +94,14 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 AdminPanelAuthenticate::class,
             ]);
+    }
+
+    /** Brand image URL with cache-busting so updated logos show without hard refresh. */
+    private function brandAsset(string $filename): string
+    {
+        $path = public_path('images/brand/' . $filename);
+        $v = is_file($path) ? (string) filemtime($path) : '';
+
+        return asset('images/brand/' . $filename) . ($v !== '' ? '?v=' . $v : '');
     }
 }

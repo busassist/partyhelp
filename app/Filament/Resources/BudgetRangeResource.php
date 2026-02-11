@@ -27,11 +27,20 @@ class BudgetRangeResource extends Resource
     {
         return $schema->schema([
             Forms\Components\TextInput::make('label')
-                ->required()->placeholder('e.g. 1500-3000'),
+                ->required()->placeholder('e.g. 1500-3000 or 5000+'),
             Forms\Components\TextInput::make('min_value')
                 ->numeric()->required()->prefix('$'),
+            Forms\Components\Toggle::make('is_maximum')
+                ->label('No maximum (open-ended range)')
+                ->helperText('When on, this range has no upper limit (e.g. 5000+).')
+                ->live()
+                ->default(false),
             Forms\Components\TextInput::make('max_value')
-                ->numeric()->required()->prefix('$'),
+                ->numeric()->prefix('$')
+                ->required(fn ($get) => ! $get('is_maximum'))
+                ->hidden(fn ($get) => (bool) $get('is_maximum'))
+                ->dehydrated(true)
+                ->dehydrateStateUsing(fn ($state, $get) => $get('is_maximum') ? null : $state),
             Forms\Components\TextInput::make('sort_order')
                 ->numeric()->default(0),
             Forms\Components\Toggle::make('is_active')->default(true),
@@ -46,7 +55,8 @@ class BudgetRangeResource extends Resource
                 Tables\Columns\TextColumn::make('min_value')
                     ->money('AUD')->label('Min'),
                 Tables\Columns\TextColumn::make('max_value')
-                    ->money('AUD')->label('Max'),
+                    ->label('Max')
+                    ->formatStateUsing(fn ($state) => $state === null ? '—' : '$' . number_format((float) $state, 2)),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),
             ])
             ->recordActions([

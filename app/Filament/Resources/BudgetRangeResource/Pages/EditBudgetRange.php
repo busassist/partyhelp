@@ -10,6 +10,13 @@ class EditBudgetRange extends EditRecord
 {
     protected static string $resource = BudgetRangeResource::class;
 
+    public function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['is_maximum'] = $this->record->max_value === null;
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

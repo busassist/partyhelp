@@ -29,7 +29,7 @@ class VenuePanelProvider extends PanelProvider
             ->id('venue')
             ->path('venue')
             ->login()
-            ->registration()
+            ->registration(\App\Filament\Venue\Pages\RegisterVenue::class)
             ->profile()
             ->userMenuItems([
                 'profile' => fn (Action $action) => $action->label('Your profile'),
@@ -42,10 +42,10 @@ class VenuePanelProvider extends PanelProvider
             ->favicon(asset('images/brand/ph-icon-dark.png'))
             ->brandLogo(asset('images/brand/ph-logo-dark.png'))
             ->darkModeBrandLogo(asset('images/brand/ph-logo-white.png'))
-            ->brandLogoHeight('55px')
+            ->brandLogoHeight('75px')
             ->renderHook(PanelsRenderHook::STYLES_AFTER, fn () => new HtmlString(
                 '<style>' .
-                '.fi-logo, .fi-logo img { height: 55px !important; object-fit: contain; }' .
+                '.fi-logo, .fi-logo img { height: 75px !important; object-fit: contain; }' .
                 '.fi-sidebar-group-label { color: #7c3aed !important; }' .
                 '.dark .fi-sidebar-group-label { color: white !important; }' .
                 '.fi-sidebar-nav { border-right: 1px solid #eee; }' .

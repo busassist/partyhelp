@@ -49,6 +49,7 @@ class GeneralSettings extends Page
                 config('partyhelp.lead.max_matches', 30)
             ),
             'debug_logging_enabled' => SystemSetting::get('debug_logging_enabled', false),
+            'new_venues_email_password' => SystemSetting::get('new_venues_email_password', false),
         ];
         $this->form->fill($this->data);
     }
@@ -74,6 +75,13 @@ class GeneralSettings extends Page
                                             ->minValue(1)
                                             ->maxValue(100)
                                             ->required(),
+                                    ]),
+                                Section::make('Venues')
+                                    ->description('Options for new venues created in Admin.')
+                                    ->schema([
+                                        \Filament\Forms\Components\Toggle::make('new_venues_email_password')
+                                            ->label('New venues: email set-password link')
+                                            ->helperText('When on, new venues receive a branded email with a link to set their venue portal password.'),
                                     ]),
                             ]),
                         Tab::make('Debug')
@@ -167,6 +175,13 @@ class GeneralSettings extends Page
         SystemSetting::set(
             'debug_logging_enabled',
             ! empty($data['debug_logging_enabled']),
+            'general',
+            'boolean'
+        );
+
+        SystemSetting::set(
+            'new_venues_email_password',
+            ! empty($data['new_venues_email_password']),
             'general',
             'boolean'
         );

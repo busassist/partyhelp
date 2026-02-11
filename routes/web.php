@@ -6,6 +6,7 @@ use App\Http\Controllers\MediaServeController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\VenueApprovalController;
 use App\Http\Controllers\VenueBillingController;
+use App\Http\Controllers\VenueSetPasswordController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,15 @@ Route::get('/function-pack/{token}/download', [FunctionPackController::class, 'd
 Route::get('/lead/{lead}/purchase/{venue}', [LeadPurchaseController::class, 'show'])
     ->name('lead.purchase.show')
     ->middleware('signed');
+
+// Venue set password (from email when admin creates venue)
+Route::get('/venue/set-password', [VenueSetPasswordController::class, 'show'])
+    ->name('venue.set-password');
+Route::post('/venue/set-password', [VenueSetPasswordController::class, 'store'])
+    ->name('venue.set-password.store');
+
+Route::view('/venue/registration-received', 'venue.registration-received')
+    ->name('venue.registration-received');
 
 // Venue approval actions (from admin email)
 Route::get('/venue-approval/{venue}/approve', [VenueApprovalController::class, 'approve'])

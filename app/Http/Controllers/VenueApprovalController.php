@@ -20,7 +20,7 @@ class VenueApprovalController extends Controller
             'approved_at' => now(),
         ]);
 
-        // TODO: Send welcome email to venue
+        \App\Jobs\SendVenueRegistrationApprovedEmail::dispatch($venue);
 
         return view('admin.venue-approved', [
             'venue' => $venue,

@@ -139,6 +139,26 @@ class EmailTemplateSeeder extends Seeder
                 ],
             ],
             [
+                'key' => 'venue_set_password',
+                'name' => 'Venue set password (new venue)',
+                'subject' => 'Set your Partyhelp venue portal password',
+                'content_slots' => [
+                    'intro_text' => 'Your venue {{venueName}} has been set up on Partyhelp. Click the button below to set your password and sign in to the venue portal.',
+                    'cta_button_label' => 'Set password',
+                    'expiry_note' => 'This link will expire after 60 minutes.',
+                ],
+            ],
+            [
+                'key' => 'venue_registration_approved',
+                'name' => 'Venue registration approved',
+                'subject' => 'Your Partyhelp venue registration has been approved',
+                'content_slots' => [
+                    'header_text' => 'Your registration has been approved',
+                    'intro_text' => 'Your venue registration has been approved. You may now sign in to the Partyhelp venue portal to begin receiving leads.',
+                    'cta_button_label' => 'Sign in to venue portal',
+                ],
+            ],
+            [
                 'key' => 'new_venue_for_approval',
                 'name' => 'New Venue For Approval',
                 'subject' => 'New venue pending approval: {{venueName}}',

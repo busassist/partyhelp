@@ -74,6 +74,8 @@ class SendGridTemplateSyncService
             'function_pack' => 'emails.function-pack',
             'failed_topup_notification' => 'emails.failed-topup-notification',
             'invoice_receipt' => 'emails.invoice-receipt',
+            'venue_set_password' => 'emails.venue-set-password',
+            'venue_registration_approved' => 'emails.venue-registration-approved',
             'new_venue_for_approval' => 'emails.new-venue-for-approval',
             'low_match_alert' => 'emails.low-match-alert',
             default => throw new \InvalidArgumentException("Unknown template key: {$key}"),
@@ -150,6 +152,15 @@ class SendGridTemplateSyncService
                 'failureReason' => '{{failureReason}}',
                 'updatePaymentUrl' => '{{updatePaymentUrl}}',
                 'viewInBrowserUrl' => '{{viewInBrowserUrl}}',
+            ],
+            'venue_set_password' => [
+                'venueName' => '{{venueName}}',
+                'setPasswordUrl' => '{{setPasswordUrl}}',
+                'appUrl' => '{{appUrl}}',
+            ],
+            'venue_registration_approved' => [
+                'venueName' => '{{venueName}}',
+                'loginUrl' => '{{loginUrl}}',
             ],
             'invoice_receipt' => [
                 'venueName' => '{{venueName}}',

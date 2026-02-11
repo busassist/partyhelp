@@ -124,10 +124,13 @@ class VenueResource extends Resource
                     ->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (Venue $venue) => $venue->status === 'pending')
-                    ->action(fn (Venue $venue) => $venue->update([
-                        'status' => 'active',
-                        'approved_at' => now(),
-                    ])),
+                    ->action(function (Venue $venue) {
+                        $venue->update([
+                            'status' => 'active',
+                            'approved_at' => now(),
+                        ]);
+                        \App\Jobs\SendVenueRegistrationApprovedEmail::dispatch($venue);
+                    }),
                 Actions\Action::make('suspend')
                     ->icon('heroicon-o-no-symbol')
                     ->color('danger')
@@ -152,6 +155,7 @@ class VenueResource extends Resource
         return [
             'index' => Pages\ListVenues::route('/'),
             'create' => Pages\CreateVenue::route('/create'),
+            'created' => Pages\VenueCreatedPage::route('/{record}/created'),
             'edit' => Pages\EditVenue::route('/{record}/edit'),
         ];
     }

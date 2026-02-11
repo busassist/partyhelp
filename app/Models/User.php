@@ -37,7 +37,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return match ($panel->getId()) {
             'admin' => $this->role === 'admin',
-            'venue' => $this->role === 'venue',
+            'venue' => $this->role === 'venue' && $this->venue && $this->venue->status === 'active',
             default => false,
         };
     }
