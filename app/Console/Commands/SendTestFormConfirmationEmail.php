@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Mail\FormConfirmationEmail;
+use App\Services\EmailGuard;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
@@ -24,6 +25,12 @@ class SendTestFormConfirmationEmail extends Command
         $viewInBrowserUrl = config('app.url') . '/emails/form-confirmation/preview?token=sample';
         $unsubscribeUrl = config('app.url') . '/unsubscribe?token=sample';
 
+        if (! EmailGuard::shouldSendTo($to)) {
+            $this->warn("Skipped: {$to} is a seed/test address (not sent via SendGrid).");
+
+            return self::SUCCESS;
+        }
+
         $mailable = new FormConfirmationEmail(
             customerName: $name,
             websiteUrl: $website,
@@ -31,7 +38,7 @@ class SendTestFormConfirmationEmail extends Command
             unsubscribeUrl: $unsubscribeUrl,
         );
 
-        Mail::to($to)->send($mailable);
+        Mail::mailer('sendgrid')->to($to)->send($mailable);
 
         $this->info("Test Form Confirmation email sent to: {$to}");
 

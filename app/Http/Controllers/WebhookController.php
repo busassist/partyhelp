@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessNewLead;
+use App\Jobs\SendCustomerConfirmationEmail;
 use App\Models\Lead;
 use App\Services\DebugLogService;
 use Illuminate\Http\JsonResponse;
@@ -122,6 +123,7 @@ class WebhookController extends Controller
             DebugLogService::logLeadReceived($lead);
 
             ProcessNewLead::dispatch($lead);
+            SendCustomerConfirmationEmail::dispatch($lead);
 
             $elapsedMs = round((microtime(true) - $start) * 1000);
 

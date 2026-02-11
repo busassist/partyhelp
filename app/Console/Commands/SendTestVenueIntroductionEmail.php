@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Mail\VenueIntroductionEmail;
 use App\Models\Media;
+use App\Services\EmailGuard;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
@@ -26,6 +27,12 @@ class SendTestVenueIntroductionEmail extends Command
         $viewInBrowserUrl = config('app.url') . '/emails/venue-intro/preview?token=sample';
         $unsubscribeUrl = config('app.url') . '/unsubscribe?token=sample';
 
+        if (! EmailGuard::shouldSendTo($to)) {
+            $this->warn("Skipped: {$to} is a seed/test address (not sent via SendGrid).");
+
+            return self::SUCCESS;
+        }
+
         $mailable = new VenueIntroductionEmail(
             customerName: $name,
             location: $location,
@@ -34,7 +41,7 @@ class SendTestVenueIntroductionEmail extends Command
             unsubscribeUrl: $unsubscribeUrl,
         );
 
-        Mail::to($to)->send($mailable);
+        Mail::mailer('sendgrid')->to($to)->send($mailable);
 
         $this->info("Test Venue Introduction email sent to: {$to}");
 

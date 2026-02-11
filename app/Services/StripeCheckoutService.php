@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\VenueReceiptEmail;
 use App\Models\CreditTransaction;
 use App\Models\Venue;
+use App\Services\EmailGuard;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\StripeClient;
@@ -169,9 +170,13 @@ class StripeCheckoutService
         if (! is_string($to) || trim($to) === '') {
             return;
         }
+        $to = trim($to);
+        if (! EmailGuard::shouldSendTo($to)) {
+            return;
+        }
 
         try {
-            Mail::to(trim($to))->send(new VenueReceiptEmail($venue, $transaction));
+            Mail::mailer('sendgrid')->to($to)->send(new VenueReceiptEmail($venue, $transaction));
         } catch (\Throwable $e) {
             report($e);
         }
