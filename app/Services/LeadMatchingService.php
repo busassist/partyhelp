@@ -8,10 +8,10 @@ use Illuminate\Support\Collection;
 
 class LeadMatchingService
 {
-    private const MAX_MATCHES = 30;
-
     public function findMatches(Lead $lead): Collection
     {
+        $maxMatches = (int) config('partyhelp.lead.max_matches', 30);
+
         $venues = Venue::where('status', 'active')
             ->where('credit_balance', '>', 0)
             ->with('rooms')
@@ -23,7 +23,7 @@ class LeadMatchingService
         ])
             ->filter(fn (array $item) => $item['score'] > 0)
             ->sortByDesc('score')
-            ->take(self::MAX_MATCHES);
+            ->take($maxMatches);
 
         return $scored;
     }
