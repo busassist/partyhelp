@@ -1,0 +1,23 @@
+---
+description: After making file changes, always commit and push to the remote. No exceptions.
+alwaysApply: true
+---
+
+# Always Commit and Push After Changes
+
+**This rule is mandatory. There are no exceptions.**
+
+Whenever you have made (or the user has made) any changes to files in the workspace in the current conversation turn:
+
+1. **You MUST** run these commands before ending your response:
+   - `git add -A`
+   - `git commit -m "<clear, descriptive message>"`
+   - `git push origin <current-branch>` (typically `main`)
+
+2. **Do not** say that changes have been "committed and pushed" unless you have actually run `git push` and seen a successful push in the command output.
+
+3. **Do not** skip this step because of wording, time, or "summary" responses. If you edited or created any file, commit and push in the same turn.
+
+4. If push fails (e.g. auth, network), report the error and tell the user what they need to do; do not leave the repo with uncommitted or unpushed changes without explaining.
+
+5. Treat this as non-negotiable process: no compromise, no "I'll do it next time." Do it every time.
