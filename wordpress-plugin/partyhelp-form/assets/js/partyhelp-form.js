@@ -156,7 +156,7 @@
       const errors = validateForm($form);
       if (Object.keys(errors).length > 0) {
         showErrors($form, errors);
-        $msg.addClass('partyhelp-form-message-error').text('Please fix the errors below.');
+        $msg.addClass('partyhelp-form-message-error').text('Please fix the errors in red above.');
         return;
       }
 
