@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Lead;
+use App\Models\SystemSetting;
 use App\Models\Venue;
 use Illuminate\Support\Collection;
 
@@ -10,7 +11,10 @@ class LeadMatchingService
 {
     public function findMatches(Lead $lead): Collection
     {
-        $maxMatches = (int) config('partyhelp.lead.max_matches', 30);
+        $maxMatches = (int) SystemSetting::get(
+            'lead_max_matches',
+            config('partyhelp.lead.max_matches', 30)
+        );
 
         $venues = Venue::where('status', 'active')
             ->where('credit_balance', '>', 0)

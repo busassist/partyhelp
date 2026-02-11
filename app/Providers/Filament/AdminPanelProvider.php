@@ -46,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->darkModeBrandLogo(asset('images/brand/ph-logo-white.png'))
             ->brandLogoHeight('55px')
             ->renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER, fn () => new HtmlString(
-                view('admin.user-guide-link')->render()
+                view('admin.user-guide-link')->render() . "\n" . view('admin.settings-link')->render()
             ))
             ->renderHook(PanelsRenderHook::SCRIPTS_AFTER, fn () => new HtmlString(
                 '<script>document.addEventListener("livewire:init",function(){Livewire.hook("request.failed",function(e){if(!e)return;var u=e.redirect||(e.response&&e.response.redirect);if((e.status===401||e.status===403)&&u){window.location.href=u;}else if(e.status===401){window.location.href="/admin/login";}});});</script>'

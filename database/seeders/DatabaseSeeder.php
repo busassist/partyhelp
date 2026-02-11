@@ -73,6 +73,7 @@ class DatabaseSeeder extends Seeder
         $settings = [
             ['lead_fulfilment_threshold', '3', 'leads', 'integer'],
             ['lead_expiry_hours', '72', 'leads', 'integer'],
+            ['lead_max_matches', '30', 'leads', 'integer'],
             ['admin_email', 'admin@partyhelp.com.au', 'general', 'string'],
             ['min_credit_balance', '100', 'credits', 'float'],
         ];
