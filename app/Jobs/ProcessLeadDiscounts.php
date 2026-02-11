@@ -18,12 +18,15 @@ class ProcessLeadDiscounts implements ShouldQueue
     public function handle(): void
     {
         $discountSettings = DiscountSetting::where('is_active', true)
-            ->orderBy('hours_elapsed')
+            ->orderByRaw('hours_elapsed ASC, minutes_elapsed ASC')
             ->get();
 
         foreach ($discountSettings as $setting) {
+            $cutoff = now()
+                ->subHours((int) $setting->hours_elapsed)
+                ->subMinutes((int) ($setting->minutes_elapsed ?? 0));
             $leads = Lead::whereIn('status', ['distributed', 'partially_fulfilled'])
-                ->where('distributed_at', '<=', now()->subHours($setting->hours_elapsed))
+                ->where('distributed_at', '<=', $cutoff)
                 ->where('discount_percent', '<', $setting->discount_percent)
                 ->whereNotNull('expires_at')
                 ->where('expires_at', '>', now())

@@ -29,10 +29,11 @@ class PricingMatrixResource extends Resource
             Forms\Components\Select::make('occasion_type')
                 ->options(\App\Models\OccasionType::options())
                 ->required(),
-            Forms\Components\TextInput::make('guest_min')
-                ->numeric()->required()->label('Guest count from'),
-            Forms\Components\TextInput::make('guest_max')
-                ->numeric()->required()->label('Guest count to'),
+            Forms\Components\Select::make('guest_bracket_id')
+                ->label('Guest bracket')
+                ->relationship('guestBracket', 'id', fn ($q) => $q->where('is_active', true)->orderBy('sort_order'))
+                ->getOptionLabelFromRecordUsing(fn ($r) => $r->label)
+                ->required(),
             Forms\Components\TextInput::make('price')
                 ->numeric()->prefix('$')->required(),
             Forms\Components\Toggle::make('is_active')->default(true),
@@ -45,10 +46,8 @@ class PricingMatrixResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('occasion_type')
                     ->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('guest_min')
-                    ->label('From'),
-                Tables\Columns\TextColumn::make('guest_max')
-                    ->label('To'),
+                Tables\Columns\TextColumn::make('guestBracket.label')
+                    ->label('Guest bracket'),
                 Tables\Columns\TextColumn::make('price')
                     ->money('AUD')->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
@@ -64,7 +63,7 @@ class PricingMatrixResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPricingMatrix::route('/'),
+            'index' => Pages\PricingMatrixIndex::route('/'),
             'editOccasion' => Pages\EditOccasionMatrix::route('/edit/{occasionType}'),
         ];
     }

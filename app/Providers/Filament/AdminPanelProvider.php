@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\AdminPanelAuthenticate;
 use Filament\Actions\Action;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -48,6 +48,9 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER, fn () => new HtmlString(
                 view('admin.user-guide-link')->render()
             ))
+            ->renderHook(PanelsRenderHook::SCRIPTS_AFTER, fn () => new HtmlString(
+                '<script>document.addEventListener("livewire:init",function(){Livewire.hook("request.failed",function(e){if(!e)return;var u=e.redirect||(e.response&&e.response.redirect);if((e.status===401||e.status===403)&&u){window.location.href=u;}else if(e.status===401){window.location.href="/admin/login";}});});</script>'
+            ))
             ->renderHook(PanelsRenderHook::STYLES_AFTER, function () {
                 $path = resource_path('css/user-guide.css');
                 $userGuideCss = is_file($path) ? file_get_contents($path) : '';
@@ -89,7 +92,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                Authenticate::class,
+                AdminPanelAuthenticate::class,
             ]);
     }
 }

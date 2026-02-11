@@ -4,6 +4,13 @@ PRD Section 6.4. Templates 1–2 are built; 3–14 are scaffolded here with stru
 
 **Conventions:** Admin-editable text is stored in `content_slots` per template. System data is passed at send time as `dynamic_template_data`. Subject lines may include Handlebars e.g. `{{occasion}}`, `{{suburb}}`, `{{price}}`.
 
+**Venue link URLs (when sending, not test data):**
+- **purchaseUrl** (lead_opportunity, lead_opportunity_10pct, lead_opportunity_20pct): Use signed route so the CTA works. In code: `$lead->signedPurchaseUrlFor($venue)` (resolves to `/lead/{id}/purchase/{venueId}` with signature).
+- **dashboardUrl** (lead_no_longer_available): Venue “Available Leads” list is at `{app.url}/venue/available-leads` (Filament resource index).
+- **topUpUrl** (lead opportunity templates): “Buy Credits” tab on billing – use `{app.url}/venue/billing?tab=buy-credits`. (Billing page persists tab in query string; no `/venue/billing/top-up` route.)
+- **updatePaymentUrl** (failed_topup_notification): “Payment Methods” tab – use `{app.url}/venue/billing?tab=payment-methods`.
+- **viewUrl** (invoice_receipt): Billing page (receipt is for credit purchase) – use `{app.url}/venue/billing`.
+
 ---
 
 ## Customer (Party Planner) – 5 emails

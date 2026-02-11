@@ -7,8 +7,6 @@ use Livewire\Component;
 
 class BillingBuyCredits extends Component
 {
-    public bool $saveForAutoTopup = false;
-
     public function getVenue()
     {
         return auth()->user()?->venue;
@@ -32,7 +30,7 @@ class BillingBuyCredits extends Component
             $url = app(StripeCheckoutService::class)->createCheckoutSession(
                 $venue,
                 $amount,
-                $this->saveForAutoTopup,
+                false,
                 $successUrl,
                 $cancelUrl
             );

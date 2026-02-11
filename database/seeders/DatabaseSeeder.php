@@ -45,6 +45,7 @@ class DatabaseSeeder extends Seeder
             'approved_at' => now(),
         ]);
 
+        $this->call(GuestBracketSeeder::class);
         $this->call(PricingMatrixSeeder::class);
         $this->seedDiscountSettings();
         $this->seedSystemSettings();

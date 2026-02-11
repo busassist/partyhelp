@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\EmailTemplate;
+use App\Models\Lead;
+use App\Models\Venue;
 use Illuminate\Support\Facades\Http;
 
 class SendGridTestEmailService
@@ -108,16 +110,16 @@ class SendGridTestEmailService
                 'preferredDate' => '2026-03-15',
                 'roomStyles' => 'Function Room, Bar',
                 'price' => '12.00',
-                'purchaseUrl' => $appUrl . '/venue/leads/1/purchase',
+                'purchaseUrl' => $this->sampleLeadPurchaseUrl($appUrl),
                 'creditBalance' => '150.00',
-                'topUpUrl' => $appUrl . '/venue/billing/top-up',
+                'topUpUrl' => $appUrl . '/venue/billing?tab=buy-credits',
                 'viewInBrowserUrl' => $appUrl . '/emails/view/test',
             ],
             'lead_no_longer_available' => [
                 'suburb' => 'Richmond',
                 'occasion' => '21st Birthday',
                 'reason' => 'fulfilled',
-                'dashboardUrl' => $appUrl . '/venue/leads',
+                'dashboardUrl' => $appUrl . '/venue/available-leads',
                 'viewInBrowserUrl' => $appUrl . '/emails/view/test',
             ],
             'function_pack' => [
@@ -130,7 +132,7 @@ class SendGridTestEmailService
                 'venueName' => 'Sample Venue Pty Ltd',
                 'attemptedAmount' => '50.00',
                 'failureReason' => 'Card declined.',
-                'updatePaymentUrl' => $appUrl . '/venue/billing',
+                'updatePaymentUrl' => $appUrl . '/venue/billing?tab=payment-methods',
                 'viewInBrowserUrl' => $appUrl . '/emails/view/test',
             ],
             'invoice_receipt' => [
@@ -139,7 +141,7 @@ class SendGridTestEmailService
                 'invoiceNumber' => 'INV-2026-001',
                 'amount' => '50.00',
                 'description' => 'Credit top-up $50',
-                'viewUrl' => $appUrl . '/venue/invoices/1',
+                'viewUrl' => $appUrl . '/venue/billing',
                 'viewInBrowserUrl' => $appUrl . '/emails/view/test',
             ],
             'new_venue_for_approval' => [
@@ -164,5 +166,18 @@ class SendGridTestEmailService
         };
 
         return array_merge($slots, $samples);
+    }
+
+    /**
+     * Build a signed lead-purchase URL for test emails. Uses first available lead and venue so the link works when seed data exists.
+     */
+    private function sampleLeadPurchaseUrl(string $appUrl): string
+    {
+        $lead = Lead::first();
+        $venue = Venue::first();
+        if ($lead && $venue) {
+            return $lead->signedPurchaseUrlFor($venue);
+        }
+        return $appUrl . '/venue';
     }
 }

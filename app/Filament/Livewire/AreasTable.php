@@ -72,19 +72,17 @@ class AreasTable extends TableComponent
             Forms\Components\TextInput::make('name')->required()->maxLength(255),
             Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
             Forms\Components\Select::make('postcodes')
-                ->options(Postcode::optionsForSelect())
+                ->options(fn () => Postcode::optionsForSelect())
                 ->multiple()
                 ->preload()
                 ->searchable()
                 ->label('Postcodes (suburbs)'),
             Forms\Components\Select::make('venues')
-                ->options(
-                    Venue::query()
-                        ->orderBy('business_name')
-                        ->get()
-                        ->mapWithKeys(fn (Venue $v) => [$v->id => $v->business_name])
-                        ->toArray()
-                )
+                ->options(fn () => Venue::query()
+                    ->orderBy('business_name')
+                    ->get()
+                    ->mapWithKeys(fn (Venue $v) => [$v->id => $v->business_name])
+                    ->toArray())
                 ->multiple()
                 ->preload()
                 ->searchable()

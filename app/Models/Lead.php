@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
 
 class Lead extends Model
 {
@@ -50,6 +51,12 @@ class Lead extends Model
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    /** Signed URL for a venue to view/purchase this lead (used in lead opportunity emails). */
+    public function signedPurchaseUrlFor(Venue $venue): string
+    {
+        return URL::signedRoute('lead.purchase.show', ['lead' => $this, 'venue' => $venue]);
     }
 
     /** Preferred locations from form (multiple suburbs). Falls back to single suburb. */

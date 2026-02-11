@@ -19,10 +19,20 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             $redirectTo = $e->redirectTo($request);
-            if ($redirectTo !== null) {
-                return redirect()->guest($redirectTo);
+            \Illuminate\Support\Facades\Log::channel('single')->debug('AuthenticationException render', [
+                'path' => $request->path(),
+                'redirect_to' => $redirectTo,
+                'expects_json' => $request->expectsJson(),
+                'xhr' => $request->header('X-Requested-With'),
+            ]);
+            if ($redirectTo === null) {
+                return null;
             }
-
-            return null;
+            // For XHR/Livewire, return 401 with redirect URL so the client can do a full-page redirect.
+            if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json(['message' => 'Unauthenticated.', 'redirect' => $redirectTo], 401)
+                    ->header('X-Redirect-To', $redirectTo);
+            }
+            return redirect()->guest($redirectTo);
         });
     })->create();

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PricingMatrixResource\Pages;
 
 use App\Filament\Resources\PricingMatrixResource;
+use App\Models\GuestBracket;
 use App\Models\OccasionType;
 use App\Models\PricingMatrix;
 use Filament\Actions;
@@ -40,17 +41,11 @@ class EditOccasionMatrix extends Page implements HasTable
     {
         return $table
             ->query(
-                PricingMatrix::query()->where('occasion_type', $this->occasionType)
+                PricingMatrix::query()->where('occasion_type', $this->occasionType)->with('guestBracket')
             )
             ->columns([
-                Tables\Columns\TextInputColumn::make('guest_min')
-                    ->label('From')
-                    ->type('number')
-                    ->rules(['required', 'integer', 'min:0']),
-                Tables\Columns\TextInputColumn::make('guest_max')
-                    ->label('To')
-                    ->type('number')
-                    ->rules(['required', 'integer', 'min:0']),
+                Tables\Columns\TextColumn::make('guestBracket.label')
+                    ->label('Guest bracket'),
                 Tables\Columns\TextInputColumn::make('price')
                     ->prefix('$')
                     ->type('number')
@@ -70,14 +65,13 @@ class EditOccasionMatrix extends Page implements HasTable
                         return $data;
                     })
                     ->form([
-                        \Filament\Forms\Components\TextInput::make('guest_min')
-                            ->label('From')
-                            ->numeric()
-                            ->required(),
-                        \Filament\Forms\Components\TextInput::make('guest_max')
-                            ->label('To')
-                            ->numeric()
-                            ->required(),
+                        \Filament\Forms\Components\Select::make('guest_bracket_id')
+                            ->label('Guest bracket')
+                            ->options(
+                                GuestBracket::where('is_active', true)->orderBy('sort_order')->get()->mapWithKeys(fn ($b) => [$b->id => $b->label])
+                            )
+                            ->required()
+                            ->searchable(),
                         \Filament\Forms\Components\TextInput::make('price')
                             ->prefix('$')
                             ->numeric()
@@ -86,7 +80,7 @@ class EditOccasionMatrix extends Page implements HasTable
                             ->default(true),
                     ]),
             ])
-            ->defaultSort('guest_min');
+            ->defaultSort('id');
     }
 
     public function content(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema

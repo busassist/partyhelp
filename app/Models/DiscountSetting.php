@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DiscountSetting extends Model
 {
     protected $fillable = [
-        'hours_elapsed', 'discount_percent',
+        'hours_elapsed', 'minutes_elapsed', 'discount_percent',
         'resend_notification', 'is_active', 'sort_order',
     ];
 

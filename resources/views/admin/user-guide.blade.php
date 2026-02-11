@@ -10,5 +10,6 @@
         @include('admin.user-guide-partials.emails')
         @include('admin.user-guide-partials.wordpress-plugin')
         @include('admin.user-guide-partials.venue-login')
+        @include('admin.user-guide-partials.scheduled-tasks')
     </div>
 </x-filament-panels::page.simple>

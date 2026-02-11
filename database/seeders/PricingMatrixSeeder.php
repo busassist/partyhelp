@@ -2,21 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\GuestBracket;
 use App\Models\PricingMatrix;
 use Illuminate\Database\Seeder;
 
 class PricingMatrixSeeder extends Seeder
 {
-    /** Guest count brackets matching the form (PartyhelpFormConfigController fallback). */
-    private const GUEST_BRACKETS = [
-        [10, 29],   // 10-29
-        [30, 60],   // 30-60
-        [61, 100],  // 61-100
-        [101, 500], // 100+
-    ];
-
     /**
-     * Sample prices per bracket [min-29, 30-60, 61-100, 101-500].
+     * Sample prices per bracket (by sort_order: 1=first bracket, 2=second, ...).
      * Key = occasion_type from config; value = [price_bracket_1, price_bracket_2, ...].
      * Missing types use 'default'.
      */
@@ -39,20 +32,24 @@ class PricingMatrixSeeder extends Seeder
 
     public function run(): void
     {
+        $brackets = GuestBracket::where('is_active', true)->orderBy('sort_order')->get();
+        if ($brackets->isEmpty()) {
+            return;
+        }
+
         $occasionTypes = array_keys(config('partyhelp.occasion_types', []));
 
         foreach ($occasionTypes as $occasionType) {
             $prices = self::PRICES_BY_OCCASION[$occasionType]
                 ?? self::PRICES_BY_OCCASION['default'];
 
-            foreach (self::GUEST_BRACKETS as $index => [$guestMin, $guestMax]) {
+            foreach ($brackets as $index => $bracket) {
                 $price = $prices[$index] ?? $prices[0];
 
                 PricingMatrix::updateOrCreate(
                     [
                         'occasion_type' => $occasionType,
-                        'guest_min' => $guestMin,
-                        'guest_max' => $guestMax,
+                        'guest_bracket_id' => $bracket->id,
                     ],
                     [
                         'price' => $price,

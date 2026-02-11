@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PricingMatrix extends Model
 {
     protected $table = 'pricing_matrix';
 
     protected $fillable = [
-        'occasion_type', 'guest_min', 'guest_max',
-        'price', 'is_active',
+        'occasion_type', 'guest_bracket_id', 'price', 'is_active',
     ];
 
     protected function casts(): array
@@ -21,11 +21,25 @@ class PricingMatrix extends Model
         ];
     }
 
+    public function guestBracket(): BelongsTo
+    {
+        return $this->belongsTo(GuestBracket::class);
+    }
+
     public static function getPrice(string $occasionType, int $guestCount): ?float
     {
-        $entry = static::where('occasion_type', $occasionType)
+        $bracket = GuestBracket::where('is_active', true)
             ->where('guest_min', '<=', $guestCount)
             ->where('guest_max', '>=', $guestCount)
+            ->orderBy('sort_order')
+            ->first();
+
+        if (! $bracket) {
+            return null;
+        }
+
+        $entry = static::where('occasion_type', $occasionType)
+            ->where('guest_bracket_id', $bracket->id)
             ->where('is_active', true)
             ->first();
 

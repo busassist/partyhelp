@@ -129,6 +129,14 @@
     const $form = $('#partyhelp-form');
     if (!$form.length) return;
 
+    /* When user ticks a Location (area), auto-tick all suburbs under that area. User may untick individual suburbs. */
+    $form.on('change', '.partyhelp-location-area-checkbox', function () {
+      const $areaCheckbox = $(this);
+      if (!$areaCheckbox.is(':checked')) return;
+      const $block = $areaCheckbox.closest('.partyhelp-location-area-block');
+      $block.find('.partyhelp-location-suburb-checkbox').prop('checked', true);
+    });
+
     /* Click anywhere on date field wrapper opens the date picker */
     $form.on('click', '.partyhelp-date-field-wrap', function () {
       const input = document.getElementById('ph-preferred-date');

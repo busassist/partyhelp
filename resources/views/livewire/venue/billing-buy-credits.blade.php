@@ -17,21 +17,6 @@
         @endforeach
     </div>
 
-    <div class="rounded-xl border border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800/50">
-        <label class="flex cursor-pointer items-start gap-4">
-            <input
-                type="checkbox"
-                wire:model.live="saveForAutoTopup"
-                class="mt-1 h-4 w-4 rounded border-gray-300 text-[#7c3aed] focus:ring-[#7c3aed] dark:border-gray-600 dark:bg-gray-700"
-            />
-            <span class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                <strong class="font-medium text-gray-900 dark:text-white">Auto-charge my card in future.</strong>
-                When my balance drops below the threshold, automatically top up using the card I use for this purchase.
-                You can change or disable this later under Payment Methods.
-            </span>
-        </label>
-    </div>
-
     @if(config('services.stripe.mode') !== 'live')
         <div class="rounded-xl border-2 border-amber-400 bg-amber-50 p-5 dark:border-amber-500 dark:bg-amber-950/30">
             <p class="font-semibold text-amber-800 dark:text-amber-200">Warning: STRIPE Test Mode is enabled</p>

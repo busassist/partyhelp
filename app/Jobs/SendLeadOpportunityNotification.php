@@ -22,7 +22,8 @@ class SendLeadOpportunityNotification implements ShouldQueue
 
     public function handle(): void
     {
-        // TODO: Implement SendGrid email
+        // TODO: Implement SendGrid email. When sending, pass: purchaseUrl = $this->lead->signedPurchaseUrlFor($this->venue);
+        // topUpUrl = config('app.url') . '/venue/billing?tab=buy-credits' (Buy Credits tab). Same for lead_opportunity_10pct / lead_opportunity_20pct.
         // TODO: Implement SMS via Twilio/MessageMedia
         Log::info("Lead opportunity notification", [
             'lead_id' => $this->lead->id,

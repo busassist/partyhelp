@@ -35,8 +35,10 @@ class ManageBillingCredits extends Page
                 Livewire::make(BillingSuccessBanner::class),
                 Tabs::make('Billing')
                     ->contained()
+                    ->persistTabInQueryString('tab')
                     ->tabs([
                         Tab::make('Overview')
+                            ->id('overview')
                             ->schema([
                                 Section::make()
                                     ->schema([
@@ -44,6 +46,7 @@ class ManageBillingCredits extends Page
                                     ]),
                             ]),
                         Tab::make('Buy Credits')
+                            ->id('buy-credits')
                             ->schema([
                                 Section::make()
                                     ->schema([
@@ -51,13 +54,16 @@ class ManageBillingCredits extends Page
                                     ]),
                             ]),
                         Tab::make('Payment Methods')
+                            ->id('payment-methods')
                             ->schema([
                                 Section::make()
+                                    ->columnSpanFull()
                                     ->schema([
                                         Livewire::make(BillingPaymentMethods::class),
                                     ]),
                             ]),
                         Tab::make('View Transactions')
+                            ->id('view-transactions')
                             ->schema([
                                 Section::make()
                                     ->schema([

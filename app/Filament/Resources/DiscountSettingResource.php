@@ -27,7 +27,12 @@ class DiscountSettingResource extends Resource
     {
         return $schema->schema([
             Forms\Components\TextInput::make('hours_elapsed')
-                ->numeric()->required()->label('Hours after distribution'),
+                ->numeric()->required()->minValue(0)->label('Hours after distribution')
+                ->default(0),
+            Forms\Components\TextInput::make('minutes_elapsed')
+                ->numeric()->required()->minValue(0)->maxValue(59)->label('Minutes after distribution')
+                ->default(0)
+                ->helperText('Use with 0 hours for testing (e.g. 0h 2m).'),
             Forms\Components\TextInput::make('discount_percent')
                 ->numeric()->required()->suffix('%'),
             Forms\Components\Toggle::make('resend_notification')
@@ -44,6 +49,8 @@ class DiscountSettingResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('hours_elapsed')
                     ->label('After (hours)')->sortable(),
+                Tables\Columns\TextColumn::make('minutes_elapsed')
+                    ->label('Minutes')->sortable()->default(0),
                 Tables\Columns\TextColumn::make('discount_percent')
                     ->label('Discount')->suffix('%'),
                 Tables\Columns\IconColumn::make('resend_notification')

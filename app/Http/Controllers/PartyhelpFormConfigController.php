@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\BudgetRange;
+use App\Models\GuestBracket;
 use App\Models\OccasionType;
 use App\Models\PricingMatrix;
 use App\Models\VenueStyle;
@@ -105,38 +106,17 @@ class PartyhelpFormConfigController extends Controller
 
     private function getGuestBrackets(): array
     {
-        $brackets = PricingMatrix::select('guest_min', 'guest_max')
-            ->where('is_active', true)
-            ->distinct()
-            ->orderBy('guest_min')
-            ->get();
-
-        if ($brackets->isEmpty()) {
-            return [
-                ['value' => '10-29', 'label' => '10-29', 'guest_min' => 10, 'guest_max' => 29],
-                ['value' => '30-60', 'label' => '30-60', 'guest_min' => 30, 'guest_max' => 60],
-                ['value' => '61-100', 'label' => '61-100', 'guest_min' => 61, 'guest_max' => 100],
-                ['value' => '100+', 'label' => '100+', 'guest_min' => 101, 'guest_max' => 500],
-            ];
-        }
-
-        $merged = [];
-        foreach ($brackets as $row) {
-            $label = $row->guest_min === $row->guest_max
-                ? (string) $row->guest_min
-                : "{$row->guest_min}-{$row->guest_max}";
-            $key = "{$row->guest_min}-{$row->guest_max}";
-            if (! isset($merged[$key])) {
-                $merged[$key] = [
-                    'value' => $key,
-                    'label' => $label,
-                    'guest_min' => $row->guest_min,
-                    'guest_max' => $row->guest_max,
-                ];
-            }
-        }
-
-        return array_values($merged);
+        return GuestBracket::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn (GuestBracket $b) => [
+                'value' => $b->value,
+                'label' => $b->label,
+                'guest_min' => $b->guest_min,
+                'guest_max' => $b->guest_max, // null when bracket is "maximum limit" (no upper bound)
+            ])
+            ->values()
+            ->all();
     }
 
     private function getBudgetRanges(): array

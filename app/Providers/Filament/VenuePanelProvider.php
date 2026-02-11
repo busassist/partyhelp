@@ -51,6 +51,9 @@ class VenuePanelProvider extends PanelProvider
                 '.fi-sidebar-nav { border-right: 1px solid #eee; }' .
                 '</style>'
             ))
+            ->renderHook(PanelsRenderHook::SCRIPTS_AFTER, fn () => new HtmlString(
+                '<script>document.addEventListener("livewire:init",function(){Livewire.hook("request.failed",function(e){if(!e)return;var u=e.redirect||(e.response&&e.response.redirect);if((e.status===401||e.status===403)&&u){window.location.href=u;}else if(e.status===401){window.location.href="/venue/login";}});});</script>'
+            ))
             ->discoverResources(
                 in: app_path('Filament/Venue/Resources'),
                 for: 'App\Filament\Venue\Resources'
