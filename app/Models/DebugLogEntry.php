@@ -12,5 +12,6 @@ class DebugLogEntry extends Model
 
     protected $casts = [
         'payload' => 'array',
+        'created_at' => 'datetime',
     ];
 }

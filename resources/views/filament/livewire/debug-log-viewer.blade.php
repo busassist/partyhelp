@@ -7,7 +7,7 @@
             <ul class="divide-y divide-gray-200 dark:divide-gray-600 max-h-[400px] overflow-y-auto">
                 @foreach ($entries as $entry)
                     <li class="px-3 py-2 text-sm">
-                        <span class="text-gray-500 dark:text-gray-400 font-mono">{{ $entry->created_at->format('Y-m-d H:i:s') }}</span>
+                        <span class="text-gray-500 dark:text-gray-400 font-mono">{{ $entry->created_at instanceof \DateTimeInterface ? $entry->created_at->format('Y-m-d H:i:s') : \Illuminate\Support\Str::limit($entry->created_at ?? '', 19) }}</span>
                         @switch($entry->type)
                             @case('lead_received')
                                 <span class="text-gray-700 dark:text-gray-300">

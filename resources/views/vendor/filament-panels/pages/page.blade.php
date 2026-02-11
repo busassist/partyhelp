@@ -1,3 +1,3 @@
 <x-filament-panels::page>
-    {!! $this->content !!}
+    {!! $this->content->toHtml() !!}
 </x-filament-panels::page>
