@@ -9,7 +9,7 @@ alwaysApply: true
 
 Whenever you have made (or the user has made) any changes to files in the workspace in the current conversation turn:
 
-1. **You MUST** run these commands before ending your response:
+1. **You MUST** run these commands after completing all changes for the prompt and **before** reporting back to the user:
    - `git add -A`
    - `git commit -m "<clear, descriptive message>"`
    - `git push origin <current-branch>` (typically `main`)
