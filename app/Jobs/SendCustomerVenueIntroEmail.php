@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Mail\VenueIntroductionEmail;
 use App\Models\Lead;
 use App\Models\Venue;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use App\Services\EmailGuard;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -43,7 +45,19 @@ class SendCustomerVenueIntroEmail implements ShouldQueue
             venues: $venues,
         );
 
-        Mail::mailer('sendgrid')->to($to)->send($mailable);
+        try {
+            Mail::mailer('sendgrid')->to($to)->send($mailable);
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_introduction', 'lead_id' => $this->lead->id, 'venue_id' => $this->venue->id, 'to' => $to]);
+            throw $e;
+        }
+
+        DebugLogService::logEmailSent('venue_introduction', [
+            'lead_id' => $this->lead->id,
+            'lead_email' => $to,
+            'venue' => $this->venue->business_name,
+            'venue_id' => $this->venue->id,
+        ]);
 
         Log::info('Customer venue intro email sent', [
             'lead_id' => $this->lead->id,

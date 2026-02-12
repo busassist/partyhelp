@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Mail\VenueSetPasswordEmail;
 use App\Models\Venue;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,8 +35,19 @@ class SendVenueSetPasswordEmail implements ShouldQueue
             'email' => $user->email,
         ]));
 
-        Mail::mailer('sendgrid')
-            ->to($user->email)
-            ->send(new VenueSetPasswordEmail($this->venue, $url));
+        try {
+            Mail::mailer('sendgrid')
+                ->to($user->email)
+                ->send(new VenueSetPasswordEmail($this->venue, $url));
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_set_password', 'venue_id' => $this->venue->id, 'to' => $user->email]);
+            throw $e;
+        }
+
+        DebugLogService::logEmailSent('venue_set_password', [
+            'venue' => $this->venue->business_name,
+            'venue_id' => $this->venue->id,
+            'to' => $user->email,
+        ]);
     }
 }

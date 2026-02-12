@@ -14,7 +14,8 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    // Password reset and other notifications use the default mailer. Prefer SendGrid when configured (DO blocks SMTP).
+    'default' => env('MAIL_MAILER', env('SENDGRID_API_KEY') ? 'sendgrid' : 'log'),
 
     /*
     |--------------------------------------------------------------------------

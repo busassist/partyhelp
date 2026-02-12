@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Venue;
 
+use App\Services\ApiHealthService;
 use App\Services\StripeCheckoutService;
 use Livewire\Component;
 
@@ -35,6 +36,7 @@ class BillingBuyCredits extends Component
                 $cancelUrl
             );
         } catch (\Throwable $e) {
+            ApiHealthService::logError('stripe', $e->getMessage(), ['context' => 'billing_buy_credits', 'venue_id' => $venue->id]);
             report($e);
             \Filament\Notifications\Notification::make()->title('Checkout error')->body('Could not start checkout.')->danger()->send();
             return;

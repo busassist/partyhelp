@@ -31,7 +31,7 @@ class GuestBracketsTable extends Component implements HasActions, HasTable, HasS
     public function table(Table $table): Table
     {
         return $table
-            ->query(GuestBracket::query()->orderBy('sort_order'))
+            ->query(GuestBracket::query()->orderBy('guest_min'))
             ->modelLabel('Guest Bracket')
             ->pluralModelLabel('Guest Brackets')
             ->columns([
@@ -66,12 +66,12 @@ class GuestBracketsTable extends Component implements HasActions, HasTable, HasS
                     ->url(fn (GuestBracket $record): string => GuestBracketResource::getUrl('edit', ['record' => $record]))
                     ->icon('heroicon-o-pencil-square'),
             ])
-            ->defaultSort('sort_order');
+            ->defaultSort('guest_min');
     }
 
     protected function getTableQuery(): Builder
     {
-        return GuestBracket::query()->orderBy('sort_order');
+        return GuestBracket::query()->orderBy('guest_min');
     }
 
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver

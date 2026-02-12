@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\DebugLogEntry;
 use App\Models\Lead;
+use App\Models\Venue;
 use App\Models\SystemSetting;
 use Illuminate\Support\Collection;
 
@@ -65,6 +66,22 @@ class DebugLogService
         DebugLogEntry::create([
             'type' => 'email_sent',
             'payload' => array_merge(['email' => $emailType], $context),
+        ]);
+    }
+
+    public static function logVenueApprovalQueued(Venue $venue): void
+    {
+        if (! self::isEnabled()) {
+            return;
+        }
+
+        DebugLogEntry::create([
+            'type' => 'venue_approval_queued',
+            'payload' => [
+                'venue_id' => $venue->id,
+                'business_name' => $venue->business_name,
+                'contact_email' => $venue->contact_email,
+            ],
         ]);
     }
 

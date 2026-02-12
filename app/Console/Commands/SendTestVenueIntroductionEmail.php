@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Mail\VenueIntroductionEmail;
 use App\Models\Media;
+use App\Services\DebugLogService;
 use App\Services\EmailGuard;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -42,6 +43,8 @@ class SendTestVenueIntroductionEmail extends Command
         );
 
         Mail::mailer('sendgrid')->to($to)->send($mailable);
+
+        DebugLogService::logEmailSent('test_venue_introduction', ['to' => $to]);
 
         $this->info("Test Venue Introduction email sent to: {$to}");
 

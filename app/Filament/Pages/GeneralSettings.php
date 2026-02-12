@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Console\Commands\ProcessQueueCommand;
 use App\Filament\Livewire\DebugLogViewer;
+use App\Filament\Livewire\ServerHealthContent;
 use App\Models\SystemSetting;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -106,6 +107,11 @@ class GeneralSettings extends Page
                                     ->schema([
                                         Livewire::make(DebugLogViewer::class),
                                     ]),
+                            ]),
+                        Tab::make('Server Health')
+                            ->id('server-health')
+                            ->schema([
+                                Livewire::make(ServerHealthContent::class),
                             ]),
                     ]),
             ]);

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Mail\FormConfirmationEmail;
+use App\Services\DebugLogService;
 use App\Services\EmailGuard;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -39,6 +40,8 @@ class SendTestFormConfirmationEmail extends Command
         );
 
         Mail::mailer('sendgrid')->to($to)->send($mailable);
+
+        DebugLogService::logEmailSent('test_form_confirmation', ['to' => $to]);
 
         $this->info("Test Form Confirmation email sent to: {$to}");
 

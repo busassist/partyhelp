@@ -107,7 +107,7 @@ class PartyhelpFormConfigController extends Controller
     private function getGuestBrackets(): array
     {
         return GuestBracket::where('is_active', true)
-            ->orderBy('sort_order')
+            ->orderBy('guest_min')
             ->get()
             ->map(fn (GuestBracket $b) => [
                 'value' => $b->value,

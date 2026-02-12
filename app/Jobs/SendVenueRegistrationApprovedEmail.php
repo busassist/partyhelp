@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Mail\VenueRegistrationApprovedEmail;
 use App\Models\Venue;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,6 +28,17 @@ class SendVenueRegistrationApprovedEmail implements ShouldQueue
             return;
         }
 
-        Mail::mailer('sendgrid')->to($email)->send(new VenueRegistrationApprovedEmail($this->venue));
+        try {
+            Mail::mailer('sendgrid')->to($email)->send(new VenueRegistrationApprovedEmail($this->venue));
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_registration_approved', 'venue_id' => $this->venue->id, 'to' => $email]);
+            throw $e;
+        }
+
+        DebugLogService::logEmailSent('venue_registration_approved', [
+            'venue' => $this->venue->business_name,
+            'venue_id' => $this->venue->id,
+            'to' => $email,
+        ]);
     }
 }

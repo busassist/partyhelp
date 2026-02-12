@@ -28,8 +28,9 @@ class VenuePanelProvider extends PanelProvider
         return $panel
             ->id('venue')
             ->path('venue')
-            ->login()
+            ->login(\App\Filament\Venue\Pages\LoginVenue::class)
             ->registration(\App\Filament\Venue\Pages\RegisterVenue::class)
+            ->passwordReset()
             ->profile()
             ->userMenuItems([
                 'profile' => fn (Action $action) => $action->label('Your profile'),

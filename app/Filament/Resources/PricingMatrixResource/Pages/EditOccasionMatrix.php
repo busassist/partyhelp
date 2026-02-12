@@ -68,7 +68,7 @@ class EditOccasionMatrix extends Page implements HasTable
                         \Filament\Forms\Components\Select::make('guest_bracket_id')
                             ->label('Guest bracket')
                             ->options(
-                                GuestBracket::where('is_active', true)->orderBy('sort_order')->get()->mapWithKeys(fn ($b) => [$b->id => $b->label])
+                                GuestBracket::where('is_active', true)->orderBy('guest_min')->get()->mapWithKeys(fn ($b) => [$b->id => $b->label])
                             )
                             ->required()
                             ->searchable(),

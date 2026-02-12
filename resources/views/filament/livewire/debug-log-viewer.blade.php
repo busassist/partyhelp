@@ -19,6 +19,11 @@
                                     Venues matched: {{ $entry->payload['count'] ?? 0 }} — {{ is_array($entry->payload['venue_names'] ?? null) ? implode(', ', $entry->payload['venue_names']) : '—' }}
                                 </span>
                                 @break
+                            @case('venue_approval_queued')
+                                <span class="text-gray-700 dark:text-gray-300">
+                                    Venue approval email queued: {{ $entry->payload['business_name'] ?? '—' }} ({{ $entry->payload['contact_email'] ?? '—' }})
+                                </span>
+                                @break
                             @case('email_sent')
                                 @php
                                     $emailType = $entry->payload['email'] ?? '—';

@@ -98,7 +98,8 @@ class SendGridTestEmailService
         $base = array_merge($common, ['venues' => [$venueBlock]]);
 
         $samples = match ($key) {
-            'form_confirmation', 'venue_introduction' => $base,
+            'form_confirmation' => array_merge($base, ['websiteUrl' => config('partyhelp.public_website_url')]),
+            'venue_introduction' => $base,
             'no_few_responses_prompt', 'shortlist_check', 'additional_services_lead_expiry' => $common + [
                 'occasion' => '21st Birthday',
                 'guestCount' => '60',

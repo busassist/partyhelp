@@ -6,6 +6,7 @@ use App\Auth\VenueRegistrationResponse;
 use App\Jobs\SendVenueApprovalEmail;
 use App\Models\User;
 use App\Models\Venue;
+use App\Services\DebugLogService;
 use Filament\Auth\Http\Responses\Contracts\RegistrationResponse;
 use Filament\Auth\Pages\Register as BaseRegister;
 use Filament\Forms\Components\TextInput;
@@ -86,6 +87,7 @@ class RegisterVenue extends BaseRegister
             ]);
 
             SendVenueApprovalEmail::dispatch($venue);
+            DebugLogService::logVenueApprovalQueued($venue);
         });
 
         return app(VenueRegistrationResponse::class);

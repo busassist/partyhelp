@@ -86,7 +86,7 @@ class GuestBracketResource extends Resource
                 \Filament\Actions\EditAction::make(),
                 \Filament\Actions\DeleteAction::make(),
             ])
-            ->defaultSort('sort_order');
+            ->defaultSort('guest_min');
     }
 
     public static function getPages(): array

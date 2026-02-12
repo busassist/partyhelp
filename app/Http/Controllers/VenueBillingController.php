@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ApiHealthService;
 use App\Services\StripeCheckoutService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -48,6 +49,7 @@ class VenueBillingController extends Controller
             return redirect()->route('filament.venue.pages.billing')
                 ->with('error', $e->getMessage());
         } catch (\Throwable $e) {
+            ApiHealthService::logError('stripe', $e->getMessage(), ['context' => 'create_checkout_session', 'venue_id' => $venue->id ?? null]);
             report($e);
             $message = 'Could not start checkout. Please try again.';
             if (config('app.debug')) {
@@ -82,6 +84,7 @@ class VenueBillingController extends Controller
             return redirect()->route('filament.venue.pages.billing')
                 ->with('error', $e->getMessage());
         } catch (\Throwable $e) {
+            ApiHealthService::logError('stripe', $e->getMessage(), ['context' => 'create_setup_session', 'venue_id' => $venue->id ?? null]);
             report($e);
             $message = 'Could not start add card. Please try again.';
             if (config('app.debug')) {

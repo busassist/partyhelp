@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Venue;
+use App\Services\ApiHealthService;
 use App\Services\CreditService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,6 +34,7 @@ class ProcessAutoTopUps implements ShouldQueue
                     'amount' => $venue->auto_topup_amount,
                 ]);
             } catch (\Exception $e) {
+                ApiHealthService::logError('stripe', $e->getMessage(), ['context' => 'auto_topup', 'venue_id' => $venue->id]);
                 Log::error("Auto top-up failed for venue #{$venue->id}: {$e->getMessage()}");
             }
         }

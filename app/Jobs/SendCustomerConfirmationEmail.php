@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Mail\FormConfirmationEmail;
 use App\Models\Lead;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use App\Services\EmailGuard;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,10 +33,20 @@ class SendCustomerConfirmationEmail implements ShouldQueue
         $customerName = trim($this->lead->first_name . ' ' . $this->lead->last_name) ?: 'there';
         $mailable = new FormConfirmationEmail(
             customerName: $customerName,
-            websiteUrl: config('app.url'),
+            websiteUrl: config('partyhelp.public_website_url'),
         );
 
-        Mail::mailer('sendgrid')->to($to)->send($mailable);
+        try {
+            Mail::mailer('sendgrid')->to($to)->send($mailable);
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'form_confirmation', 'lead_id' => $this->lead->id, 'to' => $to]);
+            throw $e;
+        }
+
+        DebugLogService::logEmailSent('form_confirmation', [
+            'lead_id' => $this->lead->id,
+            'lead_email' => $to,
+        ]);
 
         Log::info('Customer confirmation email sent', [
             'lead_id' => $this->lead->id,

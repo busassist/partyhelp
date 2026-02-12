@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Mail\LeadOpportunityEmail;
 use App\Models\Lead;
 use App\Models\Venue;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,9 +41,22 @@ class SendLeadOpportunityNotification implements ShouldQueue
             return;
         }
 
-        Mail::mailer('sendgrid')
-            ->to($to)
-            ->send(new LeadOpportunityEmail($this->lead, $this->venue, $this->discountPercent));
+        try {
+            Mail::mailer('sendgrid')
+                ->to($to)
+                ->send(new LeadOpportunityEmail($this->lead, $this->venue, $this->discountPercent));
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'lead_opportunity', 'lead_id' => $this->lead->id, 'venue_id' => $this->venue->id, 'to' => $to]);
+            throw $e;
+        }
+
+        DebugLogService::logEmailSent('lead_opportunity', [
+            'lead_id' => $this->lead->id,
+            'lead_email' => $this->lead->email,
+            'venue' => $this->venue->business_name,
+            'venue_id' => $this->venue->id,
+            'to' => $to,
+        ]);
 
         Log::info('Lead opportunity notification sent via SendGrid', [
             'lead_id' => $this->lead->id,

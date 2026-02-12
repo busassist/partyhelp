@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Mail\LowMatchAlertEmail;
 use App\Models\Lead;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,7 +32,18 @@ class SendLowMatchAlertEmail implements ShouldQueue
             return;
         }
 
-        Mail::mailer('sendgrid')->to(trim($to))->send(new LowMatchAlertEmail($this->lead, $this->matchCount));
+        try {
+            Mail::mailer('sendgrid')->to(trim($to))->send(new LowMatchAlertEmail($this->lead, $this->matchCount));
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'low_match_alert', 'lead_id' => $this->lead->id, 'to' => trim($to)]);
+            throw $e;
+        }
+
+        DebugLogService::logEmailSent('low_match_alert', [
+            'lead_id' => $this->lead->id,
+            'match_count' => $this->matchCount,
+            'to' => trim($to),
+        ]);
 
         Log::info('Low-match alert sent to admin', ['lead_id' => $this->lead->id, 'match_count' => $this->matchCount]);
     }

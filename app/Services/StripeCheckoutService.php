@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Mail\VenueReceiptEmail;
 use App\Models\CreditTransaction;
 use App\Models\Venue;
+use App\Services\ApiHealthService;
+use App\Services\DebugLogService;
 use App\Services\EmailGuard;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session as StripeSession;
@@ -177,7 +179,18 @@ class StripeCheckoutService
 
         try {
             Mail::mailer('sendgrid')->to($to)->send(new VenueReceiptEmail($venue, $transaction));
+            DebugLogService::logEmailSent('invoice_receipt', [
+                'venue' => $venue->business_name,
+                'venue_id' => $venue->id,
+                'to' => $to,
+                'transaction_id' => $transaction->id,
+            ]);
         } catch (\Throwable $e) {
+            \App\Services\ApiHealthService::logError('sendgrid', $e->getMessage(), [
+                'context' => 'venue_receipt',
+                'venue_id' => $venue->id,
+                'transaction_id' => $transaction->id,
+            ]);
             report($e);
         }
     }
@@ -194,7 +207,8 @@ class StripeCheckoutService
         }
         try {
             $session = $this->stripeClient()->checkout->sessions->retrieve($sessionId);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            ApiHealthService::logError('stripe', $e->getMessage(), ['context' => 'checkout_session_retrieve', 'session_id' => $sessionId]);
             return false;
         }
         if (! $session || $session->mode !== 'payment') {
