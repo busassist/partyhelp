@@ -24,11 +24,20 @@
 <p style="font-size:14px;color:#cbd5e1;margin:0 0 8px;"><strong style="color:#a855f7;">Business:</strong> {{ $businessName ?? '—' }}</p>
 <p style="font-size:14px;color:#cbd5e1;margin:0 0 8px;"><strong style="color:#a855f7;">Contact:</strong> {{ $contactName ?? '—' }}</p>
 </td></tr></table>
-<p style="margin:24px 0;text-align:center;">
-<a href="{{ $reviewUrl ?? '#' }}" style="display:inline-block;background:#475569;color:#fff!important;font-size:14px;font-weight:600;padding:12px 20px;text-decoration:none;border-radius:8px;margin:0 4px;">{!! $reviewButtonLabel !!}</a>
-<a href="{{ $approveUrl ?? '#' }}" style="display:inline-block;background:#16a34a;color:#fff!important;font-size:14px;font-weight:600;padding:12px 20px;text-decoration:none;border-radius:8px;margin:0 4px;">{!! $approveButtonLabel !!}</a>
-<a href="{{ $rejectUrl ?? '#' }}" style="display:inline-block;background:#dc2626;color:#fff!important;font-size:14px;font-weight:600;padding:12px 20px;text-decoration:none;border-radius:8px;margin:0 4px;">{!! $rejectButtonLabel !!}</a>
-</p>
+{{-- Table-based buttons for Outlook (ignores padding on inline-block anchors) --}}
+<table cellpadding="0" cellspacing="0" border="0" align="center" style="margin:24px auto;">
+<tr>
+<td style="padding:0 6px;">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#475569" style="background:#475569;padding:14px 24px;border-radius:8px;"><a href="{{ $reviewUrl ?? '#' }}" target="_blank" style="color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">{!! $reviewButtonLabel !!}</a></td></tr></table>
+</td>
+<td style="padding:0 6px;">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#16a34a" style="background:#16a34a;padding:14px 24px;border-radius:8px;"><a href="{{ $approveUrl ?? '#' }}" target="_blank" style="color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">{!! $approveButtonLabel !!}</a></td></tr></table>
+</td>
+<td style="padding:0 6px;">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#dc2626" style="background:#dc2626;padding:14px 24px;border-radius:8px;"><a href="{{ $rejectUrl ?? '#' }}" target="_blank" style="color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">{!! $rejectButtonLabel !!}</a></td></tr></table>
+</td>
+</tr>
+</table>
 </td></tr>
 <tr><td style="background:#160b2e;padding:24px;border-top:1px solid rgba(255,255,255,0.05);"><p style="margin:0;font-size:12px;color:#64748b;text-align:center;">Partyhelp Admin</p></td></tr>
 </table>
