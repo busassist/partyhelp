@@ -111,7 +111,7 @@ class Partyhelp_Form_Renderer
                         <label for="ph-budget">Estimated Budget</label>
                         <?php if (! empty($budget_ranges)): ?>
                             <select id="ph-budget" name="budget_range" class="partyhelp-select">
-                                <option value="">Select budget</option>
+                                <option value="I'm not sure at this stage" selected>I'm not sure at this stage</option>
                                 <?php foreach ($budget_ranges as $br): ?>
                                     <option value="<?php echo esc_attr($br['value']); ?>"><?php echo esc_html($br['label']); ?></option>
                                 <?php endforeach; ?>

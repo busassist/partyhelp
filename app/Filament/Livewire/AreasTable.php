@@ -54,7 +54,7 @@ class AreasTable extends TableComponent
                     ->fillForm(fn ($livewire, Area $record, $table): array => [
                         'name' => $record->name,
                         'sort_order' => $record->sort_order,
-                        'postcodes' => $record->postcodes->pluck('id')->toArray(),
+                        'postcodes' => $record->postcodes->sortBy(['sort_order', 'suburb'])->pluck('id')->values()->toArray(),
                         'venues' => $record->venues->pluck('id')->toArray(),
                     ])
                     ->using(function (array $data, $livewire, Area $record, $table): void {

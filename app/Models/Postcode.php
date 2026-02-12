@@ -17,7 +17,8 @@ class Postcode extends Model
 
     public static function optionsForSelect(): array
     {
-        return static::orderBy('suburb')
+        return static::orderBy('sort_order')
+            ->orderBy('suburb')
             ->get()
             ->mapWithKeys(fn (self $p) => [$p->id => "{$p->suburb} ({$p->postcode})"])
             ->toArray();

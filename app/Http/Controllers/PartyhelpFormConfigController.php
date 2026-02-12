@@ -77,12 +77,12 @@ class PartyhelpFormConfigController extends Controller
             return [];
         }
 
-        return Area::with('postcodes')
+        return Area::with(['postcodes' => fn ($q) => $q->orderBy('sort_order')->orderBy('suburb')])
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get()
             ->map(function (Area $area) {
-                $suburbs = $area->postcodes->pluck('suburb')->sort()->values()->toArray();
+                $suburbs = $area->postcodes->pluck('suburb')->values()->toArray();
 
                 return [
                     'id' => $area->id,

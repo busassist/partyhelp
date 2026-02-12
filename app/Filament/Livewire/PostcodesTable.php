@@ -24,12 +24,13 @@ class PostcodesTable extends TableComponent
     public function table(Table $table): Table
     {
         return $table
-            ->query(Postcode::query()->orderBy('suburb'))
+            ->query(Postcode::query()->orderBy('sort_order')->orderBy('suburb'))
             ->columns([
                 Tables\Columns\TextColumn::make('suburb')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('postcode')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('state')->sortable(),
             ])
+            ->reorderable('sort_order')
             ->headerActions([
                 Actions\Action::make('downloadCsv')
                     ->label('Download CSV template')
