@@ -11,11 +11,10 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class VenueReceiptEmail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public function __construct(
         public Venue $venue,
@@ -40,21 +39,6 @@ class VenueReceiptEmail extends Mailable
 
     public function content(): Content
     {
-        $template = EmailTemplate::byKey('invoice_receipt');
-        $templateId = $template?->sendgrid_template_id ?? config('services.sendgrid.templates.invoice_receipt');
-
-        if ($templateId) {
-            $data = array_merge($template?->content_slots ?? [], $this->templateData());
-            $this->sendgrid([
-                'personalizations' => [
-                    ['dynamic_template_data' => $data],
-                ],
-                'template_id' => $templateId,
-            ]);
-
-            return new Content(view: 'emails.sendgrid-dynamic-placeholder');
-        }
-
         return new Content(
             view: 'emails.invoice-receipt',
             with: $this->templateData(),

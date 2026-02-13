@@ -42,11 +42,9 @@ class SendLeadOpportunityNotification implements ShouldQueue
         }
 
         try {
-            Mail::mailer('sendgrid')
-                ->to($to)
-                ->send(new LeadOpportunityEmail($this->lead, $this->venue, $this->discountPercent));
+            Mail::to($to)->send(new LeadOpportunityEmail($this->lead, $this->venue, $this->discountPercent));
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'lead_opportunity', 'lead_id' => $this->lead->id, 'venue_id' => $this->venue->id, 'to' => $to]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'lead_opportunity', 'lead_id' => $this->lead->id, 'venue_id' => $this->venue->id, 'to' => $to]);
             throw $e;
         }
 
@@ -58,7 +56,7 @@ class SendLeadOpportunityNotification implements ShouldQueue
             'to' => $to,
         ]);
 
-        Log::info('Lead opportunity notification sent via SendGrid', [
+        Log::info('Lead opportunity notification sent', [
             'lead_id' => $this->lead->id,
             'venue_id' => $this->venue->id,
             'to' => $to,

@@ -33,9 +33,9 @@ class SendLowMatchAlertEmail implements ShouldQueue
         }
 
         try {
-            Mail::mailer('sendgrid')->to(trim($to))->send(new LowMatchAlertEmail($this->lead, $this->matchCount));
+            Mail::to(trim($to))->send(new LowMatchAlertEmail($this->lead, $this->matchCount));
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'low_match_alert', 'lead_id' => $this->lead->id, 'to' => trim($to)]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'low_match_alert', 'lead_id' => $this->lead->id, 'to' => trim($to)]);
             throw $e;
         }
 

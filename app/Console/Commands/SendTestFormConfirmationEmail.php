@@ -27,7 +27,7 @@ class SendTestFormConfirmationEmail extends Command
         $unsubscribeUrl = config('app.url') . '/unsubscribe?token=sample';
 
         if (! EmailGuard::shouldSendTo($to)) {
-            $this->warn("Skipped: {$to} is a seed/test address (not sent via SendGrid).");
+            $this->warn("Skipped: {$to} is a seed/test address (not sent).");
 
             return self::SUCCESS;
         }
@@ -39,7 +39,7 @@ class SendTestFormConfirmationEmail extends Command
             unsubscribeUrl: $unsubscribeUrl,
         );
 
-        Mail::mailer('sendgrid')->to($to)->send($mailable);
+        Mail::to($to)->send($mailable);
 
         DebugLogService::logEmailSent('test_form_confirmation', ['to' => $to]);
 

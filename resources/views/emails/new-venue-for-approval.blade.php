@@ -24,17 +24,21 @@
 <p style="font-size:14px;color:#cbd5e1;margin:0 0 8px;"><strong style="color:#a855f7;">Business:</strong> {{ $businessName ?? '—' }}</p>
 <p style="font-size:14px;color:#cbd5e1;margin:0 0 8px;"><strong style="color:#a855f7;">Contact:</strong> {{ $contactName ?? '—' }}</p>
 </td></tr></table>
-{{-- Table-based buttons for Outlook (ignores padding on inline-block anchors) --}}
+{{-- Table-based buttons: padding and bg on td for Outlook; white text + standard button font --}}
+@php
+    $btnStyle = 'color:#ffffff !important; font-family:Arial,Helvetica,sans-serif; font-size:15px; font-weight:600; text-decoration:none;';
+    $tdPadding = '16px 28px';
+@endphp
 <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin:24px auto;">
 <tr>
-<td style="padding:0 6px;">
-<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#475569" style="background:#475569;padding:14px 24px;border-radius:8px;"><a href="{{ $reviewUrl ?? '#' }}" target="_blank" style="color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">{!! $reviewButtonLabel !!}</a></td></tr></table>
+<td style="padding:0 8px;">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#475569" style="background:#475569; padding:{{ $tdPadding }}; border-radius:8px;"><a href="{{ $reviewUrl ?? '#' }}" target="_blank" style="{{ $btnStyle }}">{!! $reviewButtonLabel !!}</a></td></tr></table>
 </td>
-<td style="padding:0 6px;">
-<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#16a34a" style="background:#16a34a;padding:14px 24px;border-radius:8px;"><a href="{{ $approveUrl ?? '#' }}" target="_blank" style="color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">{!! $approveButtonLabel !!}</a></td></tr></table>
+<td style="padding:0 8px;">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#16a34a" style="background:#16a34a; padding:{{ $tdPadding }}; border-radius:8px;"><a href="{{ $approveUrl ?? '#' }}" target="_blank" style="{{ $btnStyle }}">{!! $approveButtonLabel !!}</a></td></tr></table>
 </td>
-<td style="padding:0 6px;">
-<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#dc2626" style="background:#dc2626;padding:14px 24px;border-radius:8px;"><a href="{{ $rejectUrl ?? '#' }}" target="_blank" style="color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">{!! $rejectButtonLabel !!}</a></td></tr></table>
+<td style="padding:0 8px;">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#dc2626" style="background:#dc2626; padding:{{ $tdPadding }}; border-radius:8px;"><a href="{{ $rejectUrl ?? '#' }}" target="_blank" style="{{ $btnStyle }}">{!! $rejectButtonLabel !!}</a></td></tr></table>
 </td>
 </tr>
 </table>

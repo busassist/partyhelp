@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\RoomResource\Pages;
 use App\Forms\Components\MediaLibraryPicker;
 use App\Models\Room;
+use App\Models\SystemSetting;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
@@ -69,7 +70,7 @@ class RoomResource extends Resource
             MediaLibraryPicker::make('images')
                 ->venueId(fn ($get, ?Room $record) => $record?->venue_id ?? $get('venue_id'))
                 ->isAdmin(true)
-                ->maxFiles(4),
+                ->maxFiles((int) SystemSetting::get('max_photos_per_room', config('partyhelp.max_photos_per_room', 4))),
             Forms\Components\TextInput::make('sort_order')
                 ->numeric()
                 ->default(0),

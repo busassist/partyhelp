@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BigQuerySyncLog;
 use App\Models\Media;
 use App\Models\ScheduleRunLog;
 use App\Models\Venue;
@@ -13,6 +14,7 @@ class ServerHealthService
         'App\Jobs\ProcessLeadDiscounts',
         'App\Jobs\ExpireLeads',
         'App\Jobs\ProcessAutoTopUps',
+        'App\Jobs\SyncToBigQueryJob',
         'Process the queue (stop when empty) with a lock so only one processor runs at a time.',
     ];
     /**
@@ -105,16 +107,17 @@ class ServerHealthService
      */
     public static function apiStatus(): array
     {
-        $sendgridKey = config('services.sendgrid.api_key');
+        $mailgunDomain = config('services.mailgun.domain');
+        $mailgunSecret = config('services.mailgun.secret');
         $stripeSecret = config('services.stripe.secret');
         $spacesKey = config('filesystems.disks.spaces.key');
         $spacesSecret = config('filesystems.disks.spaces.secret');
         $spacesBucket = config('filesystems.disks.spaces.bucket');
 
         return [
-            'sendgrid' => [
-                'configured' => ! empty($sendgridKey),
-                'label' => 'SendGrid',
+            'mailgun' => [
+                'configured' => ! empty($mailgunDomain) && ! empty($mailgunSecret),
+                'label' => 'Mailgun',
                 'detail' => 'Email sending API',
             ],
             'stripe' => [
@@ -179,6 +182,30 @@ class ServerHealthService
             'required_ok' => $requiredWithSuccess,
             'required_total' => $requiredCount,
             'required_failed' => $requiredWithFailure,
+        ];
+    }
+
+    /**
+     * Last BigQuery sync run (from bigquery_sync_logs).
+     *
+     * @return array{last_run: array{status: string, message: string|null, error_detail: string|null, started_at: string, completed_at: string|null, summary: array|null}|null, configured: bool}
+     */
+    public static function bigquerySyncStatus(): array
+    {
+        $log = BigQuerySyncLog::latestRun();
+        $credentialsPath = config('bigquery.credentials_path');
+        $configured = ! empty(config('bigquery.project_id')) && ! empty(config('bigquery.dataset')) && $credentialsPath && is_file($credentialsPath);
+
+        return [
+            'last_run' => $log ? [
+                'status' => $log->status,
+                'message' => $log->message,
+                'error_detail' => $log->error_detail,
+                'started_at' => $log->started_at->format('Y-m-d H:i:s'),
+                'completed_at' => $log->completed_at?->format('Y-m-d H:i:s'),
+                'summary' => $log->summary,
+            ] : null,
+            'configured' => $configured,
         ];
     }
 

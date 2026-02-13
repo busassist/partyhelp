@@ -113,6 +113,38 @@
             </div>
         </section>
 
+        {{-- BigQuery sync --}}
+        <section class="rounded-lg border border-gray-200 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-800/30 px-5 py-5">
+            <h3 class="text-sm font-semibold leading-6 text-gray-950 dark:text-white mb-4">BigQuery sync (daily)</h3>
+            @if (!$bigquerySync['configured'])
+                <p class="text-sm text-amber-600 dark:text-amber-400">Not configured (credentials, project, or dataset missing).</p>
+            @elseif ($bigquerySync['last_run'] === null)
+                <p class="text-sm text-gray-600 dark:text-gray-400">No sync run recorded yet. The job runs daily; run it manually from the queue or wait for the next schedule.</p>
+            @else
+                @php $run = $bigquerySync['last_run']; @endphp
+                <div class="flex flex-wrap items-center gap-4 text-sm mb-3">
+                    <span class="text-gray-500 dark:text-gray-400">Last run:</span>
+                    <strong class="tabular-nums text-gray-900 dark:text-white">{{ $run['started_at'] }}</strong>
+                    @if ($run['status'] === 'success')
+                        <span class="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">Success</span>
+                    @else
+                        <span class="inline-flex items-center rounded-md bg-red-50 dark:bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-700 dark:text-red-400">Failed</span>
+                    @endif
+                </div>
+                @if (!empty($run['summary']) && is_array($run['summary']))
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Rows synced: @foreach ($run['summary'] as $t => $c) {{ $t }}: {{ $c }}@if (!$loop->last), @endif @endforeach</p>
+                @endif
+                @if ($run['status'] === 'failed' && !empty($run['message']))
+                    <div class="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/30 px-4 py-3 mt-2">
+                        <p class="text-sm font-medium text-red-800 dark:text-red-200">{{ \Illuminate\Support\Str::limit($run['message'], 200) }}</p>
+                        @if (!empty($run['error_detail']))
+                            <details class="mt-2"><summary class="text-xs text-red-600 dark:text-red-400 cursor-pointer">Show details</summary><pre class="mt-1 text-xs text-gray-600 dark:text-gray-500 whitespace-pre-wrap break-all">{{ \Illuminate\Support\Str::limit($run['error_detail'], 500) }}</pre></details>
+                        @endif
+                    </div>
+                @endif
+            @endif
+        </section>
+
         {{-- Scheduled tasks --}}
         <section class="rounded-lg border border-gray-200 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-800/30 px-5 py-5">
             <h3 class="text-sm font-semibold leading-6 text-gray-950 dark:text-white mb-4">Scheduled tasks</h3>

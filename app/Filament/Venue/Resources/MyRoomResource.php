@@ -5,6 +5,7 @@ namespace App\Filament\Venue\Resources;
 use App\Filament\Venue\Resources\MyRoomResource\Pages;
 use App\Forms\Components\MediaLibraryPicker;
 use App\Models\Room;
+use App\Models\SystemSetting;
 use Filament\Forms;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
@@ -57,7 +58,7 @@ class MyRoomResource extends Resource
             MediaLibraryPicker::make('images')
                 ->venueId(fn () => auth()->user()?->venue?->id)
                 ->isAdmin(false)
-                ->maxFiles(4)
+                ->maxFiles((int) SystemSetting::get('max_photos_per_room', config('partyhelp.max_photos_per_room', 4)))
                 ->autoSave(true)
                 ->inlineLabel(),
             Forms\Components\Toggle::make('is_active')->default(true),
@@ -90,6 +91,18 @@ class MyRoomResource extends Resource
 
         return parent::getEloquentQuery()
             ->where('venue_id', $venue?->id ?? 0);
+    }
+
+    /** PRD 8.3: Up to 6 rooms per venue. */
+    public static function canCreate(): bool
+    {
+        $venue = auth()->user()?->venue;
+        if (! $venue) {
+            return false;
+        }
+        $max = (int) SystemSetting::get('max_rooms_per_venue', config('partyhelp.max_rooms_per_venue', 6));
+
+        return $venue->rooms()->count() < $max;
     }
 
     public static function getPages(): array

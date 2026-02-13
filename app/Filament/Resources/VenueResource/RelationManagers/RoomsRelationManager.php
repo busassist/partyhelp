@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\VenueResource\RelationManagers;
 
 use App\Forms\Components\MediaLibraryPicker;
+use App\Models\SystemSetting;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -47,7 +48,7 @@ class RoomsRelationManager extends RelationManager
             MediaLibraryPicker::make('images')
                 ->venueId(fn () => $this->getOwnerRecord()?->id)
                 ->isAdmin(true)
-                ->maxFiles(4),
+                ->maxFiles((int) SystemSetting::get('max_photos_per_room', config('partyhelp.max_photos_per_room', 4))),
             Forms\Components\TextInput::make('sort_order')
                 ->numeric()->default(0),
             Forms\Components\Toggle::make('is_active')->default(true),

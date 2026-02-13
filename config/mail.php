@@ -14,8 +14,8 @@ return [
     |
     */
 
-    // Password reset and other notifications use the default mailer. Prefer SendGrid when configured (DO blocks SMTP).
-    'default' => env('MAIL_MAILER', env('SENDGRID_API_KEY') ? 'sendgrid' : 'log'),
+    // Default mailer: mailgun (API, no SMTP). Set MAIL_MAILER=mailgun and MAILGUN_* in .env (DO blocks SMTP).
+    'default' => env('MAIL_MAILER', 'mailgun'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,9 +51,8 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
-        'sendgrid' => [
-            'transport' => 'sendgrid',
-            'api_key' => env('SENDGRID_API_KEY', env('MAIL_PASSWORD')),
+        'mailgun' => [
+            'transport' => 'mailgun',
         ],
 
         'ses' => [

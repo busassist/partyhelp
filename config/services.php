@@ -14,24 +14,19 @@ return [
     |
     */
 
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
     'resend' => [
         'key' => env('RESEND_API_KEY'),
-    ],
-
-    'sendgrid' => [
-        'api_key' => env('SENDGRID_API_KEY', env('MAIL_PASSWORD')),
-        'templates' => [
-            'venue_introduction' => env('SENDGRID_TEMPLATE_VENUE_INTRODUCTION'),
-            'form_confirmation' => env('SENDGRID_TEMPLATE_FORM_CONFIRMATION'),
-            'invoice_receipt' => env('SENDGRID_TEMPLATE_INVOICE_RECEIPT'),
-            'lead_opportunity' => env('SENDGRID_TEMPLATE_LEAD_OPPORTUNITY'),
-            'lead_opportunity_discount' => env('SENDGRID_TEMPLATE_LEAD_OPPORTUNITY_DISCOUNT'),
-            'venue_set_password' => env('SENDGRID_TEMPLATE_VENUE_SET_PASSWORD'),
-        ],
     ],
 
     'ses' => [

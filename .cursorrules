@@ -15,7 +15,7 @@ WordPress/Elementor handles the public lead-generation form; Laravel handles eve
 - **Max 500 lines** only where a single file is architecturally justified.
 - Blade files use `<x-layout>` component tags, NOT `@include` statements.
 - Follow Laravel conventions: PSR-12, type hints, return types.
-- All outbound email via **SendGrid API** (DO blocks SMTP ports).
+- All outbound email via **Mailgun API** (DO blocks SMTP ports).
 
 ## Semantic Styling (PRD 3.1)
 Use **named semantic classes** for common elements so styling can be controlled from one place. Prefer semantic classes over inline utility-only styling.

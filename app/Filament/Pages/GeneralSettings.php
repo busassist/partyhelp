@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @property-read Schema $form
@@ -39,7 +40,17 @@ class GeneralSettings extends Page
 
     public function mount(): void
     {
-        $this->fillForm();
+        try {
+            $this->fillForm();
+        } catch (\Throwable $e) {
+            Log::error('GeneralSettings mount failed', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
     }
 
     protected function fillForm(): void
@@ -48,6 +59,18 @@ class GeneralSettings extends Page
             'lead_max_matches' => (int) SystemSetting::get(
                 'lead_max_matches',
                 config('partyhelp.lead.max_matches', 30)
+            ),
+            'max_rooms_per_venue' => (int) SystemSetting::get(
+                'max_rooms_per_venue',
+                config('partyhelp.max_rooms_per_venue', 6)
+            ),
+            'max_photos_per_room' => (int) SystemSetting::get(
+                'max_photos_per_room',
+                config('partyhelp.max_photos_per_room', 4)
+            ),
+            'max_images_per_venue' => (int) SystemSetting::get(
+                'max_images_per_venue',
+                config('partyhelp.max_images_per_venue', 10)
             ),
             'debug_logging_enabled' => SystemSetting::get('debug_logging_enabled', false),
             'new_venues_email_password' => SystemSetting::get('new_venues_email_password', false),
@@ -76,6 +99,33 @@ class GeneralSettings extends Page
                                             ->minValue(1)
                                             ->maxValue(100)
                                             ->required(),
+                                    ]),
+                                Section::make('Venue & room limits')
+                                    ->description('Limits applied in the venue portal and when managing rooms in Admin.')
+                                    ->schema([
+                                        \Filament\Schemas\Components\Grid::make(3)->schema([
+                                        \Filament\Forms\Components\TextInput::make('max_rooms_per_venue')
+                                            ->label('Limit of rooms per venue')
+                                            ->helperText('Maximum number of rooms a venue can create (default 6).')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(50)
+                                            ->required(),
+                                        \Filament\Forms\Components\TextInput::make('max_photos_per_room')
+                                            ->label('Limit of photos per room')
+                                            ->helperText('Maximum images per room (default 4).')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(20)
+                                            ->required(),
+                                        \Filament\Forms\Components\TextInput::make('max_images_per_venue')
+                                            ->label('Total image limit per venue')
+                                            ->helperText('Maximum venue-level images per venue, e.g. gallery (default 10).')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(50)
+                                            ->required(),
+                                        ]),
                                     ]),
                                 Section::make('Venues')
                                     ->description('Options for new venues created in Admin.')
@@ -175,6 +225,27 @@ class GeneralSettings extends Page
             'lead_max_matches',
             (int) ($data['lead_max_matches'] ?? 30),
             'leads',
+            'integer'
+        );
+
+        SystemSetting::set(
+            'max_rooms_per_venue',
+            (int) ($data['max_rooms_per_venue'] ?? config('partyhelp.max_rooms_per_venue', 6)),
+            'venue',
+            'integer'
+        );
+
+        SystemSetting::set(
+            'max_photos_per_room',
+            (int) ($data['max_photos_per_room'] ?? config('partyhelp.max_photos_per_room', 4)),
+            'venue',
+            'integer'
+        );
+
+        SystemSetting::set(
+            'max_images_per_venue',
+            (int) ($data['max_images_per_venue'] ?? config('partyhelp.max_images_per_venue', 10)),
+            'venue',
             'integer'
         );
 

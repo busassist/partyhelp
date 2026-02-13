@@ -178,7 +178,7 @@ class StripeCheckoutService
         }
 
         try {
-            Mail::mailer('sendgrid')->to($to)->send(new VenueReceiptEmail($venue, $transaction));
+            Mail::to($to)->send(new VenueReceiptEmail($venue, $transaction));
             DebugLogService::logEmailSent('invoice_receipt', [
                 'venue' => $venue->business_name,
                 'venue_id' => $venue->id,
@@ -186,7 +186,7 @@ class StripeCheckoutService
                 'transaction_id' => $transaction->id,
             ]);
         } catch (\Throwable $e) {
-            \App\Services\ApiHealthService::logError('sendgrid', $e->getMessage(), [
+            \App\Services\ApiHealthService::logError(config('mail.default'), $e->getMessage(), [
                 'context' => 'venue_receipt',
                 'venue_id' => $venue->id,
                 'transaction_id' => $transaction->id,

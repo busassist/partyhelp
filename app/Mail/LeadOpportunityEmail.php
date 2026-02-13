@@ -10,11 +10,10 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class LeadOpportunityEmail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public function __construct(
         public Lead $lead,
@@ -40,8 +39,6 @@ class LeadOpportunityEmail extends Mailable
 
     public function content(): Content
     {
-        $templateKey = $this->discountPercent > 0 ? 'lead_opportunity_discount' : 'lead_opportunity';
-        $templateId = config('services.sendgrid.templates.' . $templateKey);
         $purchaseUrl = $this->lead->signedPurchaseUrlFor($this->venue);
         $topUpUrl = config('app.url') . '/venue/billing?tab=buy-credits';
         $price = (string) $this->lead->current_price;
@@ -53,34 +50,6 @@ class LeadOpportunityEmail extends Mailable
         $footerBalanceText = 'Your credit balance: $' . $creditBalance;
         $introText = $this->discountIntroText('intro_text');
         $discountIntroText = $this->discountIntroText('discount_intro_text');
-
-        $templateData = [
-            'purchaseUrl' => $purchaseUrl,
-            'topUpUrl' => $topUpUrl,
-            'venueName' => $this->venue->business_name,
-            'leadOccasion' => $occasionLabel,
-            'leadGuestCount' => $this->lead->guest_count_display,
-            'leadPreferredDate' => $this->lead->preferred_date?->format('j M Y'),
-            'leadSuburb' => $suburb,
-            'leadRoomStyles' => $roomStylesLabel,
-            'price' => $price,
-            'creditBalance' => $creditBalance,
-            'ctaButtonLabel' => $ctaButtonLabel,
-            'footerBalanceText' => $footerBalanceText,
-            'appUrl' => config('app.url'),
-            'intro_text' => $introText,
-            'discount_intro_text' => $discountIntroText,
-            'discountPercent' => (string) $this->discountPercent,
-        ];
-
-        if ($templateId) {
-            $this->sendgrid([
-                'personalizations' => [['dynamic_template_data' => $templateData]],
-                'template_id' => $templateId,
-            ]);
-
-            return new Content(view: 'emails.sendgrid-dynamic-placeholder');
-        }
 
         $view = $this->discountPercent > 0 ? 'emails.lead-opportunity-discount' : 'emails.lead-opportunity';
         $with = array_merge([

@@ -33,9 +33,9 @@ class SendVenueApprovalEmail implements ShouldQueue
         $to = trim($to);
 
         try {
-            Mail::mailer('sendgrid')->to($to)->send(new VenueApprovalEmail($this->venue));
+            Mail::to($to)->send(new VenueApprovalEmail($this->venue));
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_approval', 'venue_id' => $this->venue->id, 'to' => $to]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'venue_approval', 'venue_id' => $this->venue->id, 'to' => $to]);
             throw $e;
         }
 

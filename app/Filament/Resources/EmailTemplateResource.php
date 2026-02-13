@@ -77,10 +77,6 @@ class EmailTemplateResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('key')->badge()->color('gray'),
                 Tables\Columns\TextColumn::make('subject')->limit(50)->searchable(),
-                Tables\Columns\IconColumn::make('sendgrid_template_id')
-                    ->label('Synced')
-                    ->boolean()
-                    ->getStateUsing(fn ($record) => ! empty($record->sendgrid_template_id)),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

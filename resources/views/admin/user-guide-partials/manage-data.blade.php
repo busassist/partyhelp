@@ -18,6 +18,6 @@
     <p><strong>Venue Styles</strong> (e.g. Bar, Function Room, Pub) are shown on the form as selectable options (with images if configured). The form config API exposes these; the plugin syncs them so the form always shows current styles. Matching uses room style to score leads. Keep labels and keys consistent with the form and matching logic.</p>
 
     <h3>5.6 Emails (templates &amp; logs)</h3>
-    <p><strong>Manage Emails</strong> — Edit and manage <strong>email templates</strong> used for SendGrid dynamic templates. You can edit content slots, send test emails, and sync templates to SendGrid. See section <strong>7. Email integration</strong> for details.</p>
+    <p><strong>Manage Emails</strong> — Edit and manage <strong>email templates</strong> (Blade-based). You can edit content slots and send test emails via Mailgun. See section <strong>7. Email integration</strong> for details.</p>
     <p><strong>Emails</strong> (logs) — View <strong>email logs</strong> for sent messages (e.g. lead opportunity, venue intro, form confirmation). Useful for debugging and compliance.</p>
 </section>

@@ -29,9 +29,9 @@ class SendVenueRegistrationApprovedEmail implements ShouldQueue
         }
 
         try {
-            Mail::mailer('sendgrid')->to($email)->send(new VenueRegistrationApprovedEmail($this->venue));
+            Mail::to($email)->send(new VenueRegistrationApprovedEmail($this->venue));
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_registration_approved', 'venue_id' => $this->venue->id, 'to' => $email]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'venue_registration_approved', 'venue_id' => $this->venue->id, 'to' => $email]);
             throw $e;
         }
 

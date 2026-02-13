@@ -20,26 +20,29 @@ class ApiHealthModalContent extends Component
         ];
     }
 
-    public function testSendGrid(): void
+    public function testMailgun(): void
     {
         $this->testResult = null;
-        $key = config('services.sendgrid.api_key');
-        if (empty($key)) {
-            $this->testResult = 'SendGrid: Not configured (no API key).';
+        $secret = config('services.mailgun.secret');
+        $domain = config('services.mailgun.domain');
+        if (empty($secret) || empty($domain)) {
+            $this->testResult = 'Mailgun: Not configured (domain or secret missing).';
 
             return;
         }
+        $endpoint = config('services.mailgun.endpoint', 'api.mailgun.net');
+        $url = 'https://' . $endpoint . '/v3/domains/' . $domain;
         try {
-            $response = Http::withToken($key)
+            $response = Http::withBasicAuth('api', $secret)
                 ->timeout(10)
-                ->get('https://api.sendgrid.com/v3/user/account');
+                ->get($url);
             if ($response->successful()) {
-                $this->testResult = 'SendGrid: Connection OK.';
+                $this->testResult = 'Mailgun: Connection OK.';
             } else {
-                $this->testResult = 'SendGrid: API returned ' . $response->status() . ' — ' . \Illuminate\Support\Str::limit($response->body(), 100);
+                $this->testResult = 'Mailgun: API returned ' . $response->status() . ' — ' . \Illuminate\Support\Str::limit($response->body(), 100);
             }
         } catch (\Throwable $e) {
-            $this->testResult = 'SendGrid: ' . $e->getMessage();
+            $this->testResult = 'Mailgun: ' . $e->getMessage();
         }
     }
 

@@ -37,9 +37,9 @@ class SendCustomerConfirmationEmail implements ShouldQueue
         );
 
         try {
-            Mail::mailer('sendgrid')->to($to)->send($mailable);
+            Mail::to($to)->send($mailable);
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'form_confirmation', 'lead_id' => $this->lead->id, 'to' => $to]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'form_confirmation', 'lead_id' => $this->lead->id, 'to' => $to]);
             throw $e;
         }
 

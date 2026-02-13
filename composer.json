@@ -8,12 +8,14 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^5.2",
+        "google/cloud-bigquery": "^1.35",
         "intervention/image-laravel": "^1.5",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.31",
-        "s-ichikawa/laravel-sendgrid-driver": "^4.0",
-        "stripe/stripe-php": "^19.3"
+        "stripe/stripe-php": "^19.3",
+        "symfony/http-client": "^8.0",
+        "symfony/mailgun-mailer": "^8.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

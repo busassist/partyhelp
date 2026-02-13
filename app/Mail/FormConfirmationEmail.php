@@ -9,11 +9,10 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class FormConfirmationEmail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public function __construct(
         public string $customerName,
@@ -34,30 +33,6 @@ class FormConfirmationEmail extends Mailable
 
     public function content(): Content
     {
-        $templateId = config('services.sendgrid.templates.form_confirmation');
-
-        if ($templateId) {
-            $config = config('partyhelp.form_confirmation_email', []);
-
-            $this->sendgrid([
-                'personalizations' => [
-                    [
-                        'dynamic_template_data' => array_merge([
-                            'logoUrl' => asset('images/brand/ph-logo-white.png'),
-                            'customerName' => $this->customerName,
-                            'websiteUrl' => $this->websiteUrl,
-                            'viewInBrowserUrl' => $this->viewInBrowserUrl,
-                            'unsubscribeUrl' => $this->unsubscribeUrl,
-                            'appUrl' => config('app.url'),
-                        ], $config),
-                    ],
-                ],
-                'template_id' => $templateId,
-            ]);
-
-            return new Content(view: 'emails.sendgrid-dynamic-placeholder');
-        }
-
         return new Content(view: 'emails.form-confirmation', with: $this->bladeViewData());
     }
 

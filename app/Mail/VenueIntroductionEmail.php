@@ -8,11 +8,10 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class VenueIntroductionEmail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public function __construct(
         public string $customerName,
@@ -34,31 +33,6 @@ class VenueIntroductionEmail extends Mailable
 
     public function content(): Content
     {
-        $templateId = config('services.sendgrid.templates.venue_introduction');
-
-        if ($templateId) {
-            $venueIntroConfig = config('partyhelp.venue_intro_email', []);
-
-            $this->sendgrid([
-                'personalizations' => [
-                    [
-                        'dynamic_template_data' => array_merge([
-                            'logoUrl' => asset('images/brand/ph-logo-white.png'),
-                            'customerName' => $this->customerName,
-                            'location' => $this->location,
-                            'venues' => $this->venues,
-                            'viewInBrowserUrl' => $this->viewInBrowserUrl,
-                            'unsubscribeUrl' => $this->unsubscribeUrl,
-                            'appUrl' => config('app.url'),
-                        ], $venueIntroConfig),
-                    ],
-                ],
-                'template_id' => $templateId,
-            ]);
-
-            return new Content(view: 'emails.sendgrid-dynamic-placeholder');
-        }
-
         return new Content(view: 'emails.venue-introduction');
     }
 }

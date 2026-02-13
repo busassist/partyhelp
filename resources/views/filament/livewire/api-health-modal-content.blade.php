@@ -1,7 +1,7 @@
 <div class="text-white">
     <div class="flex flex-wrap gap-2 mb-4">
-        <button type="button" wire:click="testSendGrid" wire:loading.attr="disabled" class="rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-600 disabled:opacity-50">
-            Test SendGrid
+        <button type="button" wire:click="testMailgun" wire:loading.attr="disabled" class="rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-600 disabled:opacity-50">
+            Test Mailgun
         </button>
         <button type="button" wire:click="testStripe" wire:loading.attr="disabled" class="rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-600 disabled:opacity-50">
             Test Stripe

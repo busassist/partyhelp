@@ -37,6 +37,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Venue Portal Limits (PRD 8.3)
+    |--------------------------------------------------------------------------
+    */
+    'max_rooms_per_venue' => (int) env('PARTYHELP_MAX_ROOMS_PER_VENUE', 6),
+    'max_photos_per_room' => (int) env('PARTYHELP_MAX_PHOTOS_PER_ROOM', 4),
+    'max_images_per_venue' => (int) env('PARTYHELP_MAX_IMAGES_PER_VENUE', 10),
+
+    /*
+    |--------------------------------------------------------------------------
     | Lead Settings
     |--------------------------------------------------------------------------
     */

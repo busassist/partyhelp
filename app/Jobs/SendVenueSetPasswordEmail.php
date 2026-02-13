@@ -36,11 +36,9 @@ class SendVenueSetPasswordEmail implements ShouldQueue
         ]));
 
         try {
-            Mail::mailer('sendgrid')
-                ->to($user->email)
-                ->send(new VenueSetPasswordEmail($this->venue, $url));
+            Mail::to($user->email)->send(new VenueSetPasswordEmail($this->venue, $url));
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_set_password', 'venue_id' => $this->venue->id, 'to' => $user->email]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'venue_set_password', 'venue_id' => $this->venue->id, 'to' => $user->email]);
             throw $e;
         }
 

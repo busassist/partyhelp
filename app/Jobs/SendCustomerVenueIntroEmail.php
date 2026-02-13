@@ -46,9 +46,9 @@ class SendCustomerVenueIntroEmail implements ShouldQueue
         );
 
         try {
-            Mail::mailer('sendgrid')->to($to)->send($mailable);
+            Mail::to($to)->send($mailable);
         } catch (\Throwable $e) {
-            ApiHealthService::logError('sendgrid', $e->getMessage(), ['context' => 'venue_introduction', 'lead_id' => $this->lead->id, 'venue_id' => $this->venue->id, 'to' => $to]);
+            ApiHealthService::logError(config('mail.default'), $e->getMessage(), ['context' => 'venue_introduction', 'lead_id' => $this->lead->id, 'venue_id' => $this->venue->id, 'to' => $to]);
             throw $e;
         }
 
