@@ -179,6 +179,17 @@ return [
             'cta_text' => 'CTA text',
             'closing_text' => 'Closing message',
         ],
+        'lead_expiry' => [
+            'header_text' => 'Header text',
+            'expiry_intro_text' => 'Expiry intro',
+            'cta_text' => 'CTA text',
+            'closing_text' => 'Closing message',
+        ],
+        'additional_services' => [
+            'tagline' => 'Tagline (use {{occasion}} for occasion type)',
+            'cta_text' => 'CTA button label (e.g. Choose additional services)',
+            'closing_text' => 'Closing message',
+        ],
         'lead_opportunity' => [
             'intro_text' => 'Intro text',
             'cta_button_label' => 'CTA button label',

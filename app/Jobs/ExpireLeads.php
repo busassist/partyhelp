@@ -22,9 +22,8 @@ class ExpireLeads implements ShouldQueue
 
         foreach ($expiredLeads as $lead) {
             $lead->update(['status' => 'expired']);
-
-            // TODO: Notify customer of expiry
-            Log::info("Lead #{$lead->id} expired");
+            SendLeadExpiryNotification::dispatch($lead);
+            Log::info("Lead #{$lead->id} expired, expiry email queued");
         }
     }
 }

@@ -74,6 +74,10 @@ class GeneralSettings extends Page
             ),
             'debug_logging_enabled' => SystemSetting::get('debug_logging_enabled', false),
             'new_venues_email_password' => SystemSetting::get('new_venues_email_password', false),
+            'additional_services_email_hours' => (int) SystemSetting::get(
+                'additional_services_email_hours',
+                config('partyhelp.lead.expiry_hours', 72)
+            ),
         ];
         $this->form->fill($this->data);
     }
@@ -133,6 +137,17 @@ class GeneralSettings extends Page
                                         \Filament\Forms\Components\Toggle::make('new_venues_email_password')
                                             ->label('New venues: email set-password link')
                                             ->helperText('When on, new venues receive a branded email with a link to set their venue portal password.'),
+                                    ]),
+                                Section::make('Customer emails')
+                                    ->description('When to send the Additional Services email to customers after lead submission.')
+                                    ->schema([
+                                        \Filament\Forms\Components\TextInput::make('additional_services_email_hours')
+                                            ->label('Additional services email (hours after submission)')
+                                            ->helperText('Send the "Choose additional services" email this many hours after a lead is submitted (default 72).')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(720)
+                                            ->required(),
                                     ]),
                             ]),
                         Tab::make('Debug')
@@ -261,6 +276,13 @@ class GeneralSettings extends Page
             ! empty($data['new_venues_email_password']),
             'general',
             'boolean'
+        );
+
+        SystemSetting::set(
+            'additional_services_email_hours',
+            (int) ($data['additional_services_email_hours'] ?? 72),
+            'leads',
+            'integer'
         );
 
         Notification::make()

@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Mail\AdditionalServicesEmail;
 use App\Mail\FormConfirmationEmail;
+use App\Mail\LeadExpiryEmail;
 use App\Mail\VenueIntroductionEmail;
 use App\Models\CreditTransaction;
 use App\Models\EmailTemplate;
@@ -61,6 +63,8 @@ class EmailTemplateTestService
             'lead_opportunity', 'lead_opportunity_discount' => $this->buildLeadOpportunityTest($template->key),
             'new_venue_for_approval' => $this->buildVenueApprovalTest(),
             'venue_registration_approved' => $this->buildVenueRegistrationApprovedTest(),
+            'lead_expiry' => $this->buildLeadExpiryTest(),
+            'additional_services' => $this->buildAdditionalServicesTest(),
             default => null,
         };
     }
@@ -156,6 +160,30 @@ class EmailTemplateTestService
         }
 
         return new \App\Mail\VenueRegistrationApprovedEmail($venue);
+    }
+
+    private function buildLeadExpiryTest(): ?LeadExpiryEmail
+    {
+        $lead = Lead::first();
+        if (! $lead) {
+            return null;
+        }
+
+        $appUrl = config('app.url');
+
+        return new LeadExpiryEmail($lead, $appUrl . '/emails/view/test', $appUrl . '/unsubscribe?token=test');
+    }
+
+    private function buildAdditionalServicesTest(): ?AdditionalServicesEmail
+    {
+        $lead = Lead::first();
+        if (! $lead) {
+            return null;
+        }
+
+        $appUrl = config('app.url');
+
+        return new AdditionalServicesEmail($lead, $appUrl . '/emails/view/test', $appUrl . '/unsubscribe?token=test');
     }
 
     private function appUrl(): string

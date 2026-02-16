@@ -48,11 +48,41 @@ class EmailTemplateResource extends Resource
                         ->helperText('When enabled and Twilio is configured, a WhatsApp message will be sent alongside the email where a recipient phone number is available.'),
                 ])
                 ->collapsible(),
+            SchemaSection::make('WhatsApp message (lead opportunity)')
+                ->description('Wording and button labels for the WhatsApp message with Accept / Ignore buttons. Only used when this template is sent via WhatsApp.')
+                ->schema(static::whatsappLeadOpportunityFields())
+                ->visible(fn (?EmailTemplate $record) => $record && in_array($record->key, ['lead_opportunity', 'lead_opportunity_discount'], true))
+                ->collapsible(),
             SchemaSection::make('Editable content')
                 ->description('These snippets are used in the email body. Use the editor for basic formatting (bold, italic, links).')
                 ->schema(static::buildSlotEditors())
                 ->collapsible(),
         ]);
+    }
+
+    /**
+     * Form fields for WhatsApp lead-opportunity message (body + button labels).
+     */
+    protected static function whatsappLeadOpportunityFields(): array
+    {
+        return [
+            Forms\Components\Textarea::make('whatsapp_body')
+                ->label('Message body')
+                ->helperText('Main text shown above the Accept / Ignore buttons. Plain text only.')
+                ->rows(4)
+                ->maxLength(1024)
+                ->columnSpanFull(),
+            Forms\Components\TextInput::make('whatsapp_accept_label')
+                ->label('Accept button label')
+                ->maxLength(25)
+                ->placeholder('Accept')
+                ->helperText('Label for the button that accepts the lead (max 25 characters for WhatsApp).'),
+            Forms\Components\TextInput::make('whatsapp_ignore_label')
+                ->label('Ignore button label')
+                ->maxLength(25)
+                ->placeholder('Ignore')
+                ->helperText('Label for the button that declines the lead (max 25 characters for WhatsApp).'),
+        ];
     }
 
     /**

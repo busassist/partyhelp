@@ -62,7 +62,7 @@ class EmailTemplateSeeder extends Seeder
             ],
             [
                 'key' => 'additional_services_lead_expiry',
-                'name' => 'Additional Services / Lead Expiry',
+                'name' => 'Lead Expiry',
                 'subject' => "Your lead window has closed – here's what's next",
                 'content_slots' => [
                     'header_text' => "Your lead window has closed – here's what's next",
@@ -70,6 +70,27 @@ class EmailTemplateSeeder extends Seeder
                     'additional_services_text' => 'If you would like more venue options or help finalising your booking, we can still assist. Reply to this email or visit our website.',
                     'cta_text' => 'Contact us for more venue options or booking support.',
                     'closing_text' => 'Thank you for using Partyhelp.',
+                ],
+            ],
+            [
+                'key' => 'lead_expiry',
+                'name' => 'Lead Expiry',
+                'subject' => "Your lead window has closed – here's what's next",
+                'content_slots' => [
+                    'header_text' => "Your lead window has closed – here's what's next",
+                    'expiry_intro_text' => 'The 72-hour window for venues to purchase your lead has now closed.',
+                    'cta_text' => 'Contact us for more venue options or booking support.',
+                    'closing_text' => 'Thank you for using Partyhelp.',
+                ],
+            ],
+            [
+                'key' => 'additional_services',
+                'name' => 'Additional Services',
+                'subject' => 'Make your {{occasion}} unforgettable – add these extras',
+                'content_slots' => [
+                    'tagline' => 'Make your {{occasion}} unforgettable with these extras',
+                    'cta_text' => 'Choose additional services',
+                    'closing_text' => 'We will be in touch with recommendations soon.',
                 ],
             ],
             [

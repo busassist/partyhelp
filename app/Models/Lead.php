@@ -19,7 +19,7 @@ class Lead extends Model
         'special_requirements', 'base_price', 'current_price',
         'discount_percent', 'status', 'purchase_target',
         'purchase_count', 'distributed_at', 'fulfilled_at',
-        'expires_at', 'webhook_payload',
+        'expires_at', 'additional_services_email_sent_at', 'webhook_payload',
     ];
 
     protected function casts(): array
@@ -34,6 +34,7 @@ class Lead extends Model
             'distributed_at' => 'datetime',
             'fulfilled_at' => 'datetime',
             'expires_at' => 'datetime',
+            'additional_services_email_sent_at' => 'datetime',
             'webhook_payload' => 'array',
         ];
     }
@@ -79,6 +80,12 @@ class Lead extends Model
     public function signedPurchaseUrlFor(Venue $venue): string
     {
         return URL::signedRoute('lead.purchase.show', ['lead' => $this, 'venue' => $venue]);
+    }
+
+    /** Signed URL for the customer to select additional services (used in additional services email). */
+    public function signedAdditionalServicesUrl(): string
+    {
+        return URL::signedRoute('additional-services.show', ['lead' => $this]);
     }
 
     /** Preferred locations from form (multiple suburbs). Falls back to single suburb. */

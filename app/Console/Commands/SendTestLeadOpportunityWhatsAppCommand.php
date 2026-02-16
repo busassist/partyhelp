@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\EmailTemplate;
 use App\Models\Lead;
 use App\Models\Venue;
 use App\Services\TwilioWhatsAppService;
@@ -30,8 +31,13 @@ class SendTestLeadOpportunityWhatsAppCommand extends Command
             return self::FAILURE;
         }
 
-        if (empty(config('partyhelp.twilio_lead_opportunity_content_sid'))) {
-            $this->error('TWILIO_LEAD_OPPORTUNITY_CONTENT_SID is not set in .env.');
+        $contentSid = config('partyhelp.twilio_lead_opportunity_content_sid');
+        if (empty($contentSid)) {
+            $template = EmailTemplate::where('key', 'lead_opportunity')->first();
+            $contentSid = $template?->twilio_content_sid;
+        }
+        if (empty($contentSid)) {
+            $this->error('No Content SID. Run: php artisan whatsapp:create-lead-opportunity-template --save');
 
             return self::FAILURE;
         }
@@ -55,7 +61,7 @@ class SendTestLeadOpportunityWhatsAppCommand extends Command
         $this->info("Sending test lead-opportunity WhatsApp to {$e164} (lead #{$lead->id}, venue #{$venue->id})...");
 
         try {
-            $sid = $service->sendLeadOpportunityInteractive($lead, $venue, $to);
+            $sid = $service->sendLeadOpportunityInteractive($lead, $venue, $to, $contentSid);
             if ($sid) {
                 $this->info("Sent. Message SID: {$sid}");
                 return self::SUCCESS;

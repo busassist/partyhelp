@@ -15,6 +15,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Additional services selection (customer-facing, from +72h email; signed link)
+Route::get('/p/additional-services/{lead}', [\App\Http\Controllers\AdditionalServicesController::class, 'show'])
+    ->name('additional-services.show')
+    ->middleware('signed');
+Route::post('/p/additional-services/{lead}', [\App\Http\Controllers\AdditionalServicesController::class, 'submit'])
+    ->name('additional-services.submit')
+    ->middleware('signed');
+
+// Admin: download additional service submissions as CSV
+Route::get('/admin/additional-service-submissions/csv', [\App\Http\Controllers\AdditionalServiceSubmissionController::class, 'csv'])
+    ->name('admin.additional-service-submissions.csv')
+    ->middleware('auth');
+
 // Function pack download (customer-facing, dark theme)
 Route::get('/function-pack/{token}', [FunctionPackController::class, 'show'])
     ->name('function-pack.show');

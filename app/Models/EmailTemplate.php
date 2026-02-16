@@ -10,6 +10,7 @@ class EmailTemplate extends Model
         'key', 'name', 'subject', 'content_slots',
         'sendgrid_template_id', 'content_hash',
         'send_via_whatsapp',
+        'whatsapp_body', 'whatsapp_accept_label', 'whatsapp_ignore_label', 'twilio_content_sid',
     ];
 
     protected function casts(): array

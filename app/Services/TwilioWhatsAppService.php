@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\EmailTemplate;
 use App\Models\Lead;
 use App\Models\Venue;
 use Twilio\Rest\Client;
+use Twilio\Rest\Content\V1\ContentModels;
 
 class TwilioWhatsAppService
 {
@@ -76,14 +78,16 @@ class TwilioWhatsAppService
      * Send the lead-opportunity interactive message (Accept / Ignore buttons).
      * Uses a Content Template with variable button payloads {{1}} and {{2}}.
      * When the venue taps Accept, the webhook receives the payload and we reply with the purchase link.
+     *
+     * @param  string|null  $contentSid  Override Content SID (e.g. from template's twilio_content_sid); else uses config.
      */
-    public function sendLeadOpportunityInteractive(Lead $lead, Venue $venue, string $toPhone): ?string
+    public function sendLeadOpportunityInteractive(Lead $lead, Venue $venue, string $toPhone, ?string $contentSid = null): ?string
     {
         if (! $this->isConfigured()) {
             return null;
         }
 
-        $contentSid = config('partyhelp.twilio_lead_opportunity_content_sid');
+        $contentSid = $contentSid ?? config('partyhelp.twilio_lead_opportunity_content_sid');
         if (empty($contentSid)) {
             return null;
         }
@@ -102,7 +106,9 @@ class TwilioWhatsAppService
     }
 
     /**
-     * Normalize Australian phone to E.164 for WhatsApp (e.g. 0412345678 -> +61412345678).
+     * Normalize phone to E.164 for WhatsApp.
+     * Australian: 0412345678 -> +61412345678.
+     * Already international (e.g. +62...): kept as-is with + prefix.
      */
     public function normalizePhoneToE164(string $phone): ?string
     {
@@ -110,6 +116,11 @@ class TwilioWhatsAppService
         if ($digits === '') {
             return null;
         }
+        // Already has country code (e.g. +62, +61) – assume E.164
+        if (str_starts_with($phone, '+') && strlen($digits) >= 10) {
+            return '+' . $digits;
+        }
+        // Australian local
         if (str_starts_with($digits, '0')) {
             $digits = '61' . substr($digits, 1);
         } elseif (! str_starts_with($digits, '61')) {
@@ -117,6 +128,73 @@ class TwilioWhatsAppService
         }
 
         return '+' . $digits;
+    }
+
+    /**
+     * Create the lead-opportunity Accept/Ignore Content Template via Twilio Content API.
+     * Uses wording from the given template when provided; otherwise defaults.
+     * Returns the Content SID (HX...). For WhatsApp you may still need to submit for approval.
+     */
+    public function createLeadOpportunityContentTemplate(?EmailTemplate $template = null): ?string
+    {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
+        $defaultBody = "Accept and pay for this lead. **Important: your Partyhelp credits balance will be automatically deducted.** Ignore this message if you do not want to pay for this lead.";
+        $body = $template && (string) $template->whatsapp_body !== '' ? $template->whatsapp_body : $defaultBody;
+        $acceptLabel = $template && (string) $template->whatsapp_accept_label !== '' ? $template->whatsapp_accept_label : 'Accept';
+        $ignoreLabel = $template && (string) $template->whatsapp_ignore_label !== '' ? $template->whatsapp_ignore_label : 'Ignore';
+        $acceptLabel = mb_substr($acceptLabel, 0, 25);
+        $ignoreLabel = mb_substr($ignoreLabel, 0, 25);
+
+        $payload = [
+            'friendly_name' => 'partyhelp_lead_opportunity',
+            'language' => 'en',
+            'variables' => [
+                '1' => 'accept_sample',
+                '2' => 'ignore',
+            ],
+            'types' => [
+                'twilio/quick-reply' => [
+                    'body' => $body,
+                    'actions' => [
+                        ['title' => $acceptLabel, 'id' => '{{1}}'],
+                        ['title' => $ignoreLabel, 'id' => '{{2}}'],
+                    ],
+                ],
+            ],
+        ];
+
+        $request = ContentModels::createContentCreateRequest($payload);
+        $content = $this->getClient()->content->v1->contents->create($request);
+
+        return $content->sid;
+    }
+
+    /**
+     * Fetch message status from Twilio (status, error_code, error_message).
+     *
+     * @return array{status: string, error_code: int|null, error_message: string|null, to: string|null}|null
+     */
+    public function getMessageStatus(string $messageSid): ?array
+    {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
+        try {
+            $msg = $this->getClient()->messages($messageSid)->fetch();
+
+            return [
+                'status' => $msg->status ?? 'unknown',
+                'error_code' => $msg->errorCode,
+                'error_message' => $msg->errorMessage,
+                'to' => $msg->to,
+            ];
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     private function getClient(): Client

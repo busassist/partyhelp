@@ -42,6 +42,9 @@ Use **named semantic classes** for common elements so styling can be controlled 
 - Never set up local Mac development unless explicitly instructed.
 - **Commit after each prompt, before reporting back:** When you have finished ALL changes arising from one user prompt, you MUST commit and push to the remote **before** returning the results or summary to the user. Commit after the completion of each prompt—do not leave completed work only in the working tree. One commit per completed task is fine; do not make many commits in the middle of a single task. If the user has to ask you to commit, the rule was not followed.
 
+## Image uploads
+- Use the **media library** for image uploads in admin/venue: `App\Forms\Components\MediaLibraryPicker` (modal picker). Do not add new Filament FileUpload fields for images. See PRD §11.4.
+
 ## Key Documents
 - PRD: `docs/Partyhelp PRD.md`
 - Seeding: `docs/SEEDING.md`

@@ -73,6 +73,7 @@ class DatabaseSeeder extends Seeder
         $settings = [
             ['lead_fulfilment_threshold', '3', 'leads', 'integer'],
             ['lead_expiry_hours', '72', 'leads', 'integer'],
+            ['additional_services_email_hours', '72', 'leads', 'integer'],
             ['lead_max_matches', '30', 'leads', 'integer'],
             ['max_rooms_per_venue', '6', 'venue', 'integer'],
             ['max_photos_per_room', '4', 'venue', 'integer'],

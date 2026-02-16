@@ -357,6 +357,20 @@ When venues purchase a lead, they receive **function packs** (documents for the 
 - **Hosted download page:** Secure page where venue can view and download; offer options (e.g. download as PDF, view in browser)
 - App treats function packs as file attachments or links to server-side resources; links preferred to avoid large email attachments
 
+### 7.4 Additional Services Email (+72 Hours)
+
+Sent to the customer a configurable number of hours (default 72) after lead submission to promote add-on services and potential partner referrals.
+
+**Content elements:**
+
+- **Tagline:** e.g. "Make your [Occasion] unforgettable with these extras"
+- **Visual grid of additional service options with images** (e.g. Donut Wall, Candy Buffet, Professional Photographer, Videographer, DJ/Entertainment, Flowers/Decorations, Custom Cake)
+- **Service selection:** Because form/checkbox functionality inside email is technically complex and unreliable, use a **CTA linking to a server-side web page** where the customer selects the additional services they are interested in (checkboxes) and submits.
+- **Submit button** (on the server-side page) to express interest.
+- **Outcome:** Potential future revenue stream or partner referrals.
+
+**Implementation:** Admin configures the list of additional services (name, thumbnail image) under Manage System Data → Additional Services. The email shows thumbnails and a "Choose additional services" CTA linking to a signed landing page. On the landing page the customer selects services via checkboxes and submits; they see a confirmation message: "We've received your selections and will be in touch with recommendations soon."
+
 ---
 
 ## 8. Venue Portal
@@ -565,6 +579,10 @@ Note: Master HTML template structure is controlled in codebase and uploaded to S
 | Credit balance / auto top-up | Every 5 min |
 | Daily reconciliation | 2am |
 | Xero sync | 3am |
+
+### 11.4 Image uploads and media library
+
+**Use the shared media library for all image upload functionality in the admin and venue portals.** The app provides a **Media Library** (modal picker) that supports upload, browse, and select. Use the `MediaLibraryPicker` form component (`App\Forms\Components\MediaLibraryPicker`) with `isAdmin(true)` and `venueId(null)` for admin-managed images (e.g. Venue Styles, Additional Services thumbnails), or with a specific `venueId` for venue-scoped images (e.g. room photos). Do not add new one-off FileUpload fields for images; hook into the media library so assets are centralised and served consistently (e.g. via `/media/{path}` or configured CDN).
 
 ---
 

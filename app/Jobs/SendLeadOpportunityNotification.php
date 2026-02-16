@@ -80,13 +80,18 @@ class SendLeadOpportunityNotification implements ShouldQueue
             return;
         }
 
+        $contentSid = $template->twilio_content_sid ?? config('partyhelp.twilio_lead_opportunity_content_sid');
+        if (empty($contentSid)) {
+            return;
+        }
+
         $whatsApp = app(TwilioWhatsAppService::class);
-        if (! $whatsApp->isConfigured() || config('partyhelp.twilio_lead_opportunity_content_sid') === null) {
+        if (! $whatsApp->isConfigured()) {
             return;
         }
 
         try {
-            $sid = $whatsApp->sendLeadOpportunityInteractive($this->lead, $this->venue, $phone);
+            $sid = $whatsApp->sendLeadOpportunityInteractive($this->lead, $this->venue, $phone, $contentSid);
             if ($sid !== null) {
                 Log::info('Lead opportunity WhatsApp sent', [
                     'lead_id' => $this->lead->id,

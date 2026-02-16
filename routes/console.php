@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\ExpireLeads;
+use App\Jobs\ProcessAdditionalServicesEmails;
 use App\Jobs\ProcessAutoTopUps;
 use App\Jobs\ProcessLeadDiscounts;
 use App\Jobs\SyncToBigQueryJob;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Schedule;
 // Discount escalation and lead expiry
 Schedule::job(new ProcessLeadDiscounts)->hourly();
 Schedule::job(new ExpireLeads)->hourly();
+
+// Additional services email: send to customers X hours after lead (configurable in Settings)
+Schedule::job(new ProcessAdditionalServicesEmails)->hourly();
 
 // Credit auto top-ups
 Schedule::job(new ProcessAutoTopUps)->everyFiveMinutes();
