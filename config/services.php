@@ -42,6 +42,20 @@ return [
         ],
     ],
 
+    'twilio' => (function () {
+        $mode = env('TWILIO_MODE', 'sandbox');
+        $isLive = $mode === 'live';
+
+        return [
+            'mode' => $mode,
+            'sid' => $isLive ? env('TWILIO_SID_LIVE') : env('TWILIO_SID_SANDBOX'),
+            'token' => $isLive ? env('TWILIO_AUTH_TOKEN_LIVE') : env('TWILIO_AUTH_TOKEN_SANDBOX'),
+            'whatsapp_from' => $isLive
+                ? env('TWILIO_WHATSAPP_FROM_LIVE', 'whatsapp:+14155238886')
+                : env('TWILIO_WHATSAPP_FROM_SANDBOX', 'whatsapp:+14155238886'),
+        ];
+    })(),
+
     'stripe' => (function () {
         $mode = env('STRIPE_MODE', 'sandbox');
         $isLive = $mode === 'live';

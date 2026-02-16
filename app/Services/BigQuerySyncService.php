@@ -17,15 +17,16 @@ class BigQuerySyncService
     public function __construct()
     {
         $path = config('bigquery.credentials_path');
-        if ($path && is_file($path)) {
-            putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $path);
+        $absolutePath = $path && is_file($path) ? realpath($path) : $path;
+        if ($absolutePath) {
+            putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $absolutePath);
         }
 
         $this->projectId = config('bigquery.project_id');
         $this->dataset = config('bigquery.dataset');
         $this->client = new BigQueryClient([
             'projectId' => $this->projectId,
-            'keyFilePath' => $path,
+            'keyFilePath' => $absolutePath,
         ]);
     }
 
@@ -94,7 +95,7 @@ class BigQuerySyncService
 
         $loadConfig = $table->load($stream, $options);
         $job = $this->client->runJob($loadConfig);
-        $job->wait();
+        $job->waitUntilComplete();
 
         if (is_resource($stream)) {
             fclose($stream);

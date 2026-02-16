@@ -40,6 +40,14 @@ class EmailTemplateResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
             ]),
+            SchemaSection::make('Delivery')
+                ->description('Send this template via email; optionally also via WhatsApp when Twilio is configured.')
+                ->schema([
+                    Forms\Components\Checkbox::make('send_via_whatsapp')
+                        ->label('Send via WhatsApp (in addition to email)')
+                        ->helperText('When enabled and Twilio is configured, a WhatsApp message will be sent alongside the email where a recipient phone number is available.'),
+                ])
+                ->collapsible(),
             SchemaSection::make('Editable content')
                 ->description('These snippets are used in the email body. Use the editor for basic formatting (bold, italic, links).')
                 ->schema(static::buildSlotEditors())
@@ -77,6 +85,11 @@ class EmailTemplateResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('key')->badge()->color('gray'),
                 Tables\Columns\TextColumn::make('subject')->limit(50)->searchable(),
+                Tables\Columns\IconColumn::make('send_via_whatsapp')
+                    ->label('WhatsApp')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-chat-bubble-left-right')
+                    ->falseIcon('heroicon-o-minus'),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

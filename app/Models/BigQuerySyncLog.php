@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BigQuerySyncLog extends Model
 {
+    protected $table = 'bigquery_sync_logs';
+
     protected $fillable = [
         'status', 'message', 'error_detail', 'summary',
         'started_at', 'completed_at',

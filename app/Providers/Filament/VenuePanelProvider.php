@@ -30,7 +30,7 @@ class VenuePanelProvider extends PanelProvider
             ->path('venue')
             ->login(\App\Filament\Venue\Pages\LoginVenue::class)
             ->registration(\App\Filament\Venue\Pages\RegisterVenue::class)
-            ->passwordReset()
+            ->passwordReset(\Filament\Auth\Pages\PasswordReset\RequestPasswordReset::class, \App\Filament\Venue\Pages\ResetPasswordVenue::class)
             ->profile()
             ->userMenuItems([
                 'profile' => fn (Action $action) => $action->label('Your profile'),

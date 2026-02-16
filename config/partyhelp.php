@@ -76,6 +76,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Twilio WhatsApp – Lead opportunity interactive template
+    |--------------------------------------------------------------------------
+    | Content Template SID for the "Accept / Ignore" quick-reply message sent
+    | when notifying venues about a new lead. Create in Twilio Console > Content
+    | Template Builder (twilio/quick-reply, body + two buttons with id {{1}} and {{2}}).
+    */
+    'twilio_lead_opportunity_content_sid' => env('TWILIO_LEAD_OPPORTUNITY_CONTENT_SID'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Public website URL (customer-facing marketing site, used in emails)
     |--------------------------------------------------------------------------
     */

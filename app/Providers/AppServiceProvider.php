@@ -4,12 +4,17 @@ namespace App\Providers;
 
 use App\Filament\Livewire\AreasTable;
 use App\Filament\Livewire\PostcodesTable;
+use App\Mail\VenuePasswordResetEmail;
 use App\Models\ScheduleRunLog;
 use App\Models\User;
 use App\Services\DebugLogService;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -28,6 +33,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        ResetPassword::toMailUsing(function (object $notifiable, string $token) {
+            $expire = (int) config('auth.passwords.'.config('auth.defaults.passwords').'.expire', 60);
+
+            if ($notifiable instanceof User && $notifiable->role === 'venue') {
+                $panel = Filament::getPanel('venue');
+                $url = $panel->getResetPasswordUrl($token, $notifiable);
+
+                return new VenuePasswordResetEmail(
+                    $url,
+                    $expire,
+                    $notifiable->getEmailForPasswordReset(),
+                );
+            }
+
+            $url = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+
+            return (new MailMessage)
+                ->subject(Lang::get('Reset Password Notification'))
+                ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
+                ->action(Lang::get('Reset Password'), $url)
+                ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => $expire]))
+                ->line(Lang::get('If you did not request a password reset, no further action is required.'));
+        });
+
         Livewire::component('areas-table', AreasTable::class);
         Livewire::component('postcodes-table', PostcodesTable::class);
 

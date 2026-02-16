@@ -3,10 +3,12 @@
 namespace App\Jobs;
 
 use App\Mail\LeadOpportunityEmail;
+use App\Models\EmailTemplate;
 use App\Models\Lead;
 use App\Models\Venue;
 use App\Services\ApiHealthService;
 use App\Services\DebugLogService;
+use App\Services\TwilioWhatsAppService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -56,10 +58,48 @@ class SendLeadOpportunityNotification implements ShouldQueue
             'to' => $to,
         ]);
 
+        $this->sendWhatsAppIfEnabled();
+
         Log::info('Lead opportunity notification sent', [
             'lead_id' => $this->lead->id,
             'venue_id' => $this->venue->id,
             'to' => $to,
         ]);
+    }
+
+    private function sendWhatsAppIfEnabled(): void
+    {
+        $templateKey = $this->discountPercent > 0 ? 'lead_opportunity_discount' : 'lead_opportunity';
+        $template = EmailTemplate::where('key', $templateKey)->first();
+        if (! $template?->send_via_whatsapp) {
+            return;
+        }
+
+        $phone = $this->venue->contact_phone;
+        if (empty($phone)) {
+            return;
+        }
+
+        $whatsApp = app(TwilioWhatsAppService::class);
+        if (! $whatsApp->isConfigured() || config('partyhelp.twilio_lead_opportunity_content_sid') === null) {
+            return;
+        }
+
+        try {
+            $sid = $whatsApp->sendLeadOpportunityInteractive($this->lead, $this->venue, $phone);
+            if ($sid !== null) {
+                Log::info('Lead opportunity WhatsApp sent', [
+                    'lead_id' => $this->lead->id,
+                    'venue_id' => $this->venue->id,
+                    'message_sid' => $sid,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Lead opportunity WhatsApp failed', [
+                'lead_id' => $this->lead->id,
+                'venue_id' => $this->venue->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

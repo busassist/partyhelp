@@ -4,6 +4,7 @@ use App\Http\Controllers\FunctionPackController;
 use App\Http\Controllers\LeadPurchaseController;
 use App\Http\Controllers\MediaServeController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\TwilioWhatsAppWebhookController;
 use App\Http\Controllers\VenueApprovalController;
 use App\Http\Controllers\VenueBillingController;
 use App\Http\Controllers\VenueSetPasswordController;
@@ -49,6 +50,11 @@ Route::get('/media/{path}', [MediaServeController::class, 'show'])
 // Stripe webhook (no CSRF)
 Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
     ->name('stripe.webhook')
+    ->withoutMiddleware([VerifyCsrfToken::class]);
+
+// Twilio WhatsApp webhook (button replies for lead opportunity Accept/Ignore)
+Route::post('webhook/twilio/whatsapp', [TwilioWhatsAppWebhookController::class, 'handleIncoming'])
+    ->name('twilio.whatsapp.webhook')
     ->withoutMiddleware([VerifyCsrfToken::class]);
 
 // Venue billing (auth required)

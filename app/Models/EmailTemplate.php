@@ -9,12 +9,14 @@ class EmailTemplate extends Model
     protected $fillable = [
         'key', 'name', 'subject', 'content_slots',
         'sendgrid_template_id', 'content_hash',
+        'send_via_whatsapp',
     ];
 
     protected function casts(): array
     {
         return [
             'content_slots' => 'array',
+            'send_via_whatsapp' => 'boolean',
         ];
     }
 
