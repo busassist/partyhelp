@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Schedule;
 |--------------------------------------------------------------------------
 */
 
+// MySQL backup to DO Spaces (hourly; weekly/monthly when due). See Server Health for last backup timestamps.
+Schedule::command('backup:mysql')->hourly();
+
 // Discount escalation and lead expiry
 Schedule::job(new ProcessLeadDiscounts)->hourly();
 Schedule::job(new ExpireLeads)->hourly();

@@ -22,6 +22,7 @@ class ServerHealthContent extends Component
                 'apis' => ServerHealthService::apiStatus(),
                 'scheduledTasks' => ServerHealthService::scheduledTasksStatus(),
                 'bigquerySync' => ServerHealthService::bigquerySyncStatus(),
+                'mysqlBackup' => ServerHealthService::mysqlBackupStatus(),
                 'api_errors' => ApiHealthService::recentErrors(20),
                 'api_has_errors' => ApiHealthService::hasRecentErrors(),
             ];
@@ -58,6 +59,7 @@ class ServerHealthContent extends Component
                 'has_failures' => false,
             ],
             'bigquerySync' => ['configured' => false, 'last_run' => null],
+            'mysqlBackup' => ['hourly_at' => null, 'weekly_at' => null, 'monthly_at' => null, 'configured' => false],
             'api_errors' => [],
             'api_has_errors' => false,
         ];

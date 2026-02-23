@@ -6,6 +6,8 @@ use App\Models\BigQuerySyncLog;
 use App\Models\Media;
 use App\Models\ScheduleRunLog;
 use App\Models\Venue;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\StorageAttributes;
 
 class ServerHealthService
 {
@@ -15,6 +17,7 @@ class ServerHealthService
         'App\Jobs\ExpireLeads',
         'App\Jobs\ProcessAutoTopUps',
         'App\Jobs\SyncToBigQueryJob',
+        'backup:mysql',
         'Process the queue (stop when empty) with a lock so only one processor runs at a time.',
     ];
     /**
@@ -207,6 +210,57 @@ class ServerHealthService
             ] : null,
             'configured' => $configured,
         ];
+    }
+
+    /**
+     * MySQL backups (hourly/weekly/monthly) in DO Spaces: timestamp of most recent in each category.
+     *
+     * @return array{hourly_at: string|null, weekly_at: string|null, monthly_at: string|null, configured: bool}
+     */
+    public static function mysqlBackupStatus(): array
+    {
+        $bucket = config('filesystems.disks.spaces.bucket');
+        $configured = ! empty(config('filesystems.disks.spaces.key')) && ! empty($bucket);
+
+        $format = fn (?int $ts) => $ts ? date('Y-m-d H:i:s', $ts) : null;
+
+        $hourlyAt = null;
+        $weeklyAt = null;
+        $monthlyAt = null;
+
+        if ($configured) {
+            try {
+                $disk = Storage::disk('spaces');
+                $hourlyAt = self::latestBackupTimestamp($disk, 'backups/hourly');
+                $weeklyAt = self::latestBackupTimestamp($disk, 'backups/weekly');
+                $monthlyAt = self::latestBackupTimestamp($disk, 'backups/monthly');
+            } catch (\Throwable $e) {
+                // Leave timestamps null on error
+            }
+        }
+
+        return [
+            'hourly_at' => $format($hourlyAt),
+            'weekly_at' => $format($weeklyAt),
+            'monthly_at' => $format($monthlyAt),
+            'configured' => $configured,
+        ];
+    }
+
+    private static function latestBackupTimestamp($disk, string $prefix): ?int
+    {
+        $latest = null;
+        $listing = $disk->listContents($prefix, true);
+        foreach ($listing as $item) {
+            if ($item instanceof StorageAttributes && ! $item->isDir()) {
+                $ts = $item->lastModified();
+                if ($ts !== null && ($latest === null || $ts > $latest)) {
+                    $latest = $ts;
+                }
+            }
+        }
+
+        return $latest;
     }
 
     public static function bytesToHuman(int $bytes): string

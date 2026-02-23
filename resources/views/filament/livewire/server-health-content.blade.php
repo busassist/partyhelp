@@ -145,6 +145,30 @@
             @endif
         </section>
 
+        {{-- MySQL backups (DO Spaces) --}}
+        <section class="rounded-lg border border-gray-200 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-800/30 px-5 py-5">
+            <h3 class="text-sm font-semibold leading-6 text-gray-950 dark:text-white mb-4">MySQL backups (DO Spaces)</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Hourly dump to <code class="rounded bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 text-xs font-mono">backups/</code> in the Spaces bucket. Retention: 24 hourly, 4 weekly (Sun 00:00), 12 monthly (1st 00:00).</p>
+            @if (!($mysqlBackup['configured'] ?? false))
+                <p class="text-sm text-amber-600 dark:text-amber-400">Spaces not configured for backups.</p>
+            @else
+                <div class="flex flex-wrap gap-6 text-sm">
+                    <div>
+                        <span class="text-gray-500 dark:text-gray-400">Most recent hourly:</span>
+                        <strong class="tabular-nums text-gray-900 dark:text-white ml-1">{{ $mysqlBackup['hourly_at'] ?? '—' }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 dark:text-gray-400">Most recent weekly:</span>
+                        <strong class="tabular-nums text-gray-900 dark:text-white ml-1">{{ $mysqlBackup['weekly_at'] ?? '—' }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 dark:text-gray-400">Most recent monthly:</span>
+                        <strong class="tabular-nums text-gray-900 dark:text-white ml-1">{{ $mysqlBackup['monthly_at'] ?? '—' }}</strong>
+                    </div>
+                </div>
+            @endif
+        </section>
+
         {{-- Scheduled tasks --}}
         <section class="rounded-lg border border-gray-200 dark:border-gray-600/50 bg-gray-50/50 dark:bg-gray-800/30 px-5 py-5">
             <h3 class="text-sm font-semibold leading-6 text-gray-950 dark:text-white mb-4">Scheduled tasks</h3>
