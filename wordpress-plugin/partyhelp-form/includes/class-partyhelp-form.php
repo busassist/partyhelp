@@ -103,6 +103,7 @@ class Partyhelp_Form
             'Estimated_Budget' => sanitize_text_field($_POST['budget_range'] ?? ''),
             'Other_details_about_the_party:' => sanitize_textarea_field($_POST['special_requirements'] ?? ''),
             'room_styles' => $room_styles,
+            'page_url' => esc_url_raw($_POST['page_url'] ?? '') ?: '',
         ];
 
         $response = wp_remote_post($this->settings->get_webhook_url(), [

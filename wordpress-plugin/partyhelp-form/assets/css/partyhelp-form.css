@@ -271,6 +271,11 @@
   gap: 1rem;
 }
 
+/* When occasion type is locked (hidden), date field spans full width */
+.partyhelp-form-wrapper .partyhelp-party-details-group .partyhelp-date-full-width {
+  grid-column: 1 / -1;
+}
+
 @media (max-width: 600px) {
   .partyhelp-party-details-group {
     grid-template-columns: 1fr;

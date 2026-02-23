@@ -30,6 +30,9 @@ class LeadResource extends Resource
                 Forms\Components\TextInput::make('last_name')->required(),
                 Forms\Components\TextInput::make('email')->email()->required(),
                 Forms\Components\TextInput::make('phone')->required(),
+                Forms\Components\TextInput::make('referring_domain')
+                    ->label('Referring domain')
+                    ->placeholder('From page URL'),
             ])->columns(2),
 
             Section::make('Event Details')->schema([
@@ -104,6 +107,10 @@ class LeadResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('suburb')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('referring_domain')
+                    ->label('Referring domain')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('current_price')
                     ->money('AUD')->sortable(),
                 Tables\Columns\TextColumn::make('status')

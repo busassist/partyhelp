@@ -20,6 +20,7 @@ class Lead extends Model
         'discount_percent', 'status', 'purchase_target',
         'purchase_count', 'distributed_at', 'fulfilled_at',
         'expires_at', 'additional_services_email_sent_at', 'webhook_payload',
+        'referring_domain',
     ];
 
     protected function casts(): array

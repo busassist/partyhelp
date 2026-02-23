@@ -79,7 +79,19 @@ class Partyhelp_Form_Renderer
                     </div>
                 </div>
 
+                <?php
+                $lock_occasion = partyhelp_form()->settings->is_lock_occasion_type();
+                $locked_occasion_key = partyhelp_form()->settings->get_locked_occasion_type();
+                $occasion_locked = $lock_occasion && $locked_occasion_key !== '';
+                $date_full_width_class = $occasion_locked ? ' partyhelp-date-full-width' : '';
+                $page_url = is_singular() ? get_permalink() : home_url(add_query_arg([], null));
+                ?>
+                <input type="hidden" name="page_url" value="<?php echo esc_attr(esc_url($page_url)); ?>" />
                 <div class="partyhelp-party-details-group">
+                    <?php if ($occasion_locked): ?>
+                    <input type="hidden" name="occasion_type" value="<?php echo esc_attr($locked_occasion_key); ?>" />
+                    <div class="partyhelp-preferred-date-field<?php echo esc_attr($date_full_width_class); ?>">
+                    <?php else: ?>
                     <div class="partyhelp-occasion-type-field-group">
                         <label for="ph-occasion-type">Select the type of occasion <span class="required">*</span></label>
                         <select id="ph-occasion-type" name="occasion_type" class="partyhelp-select" required>
@@ -91,6 +103,7 @@ class Partyhelp_Form_Renderer
                         <span class="partyhelp-field-error" data-field="occasion_type"></span>
                     </div>
                     <div class="partyhelp-preferred-date-field">
+                    <?php endif; ?>
                         <label for="ph-preferred-date">Preferred Date <span class="required">*</span></label>
                         <div class="partyhelp-date-field-wrap" id="ph-date-wrap">
                             <input type="date" id="ph-preferred-date" name="preferred_date" class="partyhelp-input partyhelp-date-input" required />

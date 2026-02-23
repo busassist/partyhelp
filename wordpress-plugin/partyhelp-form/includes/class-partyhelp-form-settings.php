@@ -59,6 +59,46 @@ class Partyhelp_Form_Settings
             },
         ]);
 
+        register_setting('partyhelp_form', 'partyhelp_form_lock_occasion_type', [
+            'type' => 'boolean',
+            'default' => false,
+            'sanitize_callback' => function ($value) {
+                $on = (bool) $value;
+                if ($on) {
+                    $locked = isset($_POST['partyhelp_form_locked_occasion_type']) ? trim((string) $_POST['partyhelp_form_locked_occasion_type']) : '';
+                    if ($locked === '') {
+                        add_settings_error(
+                            'partyhelp_form_lock_occasion_type',
+                            'partyhelp_form_locked_occasion_required',
+                            __('Please select an occasion type when enabling Lock occasion type.', 'partyhelp-form'),
+                            'error'
+                        );
+                        return false;
+                    }
+                }
+                return $on;
+            },
+        ]);
+
+        register_setting('partyhelp_form', 'partyhelp_form_locked_occasion_type', [
+            'type' => 'string',
+            'default' => '',
+            'sanitize_callback' => function ($value) {
+                $value = is_string($value) ? trim($value) : '';
+                $lock_on = ! empty($_POST['partyhelp_form_lock_occasion_type']);
+                if ($lock_on && $value === '') {
+                    add_settings_error(
+                        'partyhelp_form_locked_occasion_type',
+                        'partyhelp_form_locked_occasion_required',
+                        __('Please select an occasion type when Lock occasion type is enabled.', 'partyhelp-form'),
+                        'error'
+                    );
+                    return get_option('partyhelp_form_locked_occasion_type', '');
+                }
+                return $value;
+            },
+        ]);
+
         register_setting('partyhelp_form', 'partyhelp_form_sync_frequency_minutes', [
             'type' => 'integer',
             'default' => 60,
@@ -159,6 +199,36 @@ class Partyhelp_Form_Settings
                                 value="<?php echo esc_attr(get_option('partyhelp_form_redirect_url', '')); ?>"
                                 class="regular-text" placeholder="/thank-you" />
                             <p class="description">Optional. Redirect to this URL after a successful submission (e.g. <code>/thank-you</code> or full URL). Leave blank to show the success message on the same page.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Lock occasion type</th>
+                        <td>
+                            <input type="hidden" name="partyhelp_form_lock_occasion_type" value="0" />
+                            <label for="partyhelp_form_lock_occasion_type">
+                                <input type="checkbox" id="partyhelp_form_lock_occasion_type" name="partyhelp_form_lock_occasion_type" value="1"
+                                    <?php checked(get_option('partyhelp_form_lock_occasion_type', false)); ?> />
+                                Enable
+                            </label>
+                            <p class="description">Use on occasion-specific sites (e.g. 21stbirthday.com.au) to hide the occasion dropdown and fix the value. When enabled, you must select the locked occasion below.</p>
+                        </td>
+                    </tr>
+                    <tr class="partyhelp-locked-occasion-row">
+                        <th scope="row"><label for="partyhelp_form_locked_occasion_type">Locked occasion type</label></th>
+                        <td>
+                            <select id="partyhelp_form_locked_occasion_type" name="partyhelp_form_locked_occasion_type">
+                                <option value="">— Select occasion —</option>
+                                <?php
+                                $occasion_types = $config['occasion_types'] ?? [];
+                                $locked = get_option('partyhelp_form_locked_occasion_type', '');
+                                foreach ($occasion_types as $ot) :
+                                    $key = $ot['key'] ?? '';
+                                    $label = $ot['label'] ?? $key;
+                                ?>
+                                <option value="<?php echo esc_attr($key); ?>" <?php selected($locked, $key); ?>><?php echo esc_html($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <p class="description">Required when Lock occasion type is enabled. This value will be sent with the form as a hidden field.</p>
                         </td>
                     </tr>
                     <tr>
@@ -320,6 +390,18 @@ class Partyhelp_Form_Settings
             return home_url($url);
         }
         return $url;
+    }
+
+    public function is_lock_occasion_type(): bool
+    {
+        return (bool) get_option('partyhelp_form_lock_occasion_type', false);
+    }
+
+    /** Locked occasion type key (e.g. 21st_birthday), or empty string if not set. */
+    public function get_locked_occasion_type(): string
+    {
+        $v = get_option('partyhelp_form_locked_occasion_type', '');
+        return is_string($v) ? trim($v) : '';
     }
 
     /**

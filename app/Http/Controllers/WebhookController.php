@@ -101,6 +101,7 @@ class WebhookController extends Controller
 
             $data = $validator->validated();
             $roomStyles = $this->parseRoomStyles($data['room_styles'] ?? ['function_room']);
+            $referringDomain = $this->extractReferringDomain($raw['page_url'] ?? null);
 
             $lead = Lead::create([
                 'first_name' => $data['first_name'],
@@ -118,6 +119,7 @@ class WebhookController extends Controller
                 'special_requirements' => $data['special_requirements'] ?? null,
                 'status' => 'new',
                 'webhook_payload' => $raw,
+                'referring_domain' => $referringDomain,
             ]);
 
             DebugLogService::logLeadReceived($lead);
@@ -319,5 +321,25 @@ class WebhookController extends Controller
         }
 
         return array_map('trim', explode(',', (string) $input));
+    }
+
+    /**
+     * Extract referring domain from page_url (e.g. "https://21stbirthday.com.au/venue-enquiry" -> "21stbirthday.com.au").
+     */
+    private function extractReferringDomain(?string $pageUrl): ?string
+    {
+        if ($pageUrl === null || trim($pageUrl) === '') {
+            return null;
+        }
+        $host = parse_url(trim($pageUrl), PHP_URL_HOST);
+        if ($host === false || $host === null) {
+            return null;
+        }
+        $host = strtolower($host);
+        if (str_starts_with($host, 'www.')) {
+            return substr($host, 4);
+        }
+
+        return $host;
     }
 }
